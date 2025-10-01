@@ -234,239 +234,239 @@ All new tasks must follow this TDD process:
   - [x] **MongoDB document**: Use existing `wordlists` collection, structure: `{_id: ObjectId, word, definition, examples: [], image_urls: [], part_of_speech, pronunciation, notes, folder_id: str, user_id: str (email), created_at, updated_at}`
   - [x] Note: Must convert `_id` (ObjectId) → `id` (str) in responses
 
-- [ ] **Define field validation rules**:
-  - [ ] **word**: Required, 1-100 chars, string
-  - [ ] **definition**: Required, 1-2000 chars, string
-  - [ ] **folder_id**: Required, must be valid ObjectId, must exist, must belong to user
-  - [ ] **examples**: Optional, List[str], max 20 items, each item max 500 chars, default empty list
-  - [ ] **image_urls**: Optional, List[str], max 10 items, each item max 500 chars (URL validation optional), default empty list
-  - [ ] **part_of_speech**: Optional, max 50 chars (noun, verb, adjective, etc. - free text for now)
-  - [ ] **pronunciation**: Optional, max 200 chars (IPA or phonetic spelling)
-  - [ ] **notes**: Optional, max 2000 chars
-  - [ ] **user_id**: Auto-set from hardcoded user (email)
-  - [ ] **created_at/updated_at**: Auto-set by system
+- [x] **Define field validation rules**:
+  - [x] **word**: Required, 1-100 chars, string
+  - [x] **definition**: Required, 1-2000 chars, string
+  - [x] **folder_id**: Required, must be valid ObjectId, must exist, must belong to user
+  - [x] **examples**: Optional, List[str], max 20 items, each item max 500 chars, default empty list
+  - [x] **image_urls**: Optional, List[str], max 10 items, each item max 500 chars (URL validation optional), default empty list
+  - [x] **part_of_speech**: Optional, max 50 chars (noun, verb, adjective, etc. - free text for now)
+  - [x] **pronunciation**: Optional, max 200 chars (IPA or phonetic spelling)
+  - [x] **notes**: Optional, max 2000 chars
+  - [x] **user_id**: Auto-set from hardcoded user (email)
+  - [x] **created_at/updated_at**: Auto-set by system
 
-- [ ] **Define API response format**:
-  - [ ] Use existing `ApiResponse[T]` from dependencies.py (consistent with folders)
-  - [ ] Success: `{success: true, message: "...", data: {...}, timestamp: datetime}`
-  - [ ] Error: `{success: false, message: "...", code: str, error: str, timestamp: datetime}`
-  - [ ] All endpoints return 200 status (consistent with Task 1.3 pattern)
+- [x] **Define API response format**:
+  - [x] Use existing `ApiResponse[T]` from dependencies.py (consistent with folders)
+  - [x] Success: `{success: true, message: "...", data: {...}, timestamp: datetime}`
+  - [x] Error: `{success: false, message: "...", code: str, error: str, timestamp: datetime}`
+  - [x] All endpoints return 200 status (consistent with Task 1.3 pattern)
 
-- [ ] **Design API endpoints**:
-  - [ ] **GET /api/v1/folders/{folder_id}/words** - List words in folder (nested under folder for clarity)
-  - [ ] **POST /api/v1/words** - Create word (flat URL, folder_id in body)
-  - [ ] **GET /api/v1/words/{word_id}** - Get single word
-  - [ ] **PUT /api/v1/words/{word_id}** - Update word
-  - [ ] **DELETE /api/v1/words/{word_id}** - Delete word
-  - [ ] Note: Mixed nested/flat pattern for pragmatism (list is folder-centric, operations are word-centric)
+- [x] **Design API endpoints**:
+  - [x] **GET /api/v1/folders/{folder_id}/words** - List words in folder (nested under folder for clarity)
+  - [x] **POST /api/v1/words** - Create word (flat URL, folder_id in body)
+  - [x] **GET /api/v1/words/{word_id}** - Get single word
+  - [x] **PUT /api/v1/words/{word_id}** - Update word
+  - [x] **DELETE /api/v1/words/{word_id}** - Delete word
+  - [x] Note: Mixed nested/flat pattern for pragmatism (list is folder-centric, operations are word-centric)
 
-- [ ] **Plan helper functions**:
-  - [ ] **Reuse from folders_router.py**:
+- [x] **Plan helper functions**:
+  - [x] **Reuse from folders_router.py**:
     - `get_hardcoded_user(users_col)` → Get/create test user
     - `validate_object_id(id_str)` → Validate ObjectId format, return ObjectId or raise 400
-  - [ ] **New word-specific helpers**:
+  - [x] **New word-specific helpers**:
     - `validate_folder_ownership(folder_id: ObjectId, user_email: str, folders_col)` → Check folder exists and belongs to user, raise 404 if not
     - `convert_word_to_response(word: dict)` → Convert MongoDB doc to response format (ObjectId → string)
 
-- [ ] **Define error handling strategy**:
-  - [ ] 400 BAD_REQUEST: Invalid ObjectId format, validation failures, empty update
-  - [ ] 404 NOT_FOUND: Word not found, folder not found, word doesn't belong to user
-  - [ ] 404 FOLDER_NOT_FOUND: Folder doesn't exist when creating word
-  - [ ] 500 INTERNAL_SERVER_ERROR: Database errors, unexpected exceptions
-  - [ ] Consistent error format: `{message: str, code: str, error: str}`
+- [x] **Define error handling strategy**:
+  - [x] 400 BAD_REQUEST: Invalid ObjectId format, validation failures, empty update
+  - [x] 404 NOT_FOUND: Word not found, folder not found, word doesn't belong to user
+  - [x] 404 FOLDER_NOT_FOUND: Folder doesn't exist when creating word
+  - [x] 500 INTERNAL_SERVER_ERROR: Database errors, unexpected exceptions
+  - [x] Consistent error format: `{message: str, code: str, error: str}`
 
-- [ ] **Plan pagination and sorting**:
-  - [ ] Add pagination to GET /api/v1/folders/{folder_id}/words (consistent with folders)
-  - [ ] Parameters: `limit` (1-1000, default 100), `skip` (≥0, default 0)
-  - [ ] Sorting: Alphabetically by word (most useful for vocabulary)
-  - [ ] Use `.sort("word", 1)` in MongoDB query
+- [x] **Plan pagination and sorting**:
+  - [x] Add pagination to GET /api/v1/folders/{folder_id}/words (consistent with folders)
+  - [x] Parameters: `limit` (1-1000, default 100), `skip` (≥0, default 0)
+  - [x] Sorting: Alphabetically by word (most useful for vocabulary)
+  - [x] Use `.sort("word", 1)` in MongoDB query
 
-- [ ] **Decide cascade delete behavior**:
-  - [ ] **Decision**: Do NOT implement cascade delete in this phase
-  - [ ] When folder deleted, words remain orphaned (acceptable for test version)
-  - [ ] Document: Add cascade delete or prevent deletion in future iteration
-  - [ ] Note: Could add background cleanup job or folder deletion validation later
+- [x] **Decide cascade delete behavior**:
+  - [x] **Decision**: Do NOT implement cascade delete in this phase
+  - [x] When folder deleted, words remain orphaned (acceptable for test version)
+  - [x] Document: Add cascade delete or prevent deletion in future iteration
+  - [x] Note: Could add background cleanup job or folder deletion validation later
 
-- [ ] **Plan database indexes** (for future optimization):
-  - [ ] Index on `folder_id` (most common query pattern)
-  - [ ] Index on `user_id` (security queries)
-  - [ ] Compound index on `(folder_id, user_id)` (best performance)
-  - [ ] Note: Not implementing in Phase C, documenting for future
+- [x] **Plan database indexes** (for future optimization):
+  - [x] Index on `folder_id` (most common query pattern)
+  - [x] Index on `user_id` (security queries)
+  - [x] Compound index on `(folder_id, user_id)` (best performance)
+  - [x] Note: Not implementing in Phase C, documenting for future
 
-- [ ] **List test scenarios**:
-  - [ ] **Happy path**: Create folder → Create word → List words → Get word → Update word → Delete word
-  - [ ] **Error cases**:
+- [x] **List test scenarios**:
+  - [x] **Happy path**: Create folder → Create word → List words → Get word → Update word → Delete word
+  - [x] **Error cases**:
     - Invalid word_id format, invalid folder_id format
     - Word not found, folder not found
     - Create word in non-existent folder, create word in other user's folder
     - Missing required fields (word, definition, folder_id)
     - Empty word name, empty definition
-  - [ ] **Array validation**: Empty examples[], large examples[] (20 items), very long example strings
-  - [ ] **Edge cases**: Long word (100 chars), long definition (2000 chars), Unicode characters, special characters
-  - [ ] **Data validation**: ObjectId conversion, timestamps auto-set, user_id assignment, folder ownership validation
+  - [x] **Array validation**: Empty examples[], large examples[] (20 items), very long example strings
+  - [x] **Edge cases**: Long word (100 chars), long definition (2000 chars), Unicode characters, special characters
+  - [x] **Data validation**: ObjectId conversion, timestamps auto-set, user_id assignment, folder ownership validation
 
 ---
 
 #### Phase B: Write Tests First (RED) ✅
-- [ ] **Create test file structure**: `tests/test_words.py`
-  - [ ] Follow test_auth.py and test_folders.py patterns
-  - [ ] Import: requests, json, sys, io (Windows encoding fix)
-  - [ ] Fix encoding: `sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")`
-  - [ ] Load BASE_URL from tests/.env
-  - [ ] Helper functions: print_separator(), print_result()
+- [x] **Create test file structure**: `tests/test_words.py`
+  - [x] Follow test_auth.py and test_folders.py patterns
+  - [x] Import: requests, json, sys, io (Windows encoding fix)
+  - [x] Fix encoding: `sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")`
+  - [x] Load BASE_URL from tests/.env
+  - [x] Helper functions: print_separator(), print_result()
 
-- [ ] **Test Setup (before tests)**:
-  - [ ] Add function to get test user_id: Call GET /auth/current-user, extract user.id
-  - [ ] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
-  - [ ] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word field
-  - [ ] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
-  - [ ] Document: Tests use real MongoDB, cleanup is mandatory
+- [x] **Test Setup (before tests)**:
+  - [x] Add function to get test user_id: Call GET /auth/current-user, extract user.id
+  - [x] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
+  - [x] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word field
+  - [x] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
+  - [x] Document: Tests use real MongoDB, cleanup is mandatory
 
-- [ ] **Write Test 1: Setup - Create Test Folder**:
-  - [ ] POST /api/v1/folders
-  - [ ] Body: `{name: "TEST_Word Folder", description: "Test folder for words"}`
-  - [ ] Assert: 200 status, save folder_id for subsequent tests
-  - [ ] Note: Reuses folders endpoint (already tested in Task 1.3)
+- [x] **Write Test 1: Setup - Create Test Folder**:
+  - [x] POST /api/v1/folders
+  - [x] Body: `{name: "TEST_Word Folder", description: "Test folder for words"}`
+  - [x] Assert: 200 status, save folder_id for subsequent tests
+  - [x] Note: Reuses folders endpoint (already tested in Task 1.3)
 
-- [ ] **Write Test 2: List Words (Empty State)**:
-  - [ ] GET /api/v1/folders/{test_folder_id}/words
-  - [ ] Assert: 200 status, success=true, data=[] (empty list)
-  - [ ] Verify ApiResponse format
+- [x] **Write Test 2: List Words (Empty State)**:
+  - [x] GET /api/v1/folders/{test_folder_id}/words
+  - [x] Assert: 200 status, success=true, data=[] (empty list)
+  - [x] Verify ApiResponse format
 
-- [ ] **Write Test 3: Create Word (Success)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_apple", folder_id: test_folder_id, definition: "A round fruit", examples: ["I ate an apple", "Apple pie"], image_urls: ["https://example.com/apple.jpg"], part_of_speech: "noun", pronunciation: "/ˈæp.əl/", notes: "Test word"}`
-  - [ ] Assert: 200 status, success=true
-  - [ ] Assert: data.id exists (24-char string), data.word matches, all fields present, timestamps exist
-  - [ ] Save word_id for subsequent tests
+- [x] **Write Test 3: Create Word (Success)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_apple", folder_id: test_folder_id, definition: "A round fruit", examples: ["I ate an apple", "Apple pie"], image_urls: ["https://example.com/apple.jpg"], part_of_speech: "noun", pronunciation: "/ˈæp.əl/", notes: "Test word"}`
+  - [x] Assert: 200 status, success=true
+  - [x] Assert: data.id exists (24-char string), data.word matches, all fields present, timestamps exist
+  - [x] Save word_id for subsequent tests
 
-- [ ] **Write Test 4: Create Word (Missing Required Field - word)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{folder_id: test_folder_id, definition: "Missing word"}`
-  - [ ] Assert: 400 or 422 status, error message about missing "word"
+- [x] **Write Test 4: Create Word (Missing Required Field - word)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{folder_id: test_folder_id, definition: "Missing word"}`
+  - [x] Assert: 400 or 422 status, error message about missing "word"
 
-- [ ] **Write Test 5: Create Word (Missing Required Field - definition)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_banana", folder_id: test_folder_id}`
-  - [ ] Assert: 400 or 422 status, error message about missing "definition"
+- [x] **Write Test 5: Create Word (Missing Required Field - definition)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_banana", folder_id: test_folder_id}`
+  - [x] Assert: 400 or 422 status, error message about missing "definition"
 
-- [ ] **Write Test 6: Create Word (Missing Required Field - folder_id)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_orange", definition: "A citrus fruit"}`
-  - [ ] Assert: 400 or 422 status, error message about missing "folder_id"
+- [x] **Write Test 6: Create Word (Missing Required Field - folder_id)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_orange", definition: "A citrus fruit"}`
+  - [x] Assert: 400 or 422 status, error message about missing "folder_id"
 
-- [ ] **Write Test 7: Create Word (Non-existent Folder)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_grape", folder_id: "000000000000000000000000", definition: "Small fruit"}`
-  - [ ] Assert: 404 status, error about folder not found
+- [x] **Write Test 7: Create Word (Non-existent Folder)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_grape", folder_id: "000000000000000000000000", definition: "Small fruit"}`
+  - [x] Assert: 404 status, error about folder not found
 
-- [ ] **Write Test 8: Create Word (Invalid Folder ID Format)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_mango", folder_id: "invalid_id", definition: "Tropical fruit"}`
-  - [ ] Assert: 400 status, error about invalid ObjectId format
+- [x] **Write Test 8: Create Word (Invalid Folder ID Format)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_mango", folder_id: "invalid_id", definition: "Tropical fruit"}`
+  - [x] Assert: 400 status, error about invalid ObjectId format
 
-- [ ] **Write Test 9: Create Word (Empty Word Name)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "", folder_id: test_folder_id, definition: "Empty word name"}`
-  - [ ] Assert: 400 or 422 status, error about empty word
+- [x] **Write Test 9: Create Word (Empty Word Name)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "", folder_id: test_folder_id, definition: "Empty word name"}`
+  - [x] Assert: 400 or 422 status, error about empty word
 
-- [ ] **Write Test 10: Create Word (Empty Definition)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_kiwi", folder_id: test_folder_id, definition: ""}`
-  - [ ] Assert: 400 or 422 status, error about empty definition
+- [x] **Write Test 10: Create Word (Empty Definition)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_kiwi", folder_id: test_folder_id, definition: ""}`
+  - [x] Assert: 400 or 422 status, error about empty definition
 
-- [ ] **Write Test 11: Create Word (Minimal - No Optional Fields)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_pear", folder_id: test_folder_id, definition: "A sweet fruit"}`
-  - [ ] Assert: 200 status, success=true
-  - [ ] Assert: examples=[], image_urls=[], part_of_speech=None, pronunciation=None, notes=None
+- [x] **Write Test 11: Create Word (Minimal - No Optional Fields)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_pear", folder_id: test_folder_id, definition: "A sweet fruit"}`
+  - [x] Assert: 200 status, success=true
+  - [x] Assert: examples=[], image_urls=[], part_of_speech=None, pronunciation=None, notes=None
 
-- [ ] **Write Test 12: Create Word (With Empty Arrays)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word: "TEST_peach", folder_id: test_folder_id, definition: "Fuzzy fruit", examples: [], image_urls: []}`
-  - [ ] Assert: 200 status, arrays are empty
+- [x] **Write Test 12: Create Word (With Empty Arrays)**:
+  - [x] POST /api/v1/words
+  - [x] Body: `{word: "TEST_peach", folder_id: test_folder_id, definition: "Fuzzy fruit", examples: [], image_urls: []}`
+  - [x] Assert: 200 status, arrays are empty
 
-- [ ] **Write Test 13: List Words (With Data)**:
-  - [ ] GET /api/v1/folders/{test_folder_id}/words
-  - [ ] Assert: 200 status, data is list, length >= 1
-  - [ ] Assert: Each word has required fields (id, word, definition, folder_id, user_id, created_at)
-  - [ ] Assert: Words sorted alphabetically by word field
+- [x] **Write Test 13: List Words (With Data)**:
+  - [x] GET /api/v1/folders/{test_folder_id}/words
+  - [x] Assert: 200 status, data is list, length >= 1
+  - [x] Assert: Each word has required fields (id, word, definition, folder_id, user_id, created_at)
+  - [x] Assert: Words sorted alphabetically by word field
 
-- [ ] **Write Test 14: List Words (Pagination - First Page)**:
-  - [ ] GET /api/v1/folders/{test_folder_id}/words?limit=2&skip=0
-  - [ ] Assert: 200 status, data length <= 2
+- [x] **Write Test 14: List Words (Pagination - First Page)**:
+  - [x] GET /api/v1/folders/{test_folder_id}/words?limit=2&skip=0
+  - [x] Assert: 200 status, data length <= 2
 
-- [ ] **Write Test 15: List Words (Pagination - Invalid Limit)**:
-  - [ ] GET /api/v1/folders/{test_folder_id}/words?limit=2000
-  - [ ] Assert: 400 status, error about limit range (1-1000)
+- [x] **Write Test 15: List Words (Pagination - Invalid Limit)**:
+  - [x] GET /api/v1/folders/{test_folder_id}/words?limit=2000
+  - [x] Assert: 400 status, error about limit range (1-1000)
 
-- [ ] **Write Test 16: List Words (Pagination - Negative Skip)**:
-  - [ ] GET /api/v1/folders/{test_folder_id}/words?skip=-5
-  - [ ] Assert: 400 status, error about skip must be >= 0
+- [x] **Write Test 16: List Words (Pagination - Negative Skip)**:
+  - [x] GET /api/v1/folders/{test_folder_id}/words?skip=-5
+  - [x] Assert: 400 status, error about skip must be >= 0
 
-- [ ] **Write Test 17: Get Single Word (Success)**:
-  - [ ] GET /api/v1/words/{word_id}
-  - [ ] Assert: 200 status, data matches created word
-  - [ ] Assert: All fields present (including arrays, optional fields)
+- [x] **Write Test 17: Get Single Word (Success)**:
+  - [x] GET /api/v1/words/{word_id}
+  - [x] Assert: 200 status, data matches created word
+  - [x] Assert: All fields present (including arrays, optional fields)
 
-- [ ] **Write Test 18: Get Single Word (Not Found)**:
-  - [ ] GET /api/v1/words/000000000000000000000000
-  - [ ] Assert: 404 status, error about word not found
+- [x] **Write Test 18: Get Single Word (Not Found)**:
+  - [x] GET /api/v1/words/000000000000000000000000
+  - [x] Assert: 404 status, error about word not found
 
-- [ ] **Write Test 19: Get Single Word (Invalid ID Format)**:
-  - [ ] GET /api/v1/words/invalid_word_id
-  - [ ] Assert: 400 status, error about invalid ObjectId
+- [x] **Write Test 19: Get Single Word (Invalid ID Format)**:
+  - [x] GET /api/v1/words/invalid_word_id
+  - [x] Assert: 400 status, error about invalid ObjectId
 
-- [ ] **Write Test 20: Update Word (Success - Partial Update)**:
-  - [ ] PUT /api/v1/words/{word_id}
-  - [ ] Body: `{definition: "Updated definition", notes: "Updated notes"}`
-  - [ ] Assert: 200 status, definition updated, notes updated
-  - [ ] Assert: word unchanged, updated_at > created_at
+- [x] **Write Test 20: Update Word (Success - Partial Update)**:
+  - [x] PUT /api/v1/words/{word_id}
+  - [x] Body: `{definition: "Updated definition", notes: "Updated notes"}`
+  - [x] Assert: 200 status, definition updated, notes updated
+  - [x] Assert: word unchanged, updated_at > created_at
 
-- [ ] **Write Test 21: Update Word (Success - Update Arrays)**:
-  - [ ] PUT /api/v1/words/{word_id}
-  - [ ] Body: `{examples: ["New example 1", "New example 2"], image_urls: ["https://new.com/img.jpg"]}`
-  - [ ] Assert: 200 status, arrays replaced with new values
+- [x] **Write Test 21: Update Word (Success - Update Arrays)**:
+  - [x] PUT /api/v1/words/{word_id}
+  - [x] Body: `{examples: ["New example 1", "New example 2"], image_urls: ["https://new.com/img.jpg"]}`
+  - [x] Assert: 200 status, arrays replaced with new values
 
-- [ ] **Write Test 22: Update Word (Empty Update)**:
-  - [ ] PUT /api/v1/words/{word_id}
-  - [ ] Body: `{}`
-  - [ ] Assert: 400 status, error about no fields to update
+- [x] **Write Test 22: Update Word (Empty Update)**:
+  - [x] PUT /api/v1/words/{word_id}
+  - [x] Body: `{}`
+  - [x] Assert: 400 status, error about no fields to update
 
-- [ ] **Write Test 23: Update Word (Not Found)**:
-  - [ ] PUT /api/v1/words/000000000000000000000000
-  - [ ] Assert: 404 status
+- [x] **Write Test 23: Update Word (Not Found)**:
+  - [x] PUT /api/v1/words/000000000000000000000000
+  - [x] Assert: 404 status
 
-- [ ] **Write Test 24: Delete Word (Success)**:
-  - [ ] DELETE /api/v1/words/{word_id}
-  - [ ] Assert: 200 status, success=true
-  - [ ] Verify: GET /api/v1/words/{word_id} returns 404
+- [x] **Write Test 24: Delete Word (Success)**:
+  - [x] DELETE /api/v1/words/{word_id}
+  - [x] Assert: 200 status, success=true
+  - [x] Verify: GET /api/v1/words/{word_id} returns 404
 
-- [ ] **Write Test 25: Delete Word (Not Found)**:
-  - [ ] DELETE /api/v1/words/000000000000000000000000
-  - [ ] Assert: 404 status
+- [x] **Write Test 25: Delete Word (Not Found)**:
+  - [x] DELETE /api/v1/words/000000000000000000000000
+  - [x] Assert: 404 status
 
-- [ ] **Add test cleanup function**:
-  - [ ] Delete all words with "TEST_" prefix in word field
-  - [ ] Delete all folders with "TEST_" prefix
-  - [ ] Call in teardown or at end of test suite
+- [x] **Add test cleanup function**:
+  - [x] Delete all words with "TEST_" prefix in word field
+  - [x] Delete all folders with "TEST_" prefix
+  - [x] Call in teardown or at end of test suite
 
-- [ ] **Add test summary and CURL examples**:
-  - [ ] Follow test_auth.py and test_folders.py format
-  - [ ] Print all passed/failed tests
-  - [ ] Show example CURL commands for each endpoint
-  - [ ] Include examples with arrays in request body
+- [x] **Add test summary and CURL examples**:
+  - [x] Follow test_auth.py and test_folders.py format
+  - [x] Print all passed/failed tests
+  - [x] Show example CURL commands for each endpoint
+  - [x] Include examples with arrays in request body
 
 - [x] **Run tests**: Execute `python tests/test_words.py`
-  - [ ] Verify all tests FAIL (endpoints don't exist yet) ✅ RED phase complete
-  - [ ] Check error messages are clear (ImportError, ConnectionRefused, 404, etc.)
+  - [x] Verify all tests FAIL (endpoints don't exist yet) ✅ RED phase complete
+  - [x] Check error messages are clear (ImportError, ConnectionRefused, 404, etc.)
 
 - [x] **Review tests**: Ensure comprehensive coverage
-  - [ ] All CRUD operations covered
-  - [ ] All error cases covered
-  - [ ] Array validation covered
-  - [ ] Pagination covered
-  - [ ] Folder ownership validation covered
+  - [x] All CRUD operations covered
+  - [x] All error cases covered
+  - [x] Array validation covered
+  - [x] Pagination covered
+  - [x] Folder ownership validation covered
 
 - [x] **Commit tests**: `git commit -m "test: add comprehensive tests for word endpoints"`
 
@@ -474,8 +474,8 @@ All new tasks must follow this TDD process:
 
 #### Phase C: Implement Code (GREEN) ✅
 - [x] **Create Pydantic models**: `models/word.py`
-  - [ ] Import: BaseModel, Field, Optional, List from pydantic
-  - [ ] **CreateWordRequest**:
+  - [x] Import: BaseModel, Field, Optional, List from pydantic
+  - [x] **CreateWordRequest**:
     - word: str = Field(..., min_length=1, max_length=100)
     - folder_id: str = Field(..., description="Folder ObjectId as string")
     - definition: str = Field(..., min_length=1, max_length=2000)
@@ -484,7 +484,7 @@ All new tasks must follow this TDD process:
     - part_of_speech: Optional[str] = Field(None, max_length=50)
     - pronunciation: Optional[str] = Field(None, max_length=200)
     - notes: Optional[str] = Field(None, max_length=2000)
-  - [ ] **UpdateWordRequest**:
+  - [x] **UpdateWordRequest**:
     - word: Optional[str] = Field(None, min_length=1, max_length=100)
     - definition: Optional[str] = Field(None, min_length=1, max_length=2000)
     - examples: Optional[List[str]] = Field(None, max_length=20)
@@ -493,7 +493,7 @@ All new tasks must follow this TDD process:
     - pronunciation: Optional[str] = Field(None, max_length=200)
     - notes: Optional[str] = Field(None, max_length=2000)
     - Note: Do NOT allow folder_id update (words can't move between folders in this version)
-  - [ ] **WordResponse**:
+  - [x] **WordResponse**:
     - id: str
     - word: str
     - definition: str
@@ -506,115 +506,115 @@ All new tasks must follow this TDD process:
     - user_id: str
     - created_at: datetime
     - updated_at: datetime
-  - [ ] Add Config class with example schemas
+  - [x] Add Config class with example schemas
 
 - [x] **Create router**: `routers/words_router.py`
-  - [ ] Import: APIRouter, Depends, HTTPException, status, List
-  - [ ] Import: get_wordlists_collection, get_folders_collection, get_users_collection, ApiResponse, HARDCODED_EMAIL from dependencies
-  - [ ] Import: CreateWordRequest, UpdateWordRequest, WordResponse from models.word
-  - [ ] Import: ObjectId from bson, InvalidId from bson.errors
-  - [ ] Import: datetime
-  - [ ] Create router with prefix="/api/v1", tags=["Words"]
+  - [x] Import: APIRouter, Depends, HTTPException, status, List
+  - [x] Import: get_wordlists_collection, get_folders_collection, get_users_collection, ApiResponse, HARDCODED_EMAIL from dependencies
+  - [x] Import: CreateWordRequest, UpdateWordRequest, WordResponse from models.word
+  - [x] Import: ObjectId from bson, InvalidId from bson.errors
+  - [x] Import: datetime
+  - [x] Create router with prefix="/api/v1", tags=["Words"]
 
-- [ ] **Create helper functions in words_router.py**:
-  - [ ] **get_hardcoded_user()**: Copy from folders_router.py (or extract to shared utils)
-  - [ ] **validate_object_id(id_str: str) -> ObjectId**: Copy from folders_router.py
-  - [ ] **validate_folder_ownership(folder_id: ObjectId, user_email: str, folders_col) -> dict**:
+- [x] **Create helper functions in words_router.py**:
+  - [x] **get_hardcoded_user()**: Copy from folders_router.py (or extract to shared utils)
+  - [x] **validate_object_id(id_str: str) -> ObjectId**: Copy from folders_router.py
+  - [x] **validate_folder_ownership(folder_id: ObjectId, user_email: str, folders_col) -> dict**:
     - Query: folder = await folders_col.find_one({"_id": folder_id, "user_id": user_email})
     - If not found: raise HTTPException 404 FOLDER_NOT_FOUND
     - Return: folder document
-  - [ ] **convert_word_to_response(word: dict) -> dict**:
+  - [x] **convert_word_to_response(word: dict) -> dict**:
     - Convert: word["id"] = str(word["_id"]), del word["_id"]
     - Ensure arrays default to empty lists if missing
     - Return: word dict
 
 - [x] **Implement GET /api/v1/folders/{folder_id}/words** - List words in folder:
-  - [ ] Async function with path param folder_id: str
-  - [ ] Query params: limit: int = 100, skip: int = 0
-  - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
-  - [ ] Validate pagination parameters (limit 1-1000, skip >= 0)
-  - [ ] Get hardcoded user
-  - [ ] Validate folder_id format (ObjectId)
-  - [ ] Validate folder ownership (folder exists and belongs to user)
-  - [ ] Query words: words = await words_col.find({"folder_id": folder_id_str, "user_id": user["email"]}).sort("word", 1).skip(skip).limit(limit).to_list(limit)
-  - [ ] Note: Store folder_id as string in MongoDB (not ObjectId) for simplicity
-  - [ ] Convert ObjectId → string for each word
-  - [ ] Map to WordResponse objects
-  - [ ] Return ApiResponse[List[WordResponse]] with success=True
-  - [ ] Error handling: 400 invalid IDs/pagination, 404 folder not found, 500 DB errors
+  - [x] Async function with path param folder_id: str
+  - [x] Query params: limit: int = 100, skip: int = 0
+  - [x] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
+  - [x] Validate pagination parameters (limit 1-1000, skip >= 0)
+  - [x] Get hardcoded user
+  - [x] Validate folder_id format (ObjectId)
+  - [x] Validate folder ownership (folder exists and belongs to user)
+  - [x] Query words: words = await words_col.find({"folder_id": folder_id_str, "user_id": user["email"]}).sort("word", 1).skip(skip).limit(limit).to_list(limit)
+  - [x] Note: Store folder_id as string in MongoDB (not ObjectId) for simplicity
+  - [x] Convert ObjectId → string for each word
+  - [x] Map to WordResponse objects
+  - [x] Return ApiResponse[List[WordResponse]] with success=True
+  - [x] Error handling: 400 invalid IDs/pagination, 404 folder not found, 500 DB errors
 
 - [x] **Implement POST /api/v1/words** - Create word:
-  - [ ] Async function with request: CreateWordRequest
-  - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
-  - [ ] Get hardcoded user
-  - [ ] Validate folder_id format (ObjectId)
-  - [ ] Validate folder ownership (folder exists and belongs to user)
-  - [ ] Create word document:
+  - [x] Async function with request: CreateWordRequest
+  - [x] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
+  - [x] Get hardcoded user
+  - [x] Validate folder_id format (ObjectId)
+  - [x] Validate folder ownership (folder exists and belongs to user)
+  - [x] Create word document:
     - word, definition, examples (default []), image_urls (default []), part_of_speech, pronunciation, notes from request
     - folder_id = request.folder_id (store as string)
     - user_id = user["email"]
     - created_at = datetime.now()
     - updated_at = datetime.now()
-  - [ ] Insert: result = await words_col.insert_one(word_data)
-  - [ ] Retrieve inserted word: await words_col.find_one({"_id": result.inserted_id})
-  - [ ] Convert ObjectId → string
-  - [ ] Return ApiResponse[WordResponse] with success=True
-  - [ ] Error handling: 400 validation errors, 404 folder not found, 500 DB errors
+  - [x] Insert: result = await words_col.insert_one(word_data)
+  - [x] Retrieve inserted word: await words_col.find_one({"_id": result.inserted_id})
+  - [x] Convert ObjectId → string
+  - [x] Return ApiResponse[WordResponse] with success=True
+  - [x] Error handling: 400 validation errors, 404 folder not found, 500 DB errors
 
 - [x] **Implement GET /api/v1/words/{word_id}** - Get single word:
-  - [ ] Async function with path param: word_id: str
-  - [ ] Dependencies: get_wordlists_collection, get_users_collection
-  - [ ] Get hardcoded user
-  - [ ] Validate word_id format (ObjectId)
-  - [ ] Query: word = await words_col.find_one({"_id": ObjectId(word_id), "user_id": user["email"]})
-  - [ ] If not found: 404 HTTPException
-  - [ ] Convert ObjectId → string
-  - [ ] Return ApiResponse[WordResponse]
-  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+  - [x] Async function with path param: word_id: str
+  - [x] Dependencies: get_wordlists_collection, get_users_collection
+  - [x] Get hardcoded user
+  - [x] Validate word_id format (ObjectId)
+  - [x] Query: word = await words_col.find_one({"_id": ObjectId(word_id), "user_id": user["email"]})
+  - [x] If not found: 404 HTTPException
+  - [x] Convert ObjectId → string
+  - [x] Return ApiResponse[WordResponse]
+  - [x] Error handling: 400 invalid ID, 404 not found, 500 DB error
 
 - [x] **Implement PUT /api/v1/words/{word_id}** - Update word:
-  - [ ] Async function with word_id: str, request: UpdateWordRequest
-  - [ ] Dependencies: get_wordlists_collection, get_users_collection
-  - [ ] Get hardcoded user
-  - [ ] Validate word_id format (ObjectId)
-  - [ ] Build update dict: {k: v for k, v in request.model_dump(exclude_unset=True).items()}
-  - [ ] Check for empty update BEFORE adding timestamp (avoid bug from Task 1.3)
-  - [ ] If empty: raise HTTPException 400 NO_UPDATE_FIELDS
-  - [ ] Add updated_at = datetime.now()
-  - [ ] Update: result = await words_col.update_one({"_id": ObjectId(word_id), "user_id": user["email"]}, {"$set": update_data})
-  - [ ] If result.matched_count == 0: 404 HTTPException
-  - [ ] Retrieve updated word
-  - [ ] Return ApiResponse[WordResponse]
-  - [ ] Error handling: 400 invalid ID/empty update, 404 not found, 500 DB error
+  - [x] Async function with word_id: str, request: UpdateWordRequest
+  - [x] Dependencies: get_wordlists_collection, get_users_collection
+  - [x] Get hardcoded user
+  - [x] Validate word_id format (ObjectId)
+  - [x] Build update dict: {k: v for k, v in request.model_dump(exclude_unset=True).items()}
+  - [x] Check for empty update BEFORE adding timestamp (avoid bug from Task 1.3)
+  - [x] If empty: raise HTTPException 400 NO_UPDATE_FIELDS
+  - [x] Add updated_at = datetime.now()
+  - [x] Update: result = await words_col.update_one({"_id": ObjectId(word_id), "user_id": user["email"]}, {"$set": update_data})
+  - [x] If result.matched_count == 0: 404 HTTPException
+  - [x] Retrieve updated word
+  - [x] Return ApiResponse[WordResponse]
+  - [x] Error handling: 400 invalid ID/empty update, 404 not found, 500 DB error
 
 - [x] **Implement DELETE /api/v1/words/{word_id}** - Delete word:
-  - [ ] Async function with word_id: str
-  - [ ] Dependencies: get_wordlists_collection, get_users_collection
-  - [ ] Get hardcoded user
-  - [ ] Validate word_id format (ObjectId)
-  - [ ] Delete: result = await words_col.delete_one({"_id": ObjectId(word_id), "user_id": user["email"]})
-  - [ ] If result.deleted_count == 0: 404 HTTPException
-  - [ ] Return ApiResponse with success=True, message="Word deleted successfully"
-  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+  - [x] Async function with word_id: str
+  - [x] Dependencies: get_wordlists_collection, get_users_collection
+  - [x] Get hardcoded user
+  - [x] Validate word_id format (ObjectId)
+  - [x] Delete: result = await words_col.delete_one({"_id": ObjectId(word_id), "user_id": user["email"]})
+  - [x] If result.deleted_count == 0: 404 HTTPException
+  - [x] Return ApiResponse with success=True, message="Word deleted successfully"
+  - [x] Error handling: 400 invalid ID, 404 not found, 500 DB error
 
 - [x] **Register router in main.py**:
-  - [ ] Import: from routers.words_router import router as words_router
-  - [ ] Add: app.include_router(words_router)
+  - [x] Import: from routers.words_router import router as words_router
+  - [x] Add: app.include_router(words_router)
 
 - [x] **Run tests**: Execute `python tests/test_words.py`
-  - [ ] Iterate on failing tests
-  - [ ] Fix bugs, adjust response formats
-  - [ ] Ensure ObjectId conversion works
-  - [ ] Verify timestamps are set correctly
-  - [ ] Verify folder ownership validation works
-  - [ ] Verify array handling works (empty lists, populated lists)
-  - [ ] Verify pagination works
-  - [ ] Continue until all tests PASS ✅ GREEN phase complete
+  - [x] Iterate on failing tests
+  - [x] Fix bugs, adjust response formats
+  - [x] Ensure ObjectId conversion works
+  - [x] Verify timestamps are set correctly
+  - [x] Verify folder ownership validation works
+  - [x] Verify array handling works (empty lists, populated lists)
+  - [x] Verify pagination works
+  - [x] Continue until all tests PASS ✅ GREEN phase complete
 
-- [ ] **Manual verification**:
-  - [ ] Start server: `python main.py`
-  - [ ] Open Swagger docs: http://localhost:8829/docs
-  - [ ] Test each endpoint manually:
+- [x] **Manual verification**:
+  - [x] Start server: `python main.py`
+  - [x] Open Swagger docs: http://localhost:8829/docs
+  - [x] Test each endpoint manually:
     - Create test folder
     - Create word with all fields
     - Create word with minimal fields
@@ -622,64 +622,64 @@ All new tasks must follow this TDD process:
     - Get single word
     - Update word
     - Delete word
-  - [ ] Verify MongoDB data via Compass/shell:
+  - [x] Verify MongoDB data via Compass/shell:
     - Check wordlists collection
     - Verify folder_id stored as string
     - Verify arrays stored correctly
     - Verify timestamps
-  - [ ] Test edge cases not covered by automated tests:
+  - [x] Test edge cases not covered by automated tests:
     - Very long strings (approaching limits)
     - Unicode characters (emoji, Chinese, Arabic)
     - Special characters in pronunciation (IPA symbols)
     - Large arrays (20 examples, 10 image_urls)
 
-- [ ] **Commit implementation**: `git commit -m "feat: implement word CRUD endpoints with simplified auth"`
+- [x] **Commit implementation**: `git commit -m "feat: implement word CRUD endpoints with simplified auth"`
 
 ---
 
 #### Phase D: Refactor (REFACTOR)
-- [ ] **Extract shared helper functions**:
-  - [ ] Option A: Create `utils/helpers.py` with get_hardcoded_user(), validate_object_id()
-  - [ ] Option B: Keep duplicated in both routers (acceptable for small project)
-  - [ ] Decision: Keep duplicated for now (simpler, no circular imports)
-  - [ ] Document: Consider extracting to shared utils in future refactor
+- [x] **Extract shared helper functions**:
+  - [x] Option A: Create `utils/helpers.py` with get_hardcoded_user(), validate_object_id()
+  - [x] Option B: Keep duplicated in both routers (acceptable for small project)
+  - [x] Decision: Keep duplicated for now (simpler, no circular imports)
+  - [x] Document: Consider extracting to shared utils in future refactor
 
-- [ ] **Create word-specific helper module** (optional):
-  - [ ] If logic becomes complex, extract to `utils/word_helpers.py`
-  - [ ] Functions: validate_folder_ownership, convert_word_to_response
-  - [ ] For now: Keep in words_router.py (simpler)
+- [x] **Create word-specific helper module** (optional):
+  - [x] If logic becomes complex, extract to `utils/word_helpers.py`
+  - [x] Functions: validate_folder_ownership, convert_word_to_response
+  - [x] For now: Keep in words_router.py (simpler)
 
-- [ ] **Improve error messages**:
-  - [ ] Consistent error format across all endpoints
-  - [ ] User-friendly error messages (avoid technical jargon)
-  - [ ] Proper HTTP status codes (400 vs 404 vs 500)
-  - [ ] Specific error codes: INVALID_OBJECT_ID, WORD_NOT_FOUND, FOLDER_NOT_FOUND, NO_UPDATE_FIELDS, etc.
+- [x] **Improve error messages**:
+  - [x] Consistent error format across all endpoints
+  - [x] User-friendly error messages (avoid technical jargon)
+  - [x] Proper HTTP status codes (400 vs 404 vs 500)
+  - [x] Specific error codes: INVALID_OBJECT_ID, WORD_NOT_FOUND, FOLDER_NOT_FOUND, NO_UPDATE_FIELDS, etc.
 
-- [ ] **Add comprehensive docstrings**:
-  - [ ] Add docstrings to all endpoint functions
-  - [ ] Document parameters, return types, exceptions
-  - [ ] Add usage examples in docstrings
-  - [ ] Document helper functions
+- [x] **Add comprehensive docstrings**:
+  - [x] Add docstrings to all endpoint functions
+  - [x] Document parameters, return types, exceptions
+  - [x] Add usage examples in docstrings
+  - [x] Document helper functions
 
-- [ ] **Code cleanup**:
-  - [ ] Remove code duplication where reasonable
-  - [ ] Improve variable naming (e.g., words_col vs wordlists_col for clarity)
-  - [ ] Add type hints everywhere (params, return types, variables)
-  - [ ] Format with `ruff format`
+- [x] **Code cleanup**:
+  - [x] Remove code duplication where reasonable
+  - [x] Improve variable naming (e.g., words_col vs wordlists_col for clarity)
+  - [x] Add type hints everywhere (params, return types, variables)
+  - [x] Format with `ruff format`
   - [ ] Run `ruff check --fix` for any linting issues
 
-- [ ] **Review array handling**:
-  - [ ] Ensure empty arrays default correctly
-  - [ ] Verify None vs [] handling in optional fields
-  - [ ] Check array validation (max length enforced)
-  - [ ] Test updating arrays (replace vs append - currently replace)
+- [x] **Review array handling**:
+  - [x] Ensure empty arrays default correctly
+  - [x] Verify None vs [] handling in optional fields
+  - [x] Check array validation (max length enforced)
+  - [x] Test updating arrays (replace vs append - currently replace)
 
-- [ ] **Run tests again**: Ensure refactoring didn't break anything
-  - [ ] Execute: `python tests/test_words.py`
-  - [ ] All tests still pass ✅
-  - [ ] No regressions introduced
+- [x] **Run tests again**: Ensure refactoring didn't break anything
+  - [x] Execute: `python tests/test_words.py`
+  - [x] All tests still pass ✅
+  - [x] No regressions introduced
 
-- [ ] **Commit refactoring**: `git commit -m "refactor: extract helpers and improve word endpoints code quality"`
+- [x] **Commit refactoring**: `git commit -m "refactor: extract helpers and improve word endpoints code quality"`
 
 ---
 
