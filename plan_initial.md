@@ -212,90 +212,546 @@ All new tasks must follow this TDD process:
 - [x] **Add pagination**: limit/skip parameters with validation (1-1000 range)
 
 
-### Task 1.4: Implement Word List Endpoints (TDD)
+### Task 1.4: Implement Word Endpoints (TDD)
 **Based on:** `be_enzo_english` existing folder
-
-#### Phase A: Write Tests First (RED)
-- [ ] **Plan**: Define test cases and expected behavior for word CRUD operations
-- [ ] **Write failing tests** in `tests/test_words.py`:
-  - [ ] Test GET /api/v1/folders/{folder_id}/words - List words in folder (expect empty list initially)
-  - [ ] Test POST /api/v1/words - Create word (expect 201 + word object with all fields)
-  - [ ] Test GET /api/v1/words/{word_id} - Get word details (expect 200 + full word data)
-  - [ ] Test PUT /api/v1/words/{word_id} - Update word (expect 200 + updated word)
-  - [ ] Test DELETE /api/v1/words/{word_id} - Delete word (expect 204)
-  - [ ] Test error cases: invalid folder_id, invalid word_id, unauthorized access, missing required fields
-  - [ ] Test word with examples array and image_urls array
-- [ ] **Run tests**: Verify all tests FAIL (endpoints don't exist yet)
-- [ ] **Review tests**: Ensure comprehensive coverage including array fields
-- [ ] **Commit tests**: `git commit -m "test: add tests for word endpoints"`
-
-#### Phase B: Implement Code (GREEN)
-- [ ] **Create models**:
-  - [ ] Create `models/word.py` with Pydantic schemas
-    - Word schema: `{id, word, definition, examples[], image_urls[], part_of_speech, pronunciation, notes, folder_id, user_id, created_at, updated_at}`
-- [ ] **Implement endpoints** in `routers/words.py`:
-  - [ ] GET /api/v1/folders/{folder_id}/words - Get all words in a folder
-    - Requires Firebase authentication
-    - Validates folder belongs to authenticated user
-    - Returns list of words
-  - [ ] GET /api/v1/words/{word_id} - Get detailed word information
-    - Requires Firebase authentication
-    - Validates word belongs to authenticated user
-    - Returns full word details with all fields
-  - [ ] POST /api/v1/words - Create new word
-    - Requires Firebase authentication
-    - Request body: `{word, folder_id, definition, examples[], image_urls[], part_of_speech, pronunciation, notes}`
-    - Validates folder belongs to authenticated user
-    - Saves to MongoDB with metadata
-    - Returns created word object with ID
-  - [ ] PUT /api/v1/words/{word_id} - Update word
-    - Requires Firebase authentication
-    - Validates word belongs to authenticated user
-  - [ ] DELETE /api/v1/words/{word_id} - Delete word
-    - Requires Firebase authentication
-    - Validates word belongs to authenticated user
-- [ ] **Run tests**: Iterate until all tests PASS
-- [ ] **Manual test**: Call endpoints via Postman for final verification
-- [ ] **Commit implementation**: `git commit -m "feat: implement word CRUD endpoints"`
-
-### Task 1.5: Backend Documentation & Testing (Verification-Driven)
-
-#### Phase A: Create Documentation
-- [ ] **Create comprehensive `README.md`** with:
-  - [ ] Project overview and purpose
-  - [ ] Technology stack
-  - [ ] Setup instructions (clone, install dependencies, configure .env)
-  - [ ] Firebase setup instructions
-  - [ ] MongoDB connection setup
-  - [ ] How to run the server
-  - [ ] How to run tests
-  - [ ] API documentation for all endpoints with example requests/responses
-  - [ ] Troubleshooting section
-- [ ] **Create `requirements.txt`** with all dependencies:
-  - [ ] fastapi
-  - [ ] uvicorn
-  - [ ] pymongo / motor (async MongoDB)
-  - [ ] firebase-admin
-  - [ ] pydantic
-  - [ ] python-dotenv
-  - [ ] python-multipart
-  - [ ] pytest (for testing)
-  - [ ] httpx (for async testing)
-- [ ] **Create `.env.example`** with all required environment variables and descriptions
-- [ ] **Create Postman collection** or OpenAPI/Swagger documentation
-- [ ] **Commit documentation**: `git commit -m "docs: add comprehensive backend documentation"`
-
-#### Phase B: Verify Documentation Works
-- [ ] **Fresh environment test**:
-  - [ ] Clone repo in new directory
-  - [ ] Follow README setup instructions exactly
-  - [ ] Verify server starts without errors
-  - [ ] Run all test files and verify they pass
-  - [ ] Test all endpoints via Postman/curl
-- [ ] **Fix any gaps**: Update documentation based on issues found
-- [ ] **Commit fixes**: `git commit -m "docs: fix setup instructions and examples"`
+**Auth Strategy:** Simplified (no Firebase token required, hardcoded user like Tasks 1.2 & 1.3)
 
 ---
+
+#### Phase A: Design & Plan (BLUE)
+- [ ] **Decide authentication approach**:
+  - [ ] **Decision**: Use simplified auth (no token) for consistency with Tasks 1.2 & 1.3
+  - [ ] Words belong to hardcoded user (dinhthongchau@gmail.com)
+  - [ ] Must validate folder ownership before word operations
+  - [ ] Document: Will add real Firebase auth in future iteration
+
+- [ ] **Design data models**:
+  - [ ] **WordResponse** (output): `{id: str, word: str, definition: str, examples: List[str], image_urls: List[str], part_of_speech: str, pronunciation: str, notes: str, folder_id: str, user_id: str, created_at: datetime, updated_at: datetime}`
+  - [ ] **CreateWordRequest** (input): `{word: str, folder_id: str, definition: str, examples: Optional[List[str]], image_urls: Optional[List[str]], part_of_speech: Optional[str], pronunciation: Optional[str], notes: Optional[str]}`
+  - [ ] **UpdateWordRequest** (input): All fields optional except no folder_id change allowed
+  - [ ] **MongoDB document**: Use existing `wordlists` collection, structure: `{_id: ObjectId, word, definition, examples: [], image_urls: [], part_of_speech, pronunciation, notes, folder_id: str, user_id: str (email), created_at, updated_at}`
+  - [ ] Note: Must convert `_id` (ObjectId) → `id` (str) in responses
+
+- [ ] **Define field validation rules**:
+  - [ ] **word**: Required, 1-100 chars, string
+  - [ ] **definition**: Required, 1-2000 chars, string
+  - [ ] **folder_id**: Required, must be valid ObjectId, must exist, must belong to user
+  - [ ] **examples**: Optional, List[str], max 20 items, each item max 500 chars, default empty list
+  - [ ] **image_urls**: Optional, List[str], max 10 items, each item max 500 chars (URL validation optional), default empty list
+  - [ ] **part_of_speech**: Optional, max 50 chars (noun, verb, adjective, etc. - free text for now)
+  - [ ] **pronunciation**: Optional, max 200 chars (IPA or phonetic spelling)
+  - [ ] **notes**: Optional, max 2000 chars
+  - [ ] **user_id**: Auto-set from hardcoded user (email)
+  - [ ] **created_at/updated_at**: Auto-set by system
+
+- [ ] **Define API response format**:
+  - [ ] Use existing `ApiResponse[T]` from dependencies.py (consistent with folders)
+  - [ ] Success: `{success: true, message: "...", data: {...}, timestamp: datetime}`
+  - [ ] Error: `{success: false, message: "...", code: str, error: str, timestamp: datetime}`
+  - [ ] All endpoints return 200 status (consistent with Task 1.3 pattern)
+
+- [ ] **Design API endpoints**:
+  - [ ] **GET /api/v1/folders/{folder_id}/words** - List words in folder (nested under folder for clarity)
+  - [ ] **POST /api/v1/words** - Create word (flat URL, folder_id in body)
+  - [ ] **GET /api/v1/words/{word_id}** - Get single word
+  - [ ] **PUT /api/v1/words/{word_id}** - Update word
+  - [ ] **DELETE /api/v1/words/{word_id}** - Delete word
+  - [ ] Note: Mixed nested/flat pattern for pragmatism (list is folder-centric, operations are word-centric)
+
+- [ ] **Plan helper functions**:
+  - [ ] **Reuse from folders_router.py**:
+    - `get_hardcoded_user(users_col)` → Get/create test user
+    - `validate_object_id(id_str)` → Validate ObjectId format, return ObjectId or raise 400
+  - [ ] **New word-specific helpers**:
+    - `validate_folder_ownership(folder_id: ObjectId, user_email: str, folders_col)` → Check folder exists and belongs to user, raise 404 if not
+    - `convert_word_to_response(word: dict)` → Convert MongoDB doc to response format (ObjectId → string)
+
+- [ ] **Define error handling strategy**:
+  - [ ] 400 BAD_REQUEST: Invalid ObjectId format, validation failures, empty update
+  - [ ] 404 NOT_FOUND: Word not found, folder not found, word doesn't belong to user
+  - [ ] 404 FOLDER_NOT_FOUND: Folder doesn't exist when creating word
+  - [ ] 500 INTERNAL_SERVER_ERROR: Database errors, unexpected exceptions
+  - [ ] Consistent error format: `{message: str, code: str, error: str}`
+
+- [ ] **Plan pagination and sorting**:
+  - [ ] Add pagination to GET /api/v1/folders/{folder_id}/words (consistent with folders)
+  - [ ] Parameters: `limit` (1-1000, default 100), `skip` (≥0, default 0)
+  - [ ] Sorting: Alphabetically by word (most useful for vocabulary)
+  - [ ] Use `.sort("word", 1)` in MongoDB query
+
+- [ ] **Decide cascade delete behavior**:
+  - [ ] **Decision**: Do NOT implement cascade delete in this phase
+  - [ ] When folder deleted, words remain orphaned (acceptable for test version)
+  - [ ] Document: Add cascade delete or prevent deletion in future iteration
+  - [ ] Note: Could add background cleanup job or folder deletion validation later
+
+- [ ] **Plan database indexes** (for future optimization):
+  - [ ] Index on `folder_id` (most common query pattern)
+  - [ ] Index on `user_id` (security queries)
+  - [ ] Compound index on `(folder_id, user_id)` (best performance)
+  - [ ] Note: Not implementing in Phase C, documenting for future
+
+- [ ] **List test scenarios**:
+  - [ ] **Happy path**: Create folder → Create word → List words → Get word → Update word → Delete word
+  - [ ] **Error cases**:
+    - Invalid word_id format, invalid folder_id format
+    - Word not found, folder not found
+    - Create word in non-existent folder, create word in other user's folder
+    - Missing required fields (word, definition, folder_id)
+    - Empty word name, empty definition
+  - [ ] **Array validation**: Empty examples[], large examples[] (20 items), very long example strings
+  - [ ] **Edge cases**: Long word (100 chars), long definition (2000 chars), Unicode characters, special characters
+  - [ ] **Data validation**: ObjectId conversion, timestamps auto-set, user_id assignment, folder ownership validation
+
+---
+
+#### Phase B: Write Tests First (RED)
+- [ ] **Create test file structure**: `tests/test_words.py`
+  - [ ] Follow test_auth.py and test_folders.py patterns
+  - [ ] Import: requests, json, sys, io (Windows encoding fix)
+  - [ ] Fix encoding: `sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")`
+  - [ ] Load BASE_URL from tests/.env
+  - [ ] Helper functions: print_separator(), print_result()
+
+- [ ] **Test Setup (before tests)**:
+  - [ ] Add function to get test user_id: Call GET /auth/current-user, extract user.id
+  - [ ] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
+  - [ ] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word field
+  - [ ] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
+  - [ ] Document: Tests use real MongoDB, cleanup is mandatory
+
+- [ ] **Write Test 1: Setup - Create Test Folder**:
+  - [ ] POST /api/v1/folders
+  - [ ] Body: `{name: "TEST_Word Folder", description: "Test folder for words"}`
+  - [ ] Assert: 200 status, save folder_id for subsequent tests
+  - [ ] Note: Reuses folders endpoint (already tested in Task 1.3)
+
+- [ ] **Write Test 2: List Words (Empty State)**:
+  - [ ] GET /api/v1/folders/{test_folder_id}/words
+  - [ ] Assert: 200 status, success=true, data=[] (empty list)
+  - [ ] Verify ApiResponse format
+
+- [ ] **Write Test 3: Create Word (Success)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_apple", folder_id: test_folder_id, definition: "A round fruit", examples: ["I ate an apple", "Apple pie"], image_urls: ["https://example.com/apple.jpg"], part_of_speech: "noun", pronunciation: "/ˈæp.əl/", notes: "Test word"}`
+  - [ ] Assert: 200 status, success=true
+  - [ ] Assert: data.id exists (24-char string), data.word matches, all fields present, timestamps exist
+  - [ ] Save word_id for subsequent tests
+
+- [ ] **Write Test 4: Create Word (Missing Required Field - word)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{folder_id: test_folder_id, definition: "Missing word"}`
+  - [ ] Assert: 400 or 422 status, error message about missing "word"
+
+- [ ] **Write Test 5: Create Word (Missing Required Field - definition)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_banana", folder_id: test_folder_id}`
+  - [ ] Assert: 400 or 422 status, error message about missing "definition"
+
+- [ ] **Write Test 6: Create Word (Missing Required Field - folder_id)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_orange", definition: "A citrus fruit"}`
+  - [ ] Assert: 400 or 422 status, error message about missing "folder_id"
+
+- [ ] **Write Test 7: Create Word (Non-existent Folder)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_grape", folder_id: "000000000000000000000000", definition: "Small fruit"}`
+  - [ ] Assert: 404 status, error about folder not found
+
+- [ ] **Write Test 8: Create Word (Invalid Folder ID Format)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_mango", folder_id: "invalid_id", definition: "Tropical fruit"}`
+  - [ ] Assert: 400 status, error about invalid ObjectId format
+
+- [ ] **Write Test 9: Create Word (Empty Word Name)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "", folder_id: test_folder_id, definition: "Empty word name"}`
+  - [ ] Assert: 400 or 422 status, error about empty word
+
+- [ ] **Write Test 10: Create Word (Empty Definition)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_kiwi", folder_id: test_folder_id, definition: ""}`
+  - [ ] Assert: 400 or 422 status, error about empty definition
+
+- [ ] **Write Test 11: Create Word (Minimal - No Optional Fields)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_pear", folder_id: test_folder_id, definition: "A sweet fruit"}`
+  - [ ] Assert: 200 status, success=true
+  - [ ] Assert: examples=[], image_urls=[], part_of_speech=None, pronunciation=None, notes=None
+
+- [ ] **Write Test 12: Create Word (With Empty Arrays)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word: "TEST_peach", folder_id: test_folder_id, definition: "Fuzzy fruit", examples: [], image_urls: []}`
+  - [ ] Assert: 200 status, arrays are empty
+
+- [ ] **Write Test 13: List Words (With Data)**:
+  - [ ] GET /api/v1/folders/{test_folder_id}/words
+  - [ ] Assert: 200 status, data is list, length >= 1
+  - [ ] Assert: Each word has required fields (id, word, definition, folder_id, user_id, created_at)
+  - [ ] Assert: Words sorted alphabetically by word field
+
+- [ ] **Write Test 14: List Words (Pagination - First Page)**:
+  - [ ] GET /api/v1/folders/{test_folder_id}/words?limit=2&skip=0
+  - [ ] Assert: 200 status, data length <= 2
+
+- [ ] **Write Test 15: List Words (Pagination - Invalid Limit)**:
+  - [ ] GET /api/v1/folders/{test_folder_id}/words?limit=2000
+  - [ ] Assert: 400 status, error about limit range (1-1000)
+
+- [ ] **Write Test 16: List Words (Pagination - Negative Skip)**:
+  - [ ] GET /api/v1/folders/{test_folder_id}/words?skip=-5
+  - [ ] Assert: 400 status, error about skip must be >= 0
+
+- [ ] **Write Test 17: Get Single Word (Success)**:
+  - [ ] GET /api/v1/words/{word_id}
+  - [ ] Assert: 200 status, data matches created word
+  - [ ] Assert: All fields present (including arrays, optional fields)
+
+- [ ] **Write Test 18: Get Single Word (Not Found)**:
+  - [ ] GET /api/v1/words/000000000000000000000000
+  - [ ] Assert: 404 status, error about word not found
+
+- [ ] **Write Test 19: Get Single Word (Invalid ID Format)**:
+  - [ ] GET /api/v1/words/invalid_word_id
+  - [ ] Assert: 400 status, error about invalid ObjectId
+
+- [ ] **Write Test 20: Update Word (Success - Partial Update)**:
+  - [ ] PUT /api/v1/words/{word_id}
+  - [ ] Body: `{definition: "Updated definition", notes: "Updated notes"}`
+  - [ ] Assert: 200 status, definition updated, notes updated
+  - [ ] Assert: word unchanged, updated_at > created_at
+
+- [ ] **Write Test 21: Update Word (Success - Update Arrays)**:
+  - [ ] PUT /api/v1/words/{word_id}
+  - [ ] Body: `{examples: ["New example 1", "New example 2"], image_urls: ["https://new.com/img.jpg"]}`
+  - [ ] Assert: 200 status, arrays replaced with new values
+
+- [ ] **Write Test 22: Update Word (Empty Update)**:
+  - [ ] PUT /api/v1/words/{word_id}
+  - [ ] Body: `{}`
+  - [ ] Assert: 400 status, error about no fields to update
+
+- [ ] **Write Test 23: Update Word (Not Found)**:
+  - [ ] PUT /api/v1/words/000000000000000000000000
+  - [ ] Assert: 404 status
+
+- [ ] **Write Test 24: Delete Word (Success)**:
+  - [ ] DELETE /api/v1/words/{word_id}
+  - [ ] Assert: 200 status, success=true
+  - [ ] Verify: GET /api/v1/words/{word_id} returns 404
+
+- [ ] **Write Test 25: Delete Word (Not Found)**:
+  - [ ] DELETE /api/v1/words/000000000000000000000000
+  - [ ] Assert: 404 status
+
+- [ ] **Add test cleanup function**:
+  - [ ] Delete all words with "TEST_" prefix in word field
+  - [ ] Delete all folders with "TEST_" prefix
+  - [ ] Call in teardown or at end of test suite
+
+- [ ] **Add test summary and CURL examples**:
+  - [ ] Follow test_auth.py and test_folders.py format
+  - [ ] Print all passed/failed tests
+  - [ ] Show example CURL commands for each endpoint
+  - [ ] Include examples with arrays in request body
+
+- [ ] **Run tests**: Execute `python tests/test_words.py`
+  - [ ] Verify all tests FAIL (endpoints don't exist yet) ✅ RED phase complete
+  - [ ] Check error messages are clear (ImportError, ConnectionRefused, 404, etc.)
+
+- [ ] **Review tests**: Ensure comprehensive coverage
+  - [ ] All CRUD operations covered
+  - [ ] All error cases covered
+  - [ ] Array validation covered
+  - [ ] Pagination covered
+  - [ ] Folder ownership validation covered
+
+- [ ] **Commit tests**: `git commit -m "test: add comprehensive tests for word endpoints"`
+
+---
+
+#### Phase C: Implement Code (GREEN)
+- [ ] **Create Pydantic models**: `models/word.py`
+  - [ ] Import: BaseModel, Field, Optional, List from pydantic
+  - [ ] **CreateWordRequest**:
+    - word: str = Field(..., min_length=1, max_length=100)
+    - folder_id: str = Field(..., description="Folder ObjectId as string")
+    - definition: str = Field(..., min_length=1, max_length=2000)
+    - examples: Optional[List[str]] = Field(default_factory=list, max_length=20)
+    - image_urls: Optional[List[str]] = Field(default_factory=list, max_length=10)
+    - part_of_speech: Optional[str] = Field(None, max_length=50)
+    - pronunciation: Optional[str] = Field(None, max_length=200)
+    - notes: Optional[str] = Field(None, max_length=2000)
+  - [ ] **UpdateWordRequest**:
+    - word: Optional[str] = Field(None, min_length=1, max_length=100)
+    - definition: Optional[str] = Field(None, min_length=1, max_length=2000)
+    - examples: Optional[List[str]] = Field(None, max_length=20)
+    - image_urls: Optional[List[str]] = Field(None, max_length=10)
+    - part_of_speech: Optional[str] = Field(None, max_length=50)
+    - pronunciation: Optional[str] = Field(None, max_length=200)
+    - notes: Optional[str] = Field(None, max_length=2000)
+    - Note: Do NOT allow folder_id update (words can't move between folders in this version)
+  - [ ] **WordResponse**:
+    - id: str
+    - word: str
+    - definition: str
+    - examples: List[str]
+    - image_urls: List[str]
+    - part_of_speech: Optional[str]
+    - pronunciation: Optional[str]
+    - notes: Optional[str]
+    - folder_id: str
+    - user_id: str
+    - created_at: datetime
+    - updated_at: datetime
+  - [ ] Add Config class with example schemas
+
+- [ ] **Create router**: `routers/words_router.py`
+  - [ ] Import: APIRouter, Depends, HTTPException, status, List
+  - [ ] Import: get_wordlists_collection, get_folders_collection, get_users_collection, ApiResponse, HARDCODED_EMAIL from dependencies
+  - [ ] Import: CreateWordRequest, UpdateWordRequest, WordResponse from models.word
+  - [ ] Import: ObjectId from bson, InvalidId from bson.errors
+  - [ ] Import: datetime
+  - [ ] Create router with prefix="/api/v1", tags=["Words"]
+
+- [ ] **Create helper functions in words_router.py**:
+  - [ ] **get_hardcoded_user()**: Copy from folders_router.py (or extract to shared utils)
+  - [ ] **validate_object_id(id_str: str) -> ObjectId**: Copy from folders_router.py
+  - [ ] **validate_folder_ownership(folder_id: ObjectId, user_email: str, folders_col) -> dict**:
+    - Query: folder = await folders_col.find_one({"_id": folder_id, "user_id": user_email})
+    - If not found: raise HTTPException 404 FOLDER_NOT_FOUND
+    - Return: folder document
+  - [ ] **convert_word_to_response(word: dict) -> dict**:
+    - Convert: word["id"] = str(word["_id"]), del word["_id"]
+    - Ensure arrays default to empty lists if missing
+    - Return: word dict
+
+- [ ] **Implement GET /api/v1/folders/{folder_id}/words** - List words in folder:
+  - [ ] Async function with path param folder_id: str
+  - [ ] Query params: limit: int = 100, skip: int = 0
+  - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
+  - [ ] Validate pagination parameters (limit 1-1000, skip >= 0)
+  - [ ] Get hardcoded user
+  - [ ] Validate folder_id format (ObjectId)
+  - [ ] Validate folder ownership (folder exists and belongs to user)
+  - [ ] Query words: words = await words_col.find({"folder_id": folder_id_str, "user_id": user["email"]}).sort("word", 1).skip(skip).limit(limit).to_list(limit)
+  - [ ] Note: Store folder_id as string in MongoDB (not ObjectId) for simplicity
+  - [ ] Convert ObjectId → string for each word
+  - [ ] Map to WordResponse objects
+  - [ ] Return ApiResponse[List[WordResponse]] with success=True
+  - [ ] Error handling: 400 invalid IDs/pagination, 404 folder not found, 500 DB errors
+
+- [ ] **Implement POST /api/v1/words** - Create word:
+  - [ ] Async function with request: CreateWordRequest
+  - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
+  - [ ] Get hardcoded user
+  - [ ] Validate folder_id format (ObjectId)
+  - [ ] Validate folder ownership (folder exists and belongs to user)
+  - [ ] Create word document:
+    - word, definition, examples (default []), image_urls (default []), part_of_speech, pronunciation, notes from request
+    - folder_id = request.folder_id (store as string)
+    - user_id = user["email"]
+    - created_at = datetime.now()
+    - updated_at = datetime.now()
+  - [ ] Insert: result = await words_col.insert_one(word_data)
+  - [ ] Retrieve inserted word: await words_col.find_one({"_id": result.inserted_id})
+  - [ ] Convert ObjectId → string
+  - [ ] Return ApiResponse[WordResponse] with success=True
+  - [ ] Error handling: 400 validation errors, 404 folder not found, 500 DB errors
+
+- [ ] **Implement GET /api/v1/words/{word_id}** - Get single word:
+  - [ ] Async function with path param: word_id: str
+  - [ ] Dependencies: get_wordlists_collection, get_users_collection
+  - [ ] Get hardcoded user
+  - [ ] Validate word_id format (ObjectId)
+  - [ ] Query: word = await words_col.find_one({"_id": ObjectId(word_id), "user_id": user["email"]})
+  - [ ] If not found: 404 HTTPException
+  - [ ] Convert ObjectId → string
+  - [ ] Return ApiResponse[WordResponse]
+  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+
+- [ ] **Implement PUT /api/v1/words/{word_id}** - Update word:
+  - [ ] Async function with word_id: str, request: UpdateWordRequest
+  - [ ] Dependencies: get_wordlists_collection, get_users_collection
+  - [ ] Get hardcoded user
+  - [ ] Validate word_id format (ObjectId)
+  - [ ] Build update dict: {k: v for k, v in request.model_dump(exclude_unset=True).items()}
+  - [ ] Check for empty update BEFORE adding timestamp (avoid bug from Task 1.3)
+  - [ ] If empty: raise HTTPException 400 NO_UPDATE_FIELDS
+  - [ ] Add updated_at = datetime.now()
+  - [ ] Update: result = await words_col.update_one({"_id": ObjectId(word_id), "user_id": user["email"]}, {"$set": update_data})
+  - [ ] If result.matched_count == 0: 404 HTTPException
+  - [ ] Retrieve updated word
+  - [ ] Return ApiResponse[WordResponse]
+  - [ ] Error handling: 400 invalid ID/empty update, 404 not found, 500 DB error
+
+- [ ] **Implement DELETE /api/v1/words/{word_id}** - Delete word:
+  - [ ] Async function with word_id: str
+  - [ ] Dependencies: get_wordlists_collection, get_users_collection
+  - [ ] Get hardcoded user
+  - [ ] Validate word_id format (ObjectId)
+  - [ ] Delete: result = await words_col.delete_one({"_id": ObjectId(word_id), "user_id": user["email"]})
+  - [ ] If result.deleted_count == 0: 404 HTTPException
+  - [ ] Return ApiResponse with success=True, message="Word deleted successfully"
+  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+
+- [ ] **Register router in main.py**:
+  - [ ] Import: from routers.words_router import router as words_router
+  - [ ] Add: app.include_router(words_router)
+
+- [ ] **Run tests**: Execute `python tests/test_words.py`
+  - [ ] Iterate on failing tests
+  - [ ] Fix bugs, adjust response formats
+  - [ ] Ensure ObjectId conversion works
+  - [ ] Verify timestamps are set correctly
+  - [ ] Verify folder ownership validation works
+  - [ ] Verify array handling works (empty lists, populated lists)
+  - [ ] Verify pagination works
+  - [ ] Continue until all tests PASS ✅ GREEN phase complete
+
+- [ ] **Manual verification**:
+  - [ ] Start server: `python main.py`
+  - [ ] Open Swagger docs: http://localhost:8829/docs
+  - [ ] Test each endpoint manually:
+    - Create test folder
+    - Create word with all fields
+    - Create word with minimal fields
+    - List words (verify sorting)
+    - Get single word
+    - Update word
+    - Delete word
+  - [ ] Verify MongoDB data via Compass/shell:
+    - Check wordlists collection
+    - Verify folder_id stored as string
+    - Verify arrays stored correctly
+    - Verify timestamps
+  - [ ] Test edge cases not covered by automated tests:
+    - Very long strings (approaching limits)
+    - Unicode characters (emoji, Chinese, Arabic)
+    - Special characters in pronunciation (IPA symbols)
+    - Large arrays (20 examples, 10 image_urls)
+
+- [ ] **Commit implementation**: `git commit -m "feat: implement word CRUD endpoints with simplified auth"`
+
+---
+
+#### Phase D: Refactor (REFACTOR)
+- [ ] **Extract shared helper functions**:
+  - [ ] Option A: Create `utils/helpers.py` with get_hardcoded_user(), validate_object_id()
+  - [ ] Option B: Keep duplicated in both routers (acceptable for small project)
+  - [ ] Decision: Keep duplicated for now (simpler, no circular imports)
+  - [ ] Document: Consider extracting to shared utils in future refactor
+
+- [ ] **Create word-specific helper module** (optional):
+  - [ ] If logic becomes complex, extract to `utils/word_helpers.py`
+  - [ ] Functions: validate_folder_ownership, convert_word_to_response
+  - [ ] For now: Keep in words_router.py (simpler)
+
+- [ ] **Improve error messages**:
+  - [ ] Consistent error format across all endpoints
+  - [ ] User-friendly error messages (avoid technical jargon)
+  - [ ] Proper HTTP status codes (400 vs 404 vs 500)
+  - [ ] Specific error codes: INVALID_OBJECT_ID, WORD_NOT_FOUND, FOLDER_NOT_FOUND, NO_UPDATE_FIELDS, etc.
+
+- [ ] **Add comprehensive docstrings**:
+  - [ ] Add docstrings to all endpoint functions
+  - [ ] Document parameters, return types, exceptions
+  - [ ] Add usage examples in docstrings
+  - [ ] Document helper functions
+
+- [ ] **Code cleanup**:
+  - [ ] Remove code duplication where reasonable
+  - [ ] Improve variable naming (e.g., words_col vs wordlists_col for clarity)
+  - [ ] Add type hints everywhere (params, return types, variables)
+  - [ ] Format with `ruff format`
+  - [ ] Run `ruff check --fix` for any linting issues
+
+- [ ] **Review array handling**:
+  - [ ] Ensure empty arrays default correctly
+  - [ ] Verify None vs [] handling in optional fields
+  - [ ] Check array validation (max length enforced)
+  - [ ] Test updating arrays (replace vs append - currently replace)
+
+- [ ] **Run tests again**: Ensure refactoring didn't break anything
+  - [ ] Execute: `python tests/test_words.py`
+  - [ ] All tests still pass ✅
+  - [ ] No regressions introduced
+
+- [ ] **Commit refactoring**: `git commit -m "refactor: extract helpers and improve word endpoints code quality"`
+
+---
+
+#### Phase E: Code Quality & Bug Fixes
+- [ ] **Validation review**:
+  - [ ] Run `/validate all code in @be_enzo_english_test\`
+  - [ ] Review critical issues
+  - [ ] Review medium issues
+  - [ ] Prioritize fixes
+
+- [ ] **Fix any critical bugs found**:
+  - [ ] Empty update validation (check BEFORE adding timestamp)
+  - [ ] ObjectId conversion edge cases
+  - [ ] Array handling edge cases
+  - [ ] Folder ownership validation edge cases
+
+- [ ] **Add missing pagination validation** (if not already done):
+  - [ ] Ensure limit 1-1000
+  - [ ] Ensure skip >= 0
+  - [ ] Clear error messages
+
+- [ ] **Performance considerations** (document for future):
+  - [ ] Note: Add database indexes in production
+  - [ ] Index on folder_id for fast word listing
+  - [ ] Index on user_id for security
+  - [ ] Compound index (folder_id, user_id) for best performance
+  - [ ] Note: Not implementing now (test environment, small data)
+
+- [ ] **Security review**:
+  - [ ] Verify user_id always set from authenticated user (hardcoded)
+  - [ ] Verify folder ownership checked before word creation
+  - [ ] Verify word ownership checked before get/update/delete
+  - [ ] Verify no way to access other users' words
+  - [ ] Verify no SQL injection vectors (using MongoDB, low risk)
+
+- [ ] **Edge case handling**:
+  - [ ] Test with maximum field lengths
+  - [ ] Test with Unicode characters
+  - [ ] Test with empty arrays vs None
+  - [ ] Test concurrent updates (acceptable data loss for test version)
+
+- [ ] **Documentation review**:
+  - [ ] Verify all endpoints documented in docstrings
+  - [ ] Verify Swagger UI shows correct examples
+  - [ ] Verify error responses documented
+  - [ ] Update main README if needed (API endpoints section)
+
+- [ ] **Final test run**:
+  - [ ] Execute all test files: test_auth.py, test_folders.py, test_words.py
+  - [ ] All tests pass ✅
+  - [ ] No warnings or errors
+  - [ ] Test summary shows 100% pass rate
+
+- [ ] **Commit quality improvements**: `git commit -m "fix: resolve bugs and improve word endpoints quality"`
+
+---
+
+#### Phase F: Documentation (Optional)
+- [ ] **Update CLAUDE.md** (if needed):
+  - [ ] Add word endpoints to API section
+  - [ ] Update task 1.4 status to completed
+  - [ ] Document any architectural decisions
+
+- [ ] **Update README.md** (if exists):
+  - [ ] Add word endpoints to API documentation
+  - [ ] Add example requests/responses
+  - [ ] Update feature list
+
+- [ ] **Create API documentation** (optional):
+  - [ ] Swagger UI already auto-generated ✅
+  - [ ] Consider exporting OpenAPI spec for reference
+  - [ ] Consider creating Postman collection
+
+- [ ] **Commit documentation**: `git commit -m "docs: add word endpoints documentation"`
 
 ## Phase 2: Flutter Mobile Repository Setup (Basic Features Only)
 

@@ -7,6 +7,7 @@ import os
 from dependencies import get_db, FirebaseAuth
 from routers.auth_router import router as auth_router
 from routers.folders_router import router as folders_router
+from routers.words_router import router as words_router
 import uvicorn
 
 # Load environment variables
@@ -59,6 +60,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 # Include routers
 app.include_router(auth_router)
 app.include_router(folders_router)  # Folder CRUD operations
+app.include_router(words_router)  # Word CRUD operations
 
 
 @app.on_event("startup")

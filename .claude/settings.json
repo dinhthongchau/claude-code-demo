@@ -1,0 +1,58 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash",
+            "Read",
+            "Write"
+        ],
+        "deny": [
+            "Git"
+        ]
+    },
+    "hooks": {
+        "Stop": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File .claude/show-notification.ps1 -Message 'Claude Code finished!' -Title 'Stop' -Icon 'Asterisk'"
+                    }
+                ]
+            }
+        ],
+        "Notification": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File .claude/show-notification.ps1 -Message 'Claude needs your input!' -Title 'Notification' -Icon 'Question'"
+                    }
+                ]
+            }
+        ],
+        "Finish": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File .claude/show-notification.ps1 -Message 'Task completed!' -Title 'Finish' -Icon 'Asterisk'"
+                    }
+                ]
+            }
+        ],
+        "Error": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File .claude/show-notification.ps1 -Message 'An error occurred!' -Title 'Error' -Icon 'Hand'"
+                    }
+                ]
+            }
+        ]
+    }
+}
