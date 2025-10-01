@@ -71,12 +71,12 @@ Then run the tests again.
 
 ### 1. Health Check (No Auth Required)
 ```bash
-curl http://localhost:8899/api/v1/health
+curl http://localhost:8829/api/v1/health
 ```
 
 ### 2. Get Current User (With Token)
 ```bash
-curl -X GET http://localhost:8899/api/v1/auth/current-user \
+curl -X GET http://localhost:8829/api/v1/auth/current-user \
   -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
 ```
 
@@ -123,7 +123,7 @@ curl -X GET http://localhost:8899/api/v1/auth/current-user \
 
 The easiest way to test is using the interactive API documentation:
 
-1. Open http://localhost:8899/docs in your browser
+1. Open http://localhost:8829/docs in your browser
 2. Click on the "Authorize" button (lock icon)
 3. Enter your Firebase ID token in the format: `Bearer YOUR_TOKEN`
 4. Click "Authorize"

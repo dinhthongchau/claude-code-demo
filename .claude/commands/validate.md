@@ -5,7 +5,7 @@ description: Deep validation of completed implementation
 
 # Implementation Validation
 
-Think hard and thoroughly validate the implementation we juok st completed
+Think hard and thoroughly validate the implementation we just completed
 
 ## Validation Criteria
 

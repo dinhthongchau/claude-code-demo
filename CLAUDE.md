@@ -123,8 +123,8 @@ ROOT_BEARER_TOKEN=your_token
 
 ### Flutter `lib/dotenv` (planned)
 ```env
-BASE_URL=http://localhost:8899
-BASE_URL_WEB=http://localhost:8899
+BASE_URL=http://localhost:8829
+BASE_URL_WEB=http://localhost:8829
 ```
 
 ### Flutter Firebase config (planned)

@@ -24,7 +24,7 @@
 
 ### Method 1: Using Swagger UI (Easiest)
 
-1. **Open Swagger UI**: http://localhost:8899/docs
+1. **Open Swagger UI**: http://localhost:8829/docs
 
 2. **Get a Firebase ID Token**:
    - Sign in to your Firebase project with `dinhthongchau@gmail.com`
@@ -62,7 +62,7 @@
 
 #### Test 1: Without Token (Should Fail)
 ```bash
-curl -X GET http://localhost:8899/api/v1/auth/current-user
+curl -X GET http://localhost:8829/api/v1/auth/current-user
 ```
 
 **Expected Response**:
@@ -72,7 +72,7 @@ curl -X GET http://localhost:8899/api/v1/auth/current-user
 
 #### Test 2: With Invalid Token (Should Fail)
 ```bash
-curl -X GET http://localhost:8899/api/v1/auth/current-user \
+curl -X GET http://localhost:8829/api/v1/auth/current-user \
   -H "Authorization: Bearer invalid_token"
 ```
 
@@ -90,7 +90,7 @@ curl -X GET http://localhost:8899/api/v1/auth/current-user \
 #### Test 3: With Valid Token (Should Succeed)
 ```bash
 # Replace YOUR_FIREBASE_ID_TOKEN with actual token
-curl -X GET http://localhost:8899/api/v1/auth/current-user \
+curl -X GET http://localhost:8829/api/v1/auth/current-user \
   -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN"
 ```
 
@@ -156,8 +156,8 @@ print('Token: $token');
 ### ✅ Successful Test Checklist
 
 - [ ] Server starts successfully on port 8899
-- [ ] Health check endpoint works: `http://localhost:8899/api/v1/health`
-- [ ] Swagger UI loads: `http://localhost:8899/docs`
+- [ ] Health check endpoint works: `http://localhost:8829/api/v1/health`
+- [ ] Swagger UI loads: `http://localhost:8829/docs`
 - [ ] Auth endpoint appears in Swagger under "Authentication" tag
 - [ ] Request without token returns `{"detail":"Not authenticated"}`
 - [ ] Request with invalid token returns 401 error
@@ -224,6 +224,6 @@ After confirming the authentication endpoint works:
 ## 📚 API Documentation
 
 Full API documentation available at:
-- **Swagger UI**: http://localhost:8899/docs
-- **ReDoc**: http://localhost:8899/redoc
-- **OpenAPI JSON**: http://localhost:8899/openapi.json
+- **Swagger UI**: http://localhost:8829/docs
+- **ReDoc**: http://localhost:8829/redoc
+- **OpenAPI JSON**: http://localhost:8829/openapi.json

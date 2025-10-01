@@ -33,7 +33,7 @@ router = APIRouter(
 @router.get(
     "/current-user",
     response_model=ApiResponse[UserResponse],
-    summary="Get current user (hardcoded for testing)",
+    summary="Get current user (hardcoded for testing it)",
     description="""
     Get information about the test user (dinhthongchau@gmail.com).
 

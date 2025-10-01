@@ -2,6 +2,55 @@
 
 **Scope:** This plan covers only the core functionality - Firebase authentication, folder management, and word management. All AI chat features will be implemented later in a separate plan.
 
+---
+
+## Test Driven Development (TDD) Workflow
+
+All new tasks must follow this TDD process:
+
+### Step 1: RAW TASK (TO DO TASK)
+- Receive or identify the task requirements
+- Raw file with checkboxes
+
+### Step 2: BASIC PLAN (Plan Mode)
+- High-level approach and architecture decisions
+- Identify endpoints, models, dependencies
+
+### Step 3: DETAIL PLAN (Plan Mode)
+- Break down into specific implementation steps
+- Define test cases and expected behavior
+
+### Step 4: ADD TO PLAN (Edit Mode)
+- Update plan_initial.md with detailed checkboxes
+- Commit the plan updates
+
+### Step 5: WRITE TESTS (Always Fail First)
+- Write test file with assertions for expected behavior
+- Run tests → verify they FAIL (red)
+- Review and iterate test coverage
+
+### Step 6: COMMIT TESTS
+- Commit failing tests with message: `test: add tests for [feature]`
+- Tests must be in version control before implementation
+
+### Step 7: IMPLEMENT CODE (Make Tests Pass)
+- Write minimal code to pass tests (green)
+- Run tests → iterate until all pass
+- Review code quality
+
+### Step 8: COMMIT CODE
+- Commit implementation with message: `feat: implement [feature]`
+- Tests and implementation in separate commits
+
+### Benefits:
+- ✅ Tests define requirements clearly
+- ✅ Code coverage guaranteed
+- ✅ Regression prevention
+- ✅ Better code design (testable architecture)
+- ✅ Clear git history (tests → implementation)
+
+---
+
 ## Phase 1: Backend Repository Setup (Basic Features Only)
 
 ### Task 1.1: Create New Backend Repository Structure ✅
@@ -37,69 +86,328 @@
 - [x] Update `be_enzo_english_test/README.md` to reflect simplified scope
 - [x] Add custom Claude Code commands for project workflow
 
-### Task 1.3: Implement User Folder Endpoints
+### Task 1.3: Implement User Folder Endpoints (TDD)
+**Based on:** `be_enzo_english` existing folder
+**Auth Strategy:** Simplified (no Firebase token required, hardcoded user like Task 1.2)
+
+---
+
+#### Phase A: Design & Plan (BLUE)
+- [ ] **Decide authentication approach**:
+  - [ ] **Decision**: Use simplified auth (no token) for consistency with Task 1.2
+  - [ ] Folders belong to hardcoded user (dinhthongchau@gmail.com)
+  - [ ] Document: Will add real Firebase auth in future iteration
+
+- [ ] **Design data models**:
+  - [ ] **FolderResponse** (output): `{id: str, name: str, description: str, user_id: str, created_at: datetime, updated_at: datetime, color: str, icon: str}`
+  - [ ] **CreateFolderRequest** (input): `{name: str, description: Optional[str], color: Optional[str], icon: Optional[str]}`
+  - [ ] **UpdateFolderRequest** (input): `{name: Optional[str], description: Optional[str], color: Optional[str], icon: Optional[str]}`
+  - [ ] **MongoDB document**: `{_id: ObjectId, name, description, user_id: str (email), created_at, updated_at, color, icon}`
+  - [ ] Note: Must convert `_id` (ObjectId) → `id` (str) in responses
+
+- [ ] **Define API response format**:
+  - [ ] Use existing `ApiResponse[T]` from dependencies.py
+  - [ ] Success: `{success: true, message: "...", data: {...}, timestamp: datetime}`
+  - [ ] Error: `{success: false, message: "...", error_code: int, error_message: str, timestamp: datetime}`
+
+- [ ] **List test scenarios**:
+  - [ ] **Happy path**: Create → List → Get → Update → Delete
+  - [ ] **Error cases**: 404 not found, 400 missing name, 400 invalid ID format, empty name, very long name
+  - [ ] **Data validation**: ObjectId conversion, timestamps auto-set, user_id assignment
+  - [ ] **Edge cases**: Duplicate names (allowed), pagination (defer to later)
+
+---
+
+#### Phase B: Write Tests First (RED)
+- [ ] **Create test file structure**: `tests/test_folders.py`
+  - [ ] Follow test_auth.py pattern (requests library, nice formatting)
+  - [ ] Import: requests, json, sys, io (Windows encoding fix)
+  - [ ] BASE_URL = "http://localhost:8829"
+  - [ ] Helper functions: print_separator(), print_result()
+
+- [ ] **Test Setup (before tests)**:
+  - [ ] Add function to get test user_id: Call GET /auth/current-user, extract user.id
+  - [ ] Add function to create test folder: Helper for setup
+  - [ ] Add function to cleanup test folders: Delete all folders with "TEST_" prefix after tests
+  - [ ] Document: Tests use real MongoDB, cleanup is mandatory
+
+- [ ] **Write Test 1: List Folders (Empty State)**:
+  - [ ] GET /api/v1/folders
+  - [ ] Assert: 200 status, success=true, data=[] (empty list)
+  - [ ] Verify ApiResponse format
+
+- [ ] **Write Test 2: Create Folder (Success)**:
+  - [ ] POST /api/v1/folders
+  - [ ] Body: `{name: "TEST_My Vocabulary", description: "Test folder", color: "#FF5733", icon: "📚"}`
+  - [ ] Assert: 200 status, success=true
+  - [ ] Assert: data.id exists (string), data.name matches, timestamps exist
+  - [ ] Save folder_id for subsequent tests
+
+- [ ] **Write Test 3: Create Folder (Missing Name)**:
+  - [ ] POST /api/v1/folders
+  - [ ] Body: `{description: "No name"}`
+  - [ ] Assert: 400 or 422 status, success=false, error message about missing name
+
+- [ ] **Write Test 4: Create Folder (Empty Name)**:
+  - [ ] POST /api/v1/folders
+  - [ ] Body: `{name: ""}`
+  - [ ] Assert: 400 status, error about empty name
+
+- [ ] **Write Test 5: List Folders (With Data)**:
+  - [ ] GET /api/v1/folders
+  - [ ] Assert: 200 status, data is list, length > 0
+  - [ ] Assert: Each folder has id, name, user_id, created_at
+
+- [ ] **Write Test 6: Get Single Folder (Success)**:
+  - [ ] GET /api/v1/folders/{folder_id}
+  - [ ] Assert: 200 status, data matches created folder
+  - [ ] Assert: All fields present
+
+- [ ] **Write Test 7: Get Single Folder (Not Found)**:
+  - [ ] GET /api/v1/folders/000000000000000000000000 (valid ObjectId format but doesn't exist)
+  - [ ] Assert: 404 status, success=false
+
+- [ ] **Write Test 8: Get Single Folder (Invalid ID)**:
+  - [ ] GET /api/v1/folders/invalid_id
+  - [ ] Assert: 400 status, error about invalid ObjectId format
+
+- [ ] **Write Test 9: Update Folder (Success)**:
+  - [ ] PUT /api/v1/folders/{folder_id}
+  - [ ] Body: `{name: "TEST_Updated Name", color: "#00FF00"}`
+  - [ ] Assert: 200 status, data.name updated, updated_at > created_at
+
+- [ ] **Write Test 10: Update Folder (Not Found)**:
+  - [ ] PUT /api/v1/folders/000000000000000000000000
+  - [ ] Assert: 404 status
+
+- [ ] **Write Test 11: Delete Folder (Success)**:
+  - [ ] DELETE /api/v1/folders/{folder_id}
+  - [ ] Assert: 200 status, success=true
+  - [ ] Verify: GET /api/v1/folders/{folder_id} returns 404
+
+- [ ] **Write Test 12: Delete Folder (Not Found)**:
+  - [ ] DELETE /api/v1/folders/000000000000000000000000
+  - [ ] Assert: 404 status
+
+- [ ] **Add test cleanup function**:
+  - [ ] Delete all folders with "TEST_" prefix
+  - [ ] Call in teardown or at end of test suite
+
+- [ ] **Add test summary and CURL examples**:
+  - [ ] Follow test_auth.py format
+  - [ ] Print all passed/failed tests
+  - [ ] Show example CURL commands
+
+- [ ] **Run tests**: Execute `python tests/test_folders.py`
+  - [ ] Verify all tests FAIL (endpoints don't exist yet) ✅ RED phase complete
+  - [ ] Check error messages are clear (ImportError, ConnectionRefused, 404, etc.)
+
+- [ ] **Review tests**: Ensure comprehensive coverage
+  - [ ] All CRUD operations covered
+  - [ ] Error cases covered
+  - [ ] Response format validated
+  - [ ] ObjectId handling considered
+
+- [ ] **Commit tests**: `git commit -m "test: add comprehensive tests for folder endpoints"`
+
+---
+
+#### Phase C: Implement Code (GREEN)
+- [ ] **Create Pydantic models**: `models/user_folder.py`
+  - [ ] Import: BaseModel, Field, Optional from pydantic
+  - [ ] **CreateFolderRequest**:
+    - name: str = Field(..., min_length=1, max_length=100)
+    - description: Optional[str] = Field(None, max_length=500)
+    - color: Optional[str] = Field(None, pattern="^#[0-9A-Fa-f]{6}$")  # Hex color
+    - icon: Optional[str] = None
+  - [ ] **UpdateFolderRequest**:
+    - name: Optional[str] = Field(None, min_length=1, max_length=100)
+    - description: Optional[str] = Field(None, max_length=500)
+    - color: Optional[str] = Field(None, pattern="^#[0-9A-Fa-f]{6}$")
+    - icon: Optional[str] = None
+  - [ ] **FolderResponse**:
+    - id: str
+    - name: str
+    - description: Optional[str]
+    - user_id: str
+    - created_at: datetime
+    - updated_at: datetime
+    - color: Optional[str]
+    - icon: Optional[str]
+  - [ ] Add Config class with example schemas
+
+- [ ] **Create router**: `routers/folders_router.py`
+  - [ ] Import: APIRouter, Depends, HTTPException, status
+  - [ ] Import: get_folders_collection, get_users_collection, ApiResponse from dependencies
+  - [ ] Import: CreateFolderRequest, UpdateFolderRequest, FolderResponse from models.user_folder
+  - [ ] Import: ObjectId from bson
+  - [ ] Create router with prefix="/api/v1/folders", tags=["Folders"]
+
+- [ ] **Implement GET /api/v1/folders** - List all folders:
+  - [ ] Async function with dependencies: get_folders_collection, get_users_collection
+  - [ ] Get hardcoded user: user = await users_col.find_one({"email": "dinhthongchau@gmail.com"})
+  - [ ] If user not found: Create user (same as auth_router.py)
+  - [ ] Query folders: folders = await folders_col.find({"user_id": user["email"]}).to_list(100)
+  - [ ] Convert each folder: `id = str(folder["_id"])`, remove `_id` key
+  - [ ] Map to FolderResponse objects
+  - [ ] Return ApiResponse[List[FolderResponse]] with success=True
+  - [ ] Error handling: HTTPException 500 on failure
+
+- [ ] **Implement POST /api/v1/folders** - Create folder:
+  - [ ] Async function with request: CreateFolderRequest
+  - [ ] Get hardcoded user (same as above)
+  - [ ] Create folder document:
+    - name, description, color, icon from request
+    - user_id = user["email"]
+    - created_at = datetime.now()
+    - updated_at = datetime.now()
+  - [ ] Insert: result = await folders_col.insert_one(folder_data)
+  - [ ] Retrieve inserted folder: await folders_col.find_one({"_id": result.inserted_id})
+  - [ ] Convert ObjectId → string
+  - [ ] Return ApiResponse[FolderResponse] with success=True
+  - [ ] Error handling: 400 for validation errors, 500 for DB errors
+
+- [ ] **Implement GET /api/v1/folders/{folder_id}** - Get single folder:
+  - [ ] Async function with path param: folder_id: str
+  - [ ] Validate ObjectId format: try ObjectId(folder_id) except InvalidId → 400
+  - [ ] Get hardcoded user
+  - [ ] Query: folder = await folders_col.find_one({"_id": ObjectId(folder_id), "user_id": user["email"]})
+  - [ ] If not found: 404 HTTPException
+  - [ ] Convert ObjectId → string
+  - [ ] Return ApiResponse[FolderResponse]
+  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+
+- [ ] **Implement PUT /api/v1/folders/{folder_id}** - Update folder:
+  - [ ] Async function with folder_id: str, request: UpdateFolderRequest
+  - [ ] Validate ObjectId format
+  - [ ] Get hardcoded user
+  - [ ] Build update dict: {k: v for k, v in request.dict(exclude_unset=True).items()}
+  - [ ] Add updated_at = datetime.now()
+  - [ ] Update: result = await folders_col.update_one({"_id": ObjectId(folder_id), "user_id": user["email"]}, {"$set": update_data})
+  - [ ] If result.matched_count == 0: 404 HTTPException
+  - [ ] Retrieve updated folder
+  - [ ] Return ApiResponse[FolderResponse]
+  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+
+- [ ] **Implement DELETE /api/v1/folders/{folder_id}** - Delete folder:
+  - [ ] Async function with folder_id: str
+  - [ ] Validate ObjectId format
+  - [ ] Get hardcoded user
+  - [ ] Delete: result = await folders_col.delete_one({"_id": ObjectId(folder_id), "user_id": user["email"]})
+  - [ ] If result.deleted_count == 0: 404 HTTPException
+  - [ ] Return ApiResponse with success=True, message="Folder deleted successfully"
+  - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
+
+- [ ] **Register router in main.py**:
+  - [ ] Import: from routers.folders_router import router as folders_router
+  - [ ] Add: app.include_router(folders_router)
+
+- [ ] **Run tests**: Execute `python tests/test_folders.py`
+  - [ ] Iterate on failing tests
+  - [ ] Fix bugs, adjust response formats
+  - [ ] Ensure ObjectId conversion works
+  - [ ] Verify timestamps are set correctly
+  - [ ] Continue until all tests PASS ✅ GREEN phase complete
+
+- [ ] **Manual verification**:
+  - [ ] Start server: `python main.py`
+  - [ ] Open Swagger docs: http://localhost:8829/docs
+  - [ ] Test each endpoint manually
+  - [ ] Verify MongoDB data via Compass/shell
+  - [ ] Test edge cases not covered by automated tests
+
+- [ ] **Commit implementation**: `git commit -m "feat: implement folder CRUD endpoints with simplified auth"`
+
+---
+
+#### Phase D: Refactor (REFACTOR)
+- [ ] **Extract helper functions**:
+  - [ ] Create `get_hardcoded_user()` helper (used in all endpoints)
+  - [ ] Create `validate_object_id()` helper (used in GET/PUT/DELETE)
+  - [ ] Create `convert_folder_to_response()` helper (ObjectId → string conversion)
+
+- [ ] **Improve error messages**:
+  - [ ] Consistent error format across all endpoints
+  - [ ] User-friendly error messages
+  - [ ] Proper HTTP status codes
+
+- [ ] **Add docstrings**:
+  - [ ] Add comprehensive docstrings to all endpoint functions
+  - [ ] Document parameters, return types, exceptions
+  - [ ] Add usage examples in docstrings
+
+- [ ] **Code cleanup**:
+  - [ ] Remove code duplication
+  - [ ] Improve variable naming
+  - [ ] Add type hints everywhere
+  - [ ] Format with `ruff format`
+
+- [ ] **Run tests again**: Ensure refactoring didn't break anything
+  - [ ] All tests still pass ✅
+
+- [ ] **Commit refactoring**: `git commit -m "refactor: extract helpers and improve folder endpoints code quality"`
+
+
+### Task 1.4: Implement Word List Endpoints (TDD)
 **Based on:** `be_enzo_english` existing folder
 
-- [ ] Create `database.py` with MongoDB connection utility
-- [ ] Create `models/user_folder.py` with Pydantic schemas
-  - [ ] UserFolder schema: `{id, name, description, user_id, created_at, updated_at, color, icon}`
-- [ ] Create `routers/folders.py` with folder endpoints
-- [ ] Implement `GET /api/v1/folders` - Get all folders for authenticated user (dinhthongchau@gmail.com)
-  - [ ] Requires Firebase authentication
-  - [ ] Returns list of folders from MongoDB
-- [ ] Implement `GET /api/v1/folders/{folder_id}` - Get single folder details
-  - [ ] Requires Firebase authentication
-  - [ ] Validates folder belongs to authenticated user
-- [ ] Implement `POST /api/v1/folders` - Create new folder
-  - [ ] Requires Firebase authentication
-  - [ ] Request body: `{name, description, color, icon}`
-  - [ ] Saves to MongoDB with user_id
-- [ ] Implement `PUT /api/v1/folders/{folder_id}` - Update folder
-  - [ ] Requires Firebase authentication
-  - [ ] Validates folder belongs to authenticated user
-- [ ] Implement `DELETE /api/v1/folders/{folder_id}` - Delete folder
-  - [ ] Requires Firebase authentication
-  - [ ] Validates folder belongs to authenticated user
-- [ ] Create test file `tests/test_folders.py` with sample requests
-- [ ] Test: Call all endpoints via Postman and verify CRUD operations work
+#### Phase A: Write Tests First (RED)
+- [ ] **Plan**: Define test cases and expected behavior for word CRUD operations
+- [ ] **Write failing tests** in `tests/test_words.py`:
+  - [ ] Test GET /api/v1/folders/{folder_id}/words - List words in folder (expect empty list initially)
+  - [ ] Test POST /api/v1/words - Create word (expect 201 + word object with all fields)
+  - [ ] Test GET /api/v1/words/{word_id} - Get word details (expect 200 + full word data)
+  - [ ] Test PUT /api/v1/words/{word_id} - Update word (expect 200 + updated word)
+  - [ ] Test DELETE /api/v1/words/{word_id} - Delete word (expect 204)
+  - [ ] Test error cases: invalid folder_id, invalid word_id, unauthorized access, missing required fields
+  - [ ] Test word with examples array and image_urls array
+- [ ] **Run tests**: Verify all tests FAIL (endpoints don't exist yet)
+- [ ] **Review tests**: Ensure comprehensive coverage including array fields
+- [ ] **Commit tests**: `git commit -m "test: add tests for word endpoints"`
 
-### Task 1.4: Implement Word List Endpoints
-**Based on:** `be_enzo_english` existing folder
+#### Phase B: Implement Code (GREEN)
+- [ ] **Create models**:
+  - [ ] Create `models/word.py` with Pydantic schemas
+    - Word schema: `{id, word, definition, examples[], image_urls[], part_of_speech, pronunciation, notes, folder_id, user_id, created_at, updated_at}`
+- [ ] **Implement endpoints** in `routers/words.py`:
+  - [ ] GET /api/v1/folders/{folder_id}/words - Get all words in a folder
+    - Requires Firebase authentication
+    - Validates folder belongs to authenticated user
+    - Returns list of words
+  - [ ] GET /api/v1/words/{word_id} - Get detailed word information
+    - Requires Firebase authentication
+    - Validates word belongs to authenticated user
+    - Returns full word details with all fields
+  - [ ] POST /api/v1/words - Create new word
+    - Requires Firebase authentication
+    - Request body: `{word, folder_id, definition, examples[], image_urls[], part_of_speech, pronunciation, notes}`
+    - Validates folder belongs to authenticated user
+    - Saves to MongoDB with metadata
+    - Returns created word object with ID
+  - [ ] PUT /api/v1/words/{word_id} - Update word
+    - Requires Firebase authentication
+    - Validates word belongs to authenticated user
+  - [ ] DELETE /api/v1/words/{word_id} - Delete word
+    - Requires Firebase authentication
+    - Validates word belongs to authenticated user
+- [ ] **Run tests**: Iterate until all tests PASS
+- [ ] **Manual test**: Call endpoints via Postman for final verification
+- [ ] **Commit implementation**: `git commit -m "feat: implement word CRUD endpoints"`
 
-- [ ] Create `models/word.py` with Pydantic schemas
-  - [ ] Word schema: `{id, word, definition, examples[], image_urls[], part_of_speech, pronunciation, notes, folder_id, user_id, created_at, updated_at}`
-- [ ] Create `routers/words.py` with word endpoints
-- [ ] Implement `GET /api/v1/folders/{folder_id}/words` - Get all words in a folder
-  - [ ] Requires Firebase authentication
-  - [ ] Validates folder belongs to authenticated user
-  - [ ] Returns list of words
-- [ ] Implement `GET /api/v1/words/{word_id}` - Get detailed word information
-  - [ ] Requires Firebase authentication
-  - [ ] Validates word belongs to authenticated user
-  - [ ] Returns full word details with all fields
-- [ ] Implement `POST /api/v1/words` - Create new word
-  - [ ] Requires Firebase authentication
-  - [ ] Request body: `{word, folder_id, definition, examples[], image_urls[], part_of_speech, pronunciation, notes}`
-  - [ ] Validates folder belongs to authenticated user
-  - [ ] Saves to MongoDB with metadata
-  - [ ] Returns created word object with ID
-- [ ] Implement `PUT /api/v1/words/{word_id}` - Update word
-  - [ ] Requires Firebase authentication
-  - [ ] Validates word belongs to authenticated user
-- [ ] Implement `DELETE /api/v1/words/{word_id}` - Delete word
-  - [ ] Requires Firebase authentication
-  - [ ] Validates word belongs to authenticated user
-- [ ] Create test file `tests/test_words.py` with sample requests
-- [ ] Test: Call all endpoints via Postman and verify CRUD operations work
+### Task 1.5: Backend Documentation & Testing (Verification-Driven)
 
-### Task 1.5: Backend Documentation & Testing
-- [ ] Create comprehensive `README.md` with:
+#### Phase A: Create Documentation
+- [ ] **Create comprehensive `README.md`** with:
+  - [ ] Project overview and purpose
+  - [ ] Technology stack
   - [ ] Setup instructions (clone, install dependencies, configure .env)
   - [ ] Firebase setup instructions
   - [ ] MongoDB connection setup
   - [ ] How to run the server
+  - [ ] How to run tests
   - [ ] API documentation for all endpoints with example requests/responses
-- [ ] Create `requirements.txt` with all dependencies:
+  - [ ] Troubleshooting section
+- [ ] **Create `requirements.txt`** with all dependencies:
   - [ ] fastapi
   - [ ] uvicorn
   - [ ] pymongo / motor (async MongoDB)
@@ -107,9 +415,21 @@
   - [ ] pydantic
   - [ ] python-dotenv
   - [ ] python-multipart
-- [ ] Create `.env.example` with all required environment variables
-- [ ] Create Postman collection or API documentation file
-- [ ] Test: Fresh clone → install deps → configure .env → run server → all endpoints work
+  - [ ] pytest (for testing)
+  - [ ] httpx (for async testing)
+- [ ] **Create `.env.example`** with all required environment variables and descriptions
+- [ ] **Create Postman collection** or OpenAPI/Swagger documentation
+- [ ] **Commit documentation**: `git commit -m "docs: add comprehensive backend documentation"`
+
+#### Phase B: Verify Documentation Works
+- [ ] **Fresh environment test**:
+  - [ ] Clone repo in new directory
+  - [ ] Follow README setup instructions exactly
+  - [ ] Verify server starts without errors
+  - [ ] Run all test files and verify they pass
+  - [ ] Test all endpoints via Postman/curl
+- [ ] **Fix any gaps**: Update documentation based on issues found
+- [ ] **Commit fixes**: `git commit -m "docs: fix setup instructions and examples"`
 
 ---
 

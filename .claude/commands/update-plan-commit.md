@@ -4,5 +4,6 @@ Follow these step:
 - [x] Create abc
 - [ ] Edit abc
 ````
-
-- Stash and commit all the latest changes with a short and clear commit message/
+- Commit granularly with git add -p so diffs stay readable
+- Never let uncommitted changes pile up: clean git state makes it easier to isolate AI-introduced bugs and rollback cleanly
+- Stash and commit all the latest changes with a short and clear commit message

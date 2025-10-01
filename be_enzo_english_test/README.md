@@ -81,22 +81,22 @@ uvicorn main:app --host 0.0.0.0 --port 8887 --reload
 python main.py
 ```
 
-The server will start at: `http://localhost:8899`
+The server will start at: `http://localhost:8829`
 
 ## API Documentation
 
 Once the server is running:
 
-- **Swagger UI**: http://localhost:8899/docs
-- **ReDoc**: http://localhost:8899/redoc
-- **OpenAPI JSON**: http://localhost:8899/openapi.json
+- **Swagger UI**: http://localhost:8829/docs
+- **ReDoc**: http://localhost:8829/redoc
+- **OpenAPI JSON**: http://localhost:8829/openapi.json
 
 ## Testing the API
 
 ### Health Check
 
 ```bash
-curl http://localhost:8899/api/v1/health
+curl http://localhost:8829/api/v1/health
 ```
 
 Expected response:
@@ -118,7 +118,7 @@ All endpoints (except `/api/v1/health`) require Firebase authentication.
 
 ```bash
 curl -H "Authorization: Bearer <your_firebase_id_token>" \
-     http://localhost:8899/api/v1/auth/current-user
+     http://localhost:8829/api/v1/auth/current-user
 ```
 
 **Note**: Currently only `dinhthongchau@gmail.com` is allowed access (hardcoded in dependencies.py).
