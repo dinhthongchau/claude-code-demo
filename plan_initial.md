@@ -127,7 +127,7 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase B: Write Tests First (RED) ✅
+#### Phase B: Write Tests First (RED) ✅ ✅
 - [x] **Create test file structure**: `tests/test_folders.py`
   - [x] Follow test_auth.py pattern (requests library, nice formatting)
   - [x] Import: requests, json, sys, io (Windows encoding fix)
@@ -161,7 +161,7 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase C: Implement Code (GREEN) ✅
+#### Phase C: Implement Code (GREEN) ✅ ✅
 - [x] **Create Pydantic models**: `models/user_folder.py`
 - [x] **Create router**: `routers/folders_router.py`
 - [x] **Implement GET /api/v1/folders** - List all folders with pagination
@@ -218,19 +218,19 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase A: Design & Plan (BLUE)
-- [ ] **Decide authentication approach**:
-  - [ ] **Decision**: Use simplified auth (no token) for consistency with Tasks 1.2 & 1.3
-  - [ ] Words belong to hardcoded user (dinhthongchau@gmail.com)
-  - [ ] Must validate folder ownership before word operations
-  - [ ] Document: Will add real Firebase auth in future iteration
+#### Phase A: Design & Plan (BLUE) ✅
+- [x] **Decide authentication approach**:
+  - [x] **Decision**: Use simplified auth (no token) for consistency with Tasks 1.2 & 1.3
+  - [x] Words belong to hardcoded user (dinhthongchau@gmail.com)
+  - [x] Must validate folder ownership before word operations
+  - [x] Document: Will add real Firebase auth in future iteration
 
-- [ ] **Design data models**:
-  - [ ] **WordResponse** (output): `{id: str, word: str, definition: str, examples: List[str], image_urls: List[str], part_of_speech: str, pronunciation: str, notes: str, folder_id: str, user_id: str, created_at: datetime, updated_at: datetime}`
-  - [ ] **CreateWordRequest** (input): `{word: str, folder_id: str, definition: str, examples: Optional[List[str]], image_urls: Optional[List[str]], part_of_speech: Optional[str], pronunciation: Optional[str], notes: Optional[str]}`
-  - [ ] **UpdateWordRequest** (input): All fields optional except no folder_id change allowed
-  - [ ] **MongoDB document**: Use existing `wordlists` collection, structure: `{_id: ObjectId, word, definition, examples: [], image_urls: [], part_of_speech, pronunciation, notes, folder_id: str, user_id: str (email), created_at, updated_at}`
-  - [ ] Note: Must convert `_id` (ObjectId) → `id` (str) in responses
+- [x] **Design data models**:
+  - [x] **WordResponse** (output): `{id: str, word: str, definition: str, examples: List[str], image_urls: List[str], part_of_speech: str, pronunciation: str, notes: str, folder_id: str, user_id: str, created_at: datetime, updated_at: datetime}`
+  - [x] **CreateWordRequest** (input): `{word: str, folder_id: str, definition: str, examples: Optional[List[str]], image_urls: Optional[List[str]], part_of_speech: Optional[str], pronunciation: Optional[str], notes: Optional[str]}`
+  - [x] **UpdateWordRequest** (input): All fields optional except no folder_id change allowed
+  - [x] **MongoDB document**: Use existing `wordlists` collection, structure: `{_id: ObjectId, word, definition, examples: [], image_urls: [], part_of_speech, pronunciation, notes, folder_id: str, user_id: str (email), created_at, updated_at}`
+  - [x] Note: Must convert `_id` (ObjectId) → `id` (str) in responses
 
 - [ ] **Define field validation rules**:
   - [ ] **word**: Required, 1-100 chars, string
@@ -305,7 +305,7 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase B: Write Tests First (RED)
+#### Phase B: Write Tests First (RED) ✅
 - [ ] **Create test file structure**: `tests/test_words.py`
   - [ ] Follow test_auth.py and test_folders.py patterns
   - [ ] Import: requests, json, sys, io (Windows encoding fix)
@@ -455,23 +455,23 @@ All new tasks must follow this TDD process:
   - [ ] Show example CURL commands for each endpoint
   - [ ] Include examples with arrays in request body
 
-- [ ] **Run tests**: Execute `python tests/test_words.py`
+- [x] **Run tests**: Execute `python tests/test_words.py`
   - [ ] Verify all tests FAIL (endpoints don't exist yet) ✅ RED phase complete
   - [ ] Check error messages are clear (ImportError, ConnectionRefused, 404, etc.)
 
-- [ ] **Review tests**: Ensure comprehensive coverage
+- [x] **Review tests**: Ensure comprehensive coverage
   - [ ] All CRUD operations covered
   - [ ] All error cases covered
   - [ ] Array validation covered
   - [ ] Pagination covered
   - [ ] Folder ownership validation covered
 
-- [ ] **Commit tests**: `git commit -m "test: add comprehensive tests for word endpoints"`
+- [x] **Commit tests**: `git commit -m "test: add comprehensive tests for word endpoints"`
 
 ---
 
-#### Phase C: Implement Code (GREEN)
-- [ ] **Create Pydantic models**: `models/word.py`
+#### Phase C: Implement Code (GREEN) ✅
+- [x] **Create Pydantic models**: `models/word.py`
   - [ ] Import: BaseModel, Field, Optional, List from pydantic
   - [ ] **CreateWordRequest**:
     - word: str = Field(..., min_length=1, max_length=100)
@@ -506,7 +506,7 @@ All new tasks must follow this TDD process:
     - updated_at: datetime
   - [ ] Add Config class with example schemas
 
-- [ ] **Create router**: `routers/words_router.py`
+- [x] **Create router**: `routers/words_router.py`
   - [ ] Import: APIRouter, Depends, HTTPException, status, List
   - [ ] Import: get_wordlists_collection, get_folders_collection, get_users_collection, ApiResponse, HARDCODED_EMAIL from dependencies
   - [ ] Import: CreateWordRequest, UpdateWordRequest, WordResponse from models.word
@@ -526,7 +526,7 @@ All new tasks must follow this TDD process:
     - Ensure arrays default to empty lists if missing
     - Return: word dict
 
-- [ ] **Implement GET /api/v1/folders/{folder_id}/words** - List words in folder:
+- [x] **Implement GET /api/v1/folders/{folder_id}/words** - List words in folder:
   - [ ] Async function with path param folder_id: str
   - [ ] Query params: limit: int = 100, skip: int = 0
   - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
@@ -541,7 +541,7 @@ All new tasks must follow this TDD process:
   - [ ] Return ApiResponse[List[WordResponse]] with success=True
   - [ ] Error handling: 400 invalid IDs/pagination, 404 folder not found, 500 DB errors
 
-- [ ] **Implement POST /api/v1/words** - Create word:
+- [x] **Implement POST /api/v1/words** - Create word:
   - [ ] Async function with request: CreateWordRequest
   - [ ] Dependencies: get_wordlists_collection, get_folders_collection, get_users_collection
   - [ ] Get hardcoded user
@@ -559,7 +559,7 @@ All new tasks must follow this TDD process:
   - [ ] Return ApiResponse[WordResponse] with success=True
   - [ ] Error handling: 400 validation errors, 404 folder not found, 500 DB errors
 
-- [ ] **Implement GET /api/v1/words/{word_id}** - Get single word:
+- [x] **Implement GET /api/v1/words/{word_id}** - Get single word:
   - [ ] Async function with path param: word_id: str
   - [ ] Dependencies: get_wordlists_collection, get_users_collection
   - [ ] Get hardcoded user
@@ -570,7 +570,7 @@ All new tasks must follow this TDD process:
   - [ ] Return ApiResponse[WordResponse]
   - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
 
-- [ ] **Implement PUT /api/v1/words/{word_id}** - Update word:
+- [x] **Implement PUT /api/v1/words/{word_id}** - Update word:
   - [ ] Async function with word_id: str, request: UpdateWordRequest
   - [ ] Dependencies: get_wordlists_collection, get_users_collection
   - [ ] Get hardcoded user
@@ -585,7 +585,7 @@ All new tasks must follow this TDD process:
   - [ ] Return ApiResponse[WordResponse]
   - [ ] Error handling: 400 invalid ID/empty update, 404 not found, 500 DB error
 
-- [ ] **Implement DELETE /api/v1/words/{word_id}** - Delete word:
+- [x] **Implement DELETE /api/v1/words/{word_id}** - Delete word:
   - [ ] Async function with word_id: str
   - [ ] Dependencies: get_wordlists_collection, get_users_collection
   - [ ] Get hardcoded user
@@ -595,11 +595,11 @@ All new tasks must follow this TDD process:
   - [ ] Return ApiResponse with success=True, message="Word deleted successfully"
   - [ ] Error handling: 400 invalid ID, 404 not found, 500 DB error
 
-- [ ] **Register router in main.py**:
+- [x] **Register router in main.py**:
   - [ ] Import: from routers.words_router import router as words_router
   - [ ] Add: app.include_router(words_router)
 
-- [ ] **Run tests**: Execute `python tests/test_words.py`
+- [x] **Run tests**: Execute `python tests/test_words.py`
   - [ ] Iterate on failing tests
   - [ ] Fix bugs, adjust response formats
   - [ ] Ensure ObjectId conversion works
