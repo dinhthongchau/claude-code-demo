@@ -27,7 +27,7 @@ test_dir = Path(__file__).parent
 load_dotenv(test_dir / ".env")
 
 # Base URL for the test server (from .env)
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8829")
+BASE_URL = os.getenv("BASE_URL")
 
 # Global variable to store created folder ID for tests
 created_folder_id: Optional[str] = None

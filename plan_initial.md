@@ -86,6 +86,15 @@ All new tasks must follow this TDD process:
 - [x] Update `be_enzo_english_test/README.md` to reflect simplified scope
 - [x] Add custom Claude Code commands for project workflow
 
+### Task 1.2.2: Move Hardcoded URLs to Environment Variables ✅
+**Refactor configuration to use environment variables**
+
+- [x] Add PORT, HOST, BASE_URL to `.env.example`
+- [x] Update `main.py` to read port/host from environment variables
+- [x] Remove hardcoded fallback URLs from `test_auth.py`
+- [x] Remove hardcoded fallback URLs from `test_folders.py`
+- [x] Track `.env.example` in git
+
 ### Task 1.3: Implement User Folder Endpoints (TDD)
 **Based on:** `be_enzo_english` existing folder
 **Auth Strategy:** Simplified (no Firebase token required, hardcoded user like Task 1.2)

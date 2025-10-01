@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 from dotenv import load_dotenv
 import pathlib
+import os
 from dependencies import get_db, FirebaseAuth
 from routers.auth_router import router as auth_router
 from routers.folders_router import router as folders_router
@@ -106,5 +107,5 @@ async def health_check():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8899, reload=True)
+    uvicorn.run("main:app", host=os.getenv("HOST"), port=int(os.getenv("PORT")), reload=True)
 
