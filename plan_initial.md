@@ -210,6 +210,8 @@ All new tasks must follow this TDD process:
 - [x] **Add shutdown handler**: Database cleanup on server shutdown (main.py)
 - [x] **Centralize constants**: Move HARDCODED_EMAIL to dependencies.py
 - [x] **Add pagination**: limit/skip parameters with validation (1-1000 range)
+- [x] **Clean up test imports**: Remove unused Dict, Any imports from test files
+- [x] **Update Claude settings**: Simplify notification system and add test permissions
 
 
 ### Task 1.4: Implement Word Endpoints (TDD)
