@@ -78,6 +78,17 @@ async def startup_event() -> None:
         raise
 
 
+@app.on_event("shutdown")
+async def shutdown_event() -> None:
+    """Clean up database connection on shutdown."""
+    try:
+        from dependencies import DatabaseConnection
+        await DatabaseConnection().close()
+        logger.info("Database connection closed")
+    except Exception as e:
+        logger.error(f"Shutdown error: {str(e)}")
+
+
 @app.get("/")
 async def root():
     """Root endpoint - API information."""

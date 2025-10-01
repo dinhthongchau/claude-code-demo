@@ -12,6 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorCollection
 from dependencies import (
     get_users_collection,
     ApiResponse,
+    HARDCODED_EMAIL,
 )
 
 
@@ -57,9 +58,6 @@ async def get_current_user_info(
         HTTPException: If user retrieval fails
     """
     try:
-        # Hardcoded email for testing
-        HARDCODED_EMAIL = "dinhthongchau@gmail.com"
-
         # Try to find user in database
         user = await users_col.find_one({"email": HARDCODED_EMAIL})
 

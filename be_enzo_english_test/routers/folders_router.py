@@ -14,6 +14,7 @@ from dependencies import (
     get_folders_collection,
     get_users_collection,
     ApiResponse,
+    HARDCODED_EMAIL,
 )
 from models.user_folder import (
     CreateFolderRequest,
@@ -26,10 +27,6 @@ router = APIRouter(
     prefix="/api/v1/folders",
     tags=["Folders"]
 )
-
-
-# Hardcoded email for testing (same as auth_router.py)
-HARDCODED_EMAIL = "dinhthongchau@gmail.com"
 
 
 async def get_hardcoded_user(users_col: AsyncIOMotorCollection):
@@ -121,9 +118,15 @@ def convert_folder_to_response(folder: dict) -> dict:
     Get all folders for the authenticated user (hardcoded: dinhthongchau@gmail.com).
 
     Returns a list of folders sorted by creation date (newest first).
+
+    Pagination:
+    - limit: Maximum number of folders to return (default: 100, max: 1000)
+    - skip: Number of folders to skip for pagination (default: 0)
     """
 )
 async def list_folders(
+    limit: int = 100,
+    skip: int = 0,
     folders_col: AsyncIOMotorCollection = Depends(get_folders_collection),
     users_col: AsyncIOMotorCollection = Depends(get_users_collection)
 ) -> ApiResponse[List[FolderResponse]]:
@@ -131,6 +134,8 @@ async def list_folders(
     List all folders for the hardcoded user.
 
     Args:
+        limit: Maximum number of folders to return (1-1000)
+        skip: Number of folders to skip for pagination
         folders_col: Folders collection from MongoDB
         users_col: Users collection from MongoDB
 
@@ -138,15 +143,36 @@ async def list_folders(
         ApiResponse[List[FolderResponse]]: List of user folders
 
     Raises:
-        HTTPException: If retrieval fails
+        HTTPException: If retrieval fails or parameters invalid
     """
     try:
+        # Validate pagination parameters
+        if limit < 1 or limit > 1000:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "message": "Invalid limit parameter",
+                    "code": "INVALID_LIMIT",
+                    "error": "Limit must be between 1 and 1000"
+                }
+            )
+
+        if skip < 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "message": "Invalid skip parameter",
+                    "code": "INVALID_SKIP",
+                    "error": "Skip must be 0 or greater"
+                }
+            )
+
         # Get hardcoded user
         user = await get_hardcoded_user(users_col)
 
-        # Query folders for this user
-        cursor = folders_col.find({"user_id": user["email"]})
-        folders = await cursor.to_list(length=100)
+        # Query folders for this user with pagination
+        cursor = folders_col.find({"user_id": user["email"]}).skip(skip).limit(limit)
+        folders = await cursor.to_list(length=limit)
 
         # Convert ObjectId to string for each folder
         folders_data = [convert_folder_to_response(folder) for folder in folders]
@@ -378,9 +404,7 @@ async def update_folder(
             k: v for k, v in request.model_dump(exclude_unset=True).items()
         }
 
-        # Always update the updated_at timestamp
-        update_data["updated_at"] = datetime.now()
-
+        # Check for empty update BEFORE adding timestamp
         if not update_data:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -390,6 +414,9 @@ async def update_folder(
                     "error": "At least one field must be provided for update"
                 }
             )
+
+        # Always update the updated_at timestamp
+        update_data["updated_at"] = datetime.now()
 
         # Update folder
         result = await folders_col.update_one(

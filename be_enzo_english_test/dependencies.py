@@ -13,9 +13,8 @@ from enum import Enum
 
 import firebase_admin
 from dotenv import load_dotenv
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from firebase_admin import auth, credentials
+from fastapi import Depends
+from firebase_admin import credentials
 from motor.motor_asyncio import (
     AsyncIOMotorClient,
     AsyncIOMotorCollection,
@@ -177,103 +176,5 @@ class FirebaseAuth:
                 raise
 
 
-# HTTP Bearer token security scheme
-security = HTTPBearer()
-
-
-async def verify_firebase_token(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    users_col: AsyncIOMotorCollection = Depends(get_users_collection)
-) -> dict:
-    """
-    Verify Firebase ID token and return user data.
-
-    Args:
-        credentials: HTTP Bearer token
-        users_col: Users collection for database lookup
-
-    Returns:
-        dict: User data including Firebase UID and email
-
-    Raises:
-        HTTPException: If token is invalid or user not allowed
-    """
-    token = credentials.credentials
-
-    try:
-        # Verify the Firebase ID token
-        decoded_token = auth.verify_id_token(token)
-        firebase_uid = decoded_token.get("uid")
-        email = decoded_token.get("email")
-
-        # For now, only allow dinhthongchau@gmail.com (hardcoded check)
-        if email != "dinhthongchau@gmail.com":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail={
-                    "message": "Access denied",
-                    "code": "FORBIDDEN_USER",
-                    "error": f"User {email} is not authorized to access this API"
-                }
-            )
-
-        # Look up or create user in database
-        user = await users_col.find_one({"firebase_uid": firebase_uid})
-
-        if not user:
-            # Create new user
-            user_data = {
-                "firebase_uid": firebase_uid,
-                "email": email,
-                "name": decoded_token.get("name", email.split("@")[0]),
-                "created_at": datetime.now(),
-                "updated_at": datetime.now()
-            }
-            result = await users_col.insert_one(user_data)
-            user_data["_id"] = result.inserted_id
-            logger.info(f"Created new user: {email}")
-            return user_data
-
-        return user
-
-    except auth.InvalidIdTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "message": "Invalid authentication token",
-                "code": "INVALID_ID_TOKEN",
-                "error": "The provided Firebase ID token is invalid"
-            }
-        )
-    except auth.ExpiredIdTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "message": "Authentication token expired",
-                "code": "EXPIRED_ID_TOKEN",
-                "error": "The provided Firebase ID token has expired"
-            }
-        )
-    except Exception as e:
-        logger.error(f"Token verification error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={
-                "message": "Authentication error",
-                "code": "AUTH_ERROR",
-                "error": str(e)
-            }
-        )
-
-
-def get_current_user(user: dict = Depends(verify_firebase_token)) -> dict:
-    """
-    Get current authenticated user.
-
-    Args:
-        user: User data from Firebase token verification
-
-    Returns:
-        dict: Current user data
-    """
-    return user
+# Hardcoded email for simplified testing (no Firebase token required)
+HARDCODED_EMAIL = "dinhthongchau@gmail.com"

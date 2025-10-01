@@ -4,7 +4,7 @@
 - **App type**: Full-stack English learning app (Flutter + FastAPI)
 - **Scope**: Simplified test repositories for folder user management and vocabulary with chat AI
 - **Key modules**:
-  - `/be_enzo_english_test` (FastAPI backend on port 8899)
+  - `/be_enzo_english_test` (FastAPI backend on port 8829)
   - `/flutter_enzo_english_test` (Flutter mobile/web app - to be implemented)
 - **Primary workflow**: Feature development via direct commits; small, focused changes preferred
 
@@ -23,7 +23,7 @@
 pip install -r requirements.txt    # Install dependencies
 
 # Development
-uvicorn main:app --host 0.0.0.0 --port 8899 --reload
+uvicorn main:app --host 0.0.0.0 --port 8829 --reload
 python main.py                     # Alternative entry point
 
 # Code quality
