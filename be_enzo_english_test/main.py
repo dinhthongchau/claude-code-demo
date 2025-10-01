@@ -4,6 +4,7 @@ import logging
 from dotenv import load_dotenv
 import pathlib
 from dependencies import get_db, FirebaseAuth
+from routers.auth_router import router as auth_router
 import uvicorn
 
 # Load environment variables
@@ -52,6 +53,9 @@ app.add_middleware(
 logging.getLogger("pymongo").setLevel(logging.WARNING)
 logging.getLogger("motor").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+# Include routers
+app.include_router(auth_router)
 
 
 @app.on_event("startup")
