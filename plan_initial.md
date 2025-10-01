@@ -735,23 +735,23 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase F: Documentation (Optional)
-- [ ] **Update CLAUDE.md** (if needed):
-  - [ ] Add word endpoints to API section
-  - [ ] Update task 1.4 status to completed
-  - [ ] Document any architectural decisions
+#### Phase F: Documentation ✅
+- [x] **Update CLAUDE.md** (if needed):
+  - [x] Add word endpoints to API section
+  - [x] Update task 1.4 status to completed
+  - [x] Document any architectural decisions
 
-- [ ] **Update README.md** (if exists):
-  - [ ] Add word endpoints to API documentation
-  - [ ] Add example requests/responses
-  - [ ] Update feature list
+- [x] **Update README.md** (if exists):
+  - [x] Add word endpoints to API documentation (already present)
+  - [x] Add example requests/responses (available via Swagger)
+  - [x] Update feature list (already complete)
 
-- [ ] **Create API documentation** (optional):
-  - [ ] Swagger UI already auto-generated ✅
-  - [ ] Consider exporting OpenAPI spec for reference
-  - [ ] Consider creating Postman collection
+- [x] **Create API documentation** (optional):
+  - [x] Swagger UI already auto-generated ✅
+  - [x] Consider exporting OpenAPI spec for reference (available at /openapi.json)
+  - [x] Consider creating Postman collection (optional - Swagger sufficient)
 
-- [ ] **Commit documentation**: `git commit -m "docs: add word endpoints documentation"`
+- [x] **Commit documentation**: `git commit -m "docs: update CLAUDE.md with completed word endpoints"`
 
 ## Phase 2: Flutter Mobile Repository Setup (Basic Features Only)
 

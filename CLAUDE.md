@@ -33,8 +33,8 @@ ruff format                        # Format code
 
 # Testing
 python tests/test_auth.py          # Test authentication
-python tests/test_folders.py       # Test folders (when implemented)
-python tests/test_words.py         # Test words (when implemented)
+python tests/test_folders.py       # Test folders
+python tests/test_words.py         # Test words
 ```
 
 ### Flutter (`flutter_enzo_english_test/` - planned)
@@ -81,8 +81,8 @@ flutter build web                  # Web build
   - Firebase Auth via `FirebaseAuth.initialize()`
 - **Routers**:
   - `auth_router.py`: Authentication endpoints
-  - `folders_router.py`: Folder CRUD (planned)
-  - `words_router.py`: Word CRUD with AI chat (planned)
+  - `folders_router.py`: Folder CRUD (complete)
+  - `words_router.py`: Word CRUD (complete - AI chat planned separately)
 - **Response format**: JSON with status, message, data fields
 - **Authentication**: Firebase ID token in `Authorization: Bearer <token>` header
 - **Database**: MongoDB collections: `users`, `folders`, `words`
@@ -136,16 +136,19 @@ BASE_URL_WEB=http://localhost:8829
 ### Current (Implemented)
 - `GET /api/v1/health`: Health check
 - `POST /api/v1/auth/current-user`: Get/create user (no auth required - simplified)
-
-### Planned
 - `GET /api/v1/folders`: List user folders
 - `POST /api/v1/folders`: Create folder
 - `PUT /api/v1/folders/{id}`: Update folder
 - `DELETE /api/v1/folders/{id}`: Delete folder
-- `GET /api/v1/folders/{id}/words`: List words in folder
-- `POST /api/v1/words`: Create word with AI assistance
-- `PUT /api/v1/words/{id}`: Update word
-- `DELETE /api/v1/words/{id}`: Delete word
+- `GET /api/v1/folders/{folder_id}/words`: List words in folder
+- `GET /api/v1/words/{word_id}`: Get word details
+- `POST /api/v1/words`: Create word
+- `PUT /api/v1/words/{word_id}`: Update word
+- `DELETE /api/v1/words/{word_id}`: Delete word
+
+### Planned
+- AI-assisted word creation with OpenAI integration
+- Image suggestions with Pixabay integration
 
 ## Instructions to Claude
 
@@ -182,11 +185,11 @@ See `plan_initial.md` for detailed task breakdown:
 - **Phase 1**: Backend setup (Tasks 1.1-1.5)
   - ✅ Task 1.1: Repository structure
   - ✅ Task 1.2: Simplified authentication
-  - ⏳ Task 1.3: Folder endpoints
-  - ⏳ Task 1.4: Word endpoints with AI
-  - ⏳ Task 1.5: Documentation
-- **Phase 2**: Flutter setup (Tasks 2.1-2.13)
-- **Phase 3**: Integration testing (Tasks 3.1-3.5)
+  - ✅ Task 1.3: Folder endpoints (CRUD complete)
+  - ✅ Task 1.4: Word endpoints (CRUD complete - AI integration planned separately)
+  - ⏳ Task 1.5: Documentation (in progress)
+- **Phase 2**: Flutter setup (Tasks 2.1-2.13) - planned
+- **Phase 3**: Integration testing (Tasks 3.1-3.5) - planned
 
 ## Reference Projects
 
