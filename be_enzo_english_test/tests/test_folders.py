@@ -12,15 +12,22 @@ import requests
 import json
 import sys
 import io
+import os
 from typing import Optional, Dict, Any
+from pathlib import Path
+from dotenv import load_dotenv
 
 # Fix Windows console encoding issues
-if sys.platform == 'win32':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
-# Base URL for the test server
-BASE_URL = "http://localhost:8899"
+# Load environment variables from tests/.env
+test_dir = Path(__file__).parent
+load_dotenv(test_dir / ".env")
+
+# Base URL for the test server (from .env)
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8829")
 
 # Global variable to store created folder ID for tests
 created_folder_id: Optional[str] = None
@@ -30,11 +37,11 @@ test_user_id: Optional[str] = None
 def print_separator(title=""):
     """Print a nice separator."""
     if title:
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print(f"  {title}")
-        print("="*80)
+        print("=" * 80)
     else:
-        print("="*80)
+        print("=" * 80)
 
 
 def print_result(test_name, passed, message=""):
@@ -112,10 +119,16 @@ def test_list_folders_empty():
         assert isinstance(data["data"], list), "Data should be a list"
 
         # After cleanup, should have no TEST_ folders
-        test_folders = [f for f in data["data"] if f.get("name", "").startswith("TEST_")]
+        test_folders = [
+            f for f in data["data"] if f.get("name", "").startswith("TEST_")
+        ]
         assert len(test_folders) == 0, "Should have no TEST_ folders after cleanup"
 
-        print_result("List Folders (Empty)", True, f"Total folders: {len(data['data'])}, TEST_ folders: 0")
+        print_result(
+            "List Folders (Empty)",
+            True,
+            f"Total folders: {len(data['data'])}, TEST_ folders: 0",
+        )
         return True
 
     except requests.exceptions.ConnectionError:
@@ -145,7 +158,7 @@ def test_create_folder_success():
         "name": "TEST_My Vocabulary",
         "description": "Test folder for vocabulary words",
         "color": "#FF5733",
-        "icon": "📚"
+        "icon": "📚",
     }
 
     print(f"Request Body: {json.dumps(payload, indent=2)}")
@@ -168,7 +181,9 @@ def test_create_folder_success():
         assert len(folder["id"]) == 24, "Folder id should be 24 characters (ObjectId)"
 
         assert folder["name"] == payload["name"], "Folder name should match"
-        assert folder["description"] == payload["description"], "Description should match"
+        assert folder["description"] == payload["description"], (
+            "Description should match"
+        )
         assert folder["color"] == payload["color"], "Color should match"
         assert folder["icon"] == payload["icon"], "Icon should match"
 
@@ -205,9 +220,7 @@ def test_create_folder_missing_name():
     url = f"{BASE_URL}/api/v1/folders"
     print(f"POST {url}")
 
-    payload = {
-        "description": "No name provided"
-    }
+    payload = {"description": "No name provided"}
 
     print(f"Request Body: {json.dumps(payload, indent=2)}")
 
@@ -217,20 +230,26 @@ def test_create_folder_missing_name():
         print(f"Response: {json.dumps(response.json(), indent=2)}")
 
         # Assertions - should fail with 400 or 422
-        assert response.status_code in [400, 422], f"Expected 400 or 422, got {response.status_code}"
+        assert response.status_code in [400, 422], (
+            f"Expected 400 or 422, got {response.status_code}"
+        )
 
         data = response.json()
         # FastAPI validation errors have "detail" field
         assert "detail" in data, "Error response should contain detail"
 
-        print_result("Create Folder (Missing Name)", True, "Correctly rejected missing name")
+        print_result(
+            "Create Folder (Missing Name)", True, "Correctly rejected missing name"
+        )
         return True
 
     except AssertionError as e:
         print_result("Create Folder (Missing Name)", False, str(e))
         return False
     except Exception as e:
-        print_result("Create Folder (Missing Name)", False, f"Unexpected error: {str(e)}")
+        print_result(
+            "Create Folder (Missing Name)", False, f"Unexpected error: {str(e)}"
+        )
         return False
 
 
@@ -244,10 +263,7 @@ def test_create_folder_empty_name():
     url = f"{BASE_URL}/api/v1/folders"
     print(f"POST {url}")
 
-    payload = {
-        "name": "",
-        "description": "Empty name"
-    }
+    payload = {"name": "", "description": "Empty name"}
 
     print(f"Request Body: {json.dumps(payload, indent=2)}")
 
@@ -257,12 +273,16 @@ def test_create_folder_empty_name():
         print(f"Response: {json.dumps(response.json(), indent=2)}")
 
         # Assertions - should fail with 400 or 422
-        assert response.status_code in [400, 422], f"Expected 400 or 422, got {response.status_code}"
+        assert response.status_code in [400, 422], (
+            f"Expected 400 or 422, got {response.status_code}"
+        )
 
         data = response.json()
         assert "detail" in data, "Error response should contain detail"
 
-        print_result("Create Folder (Empty Name)", True, "Correctly rejected empty name")
+        print_result(
+            "Create Folder (Empty Name)", True, "Correctly rejected empty name"
+        )
         return True
 
     except AssertionError as e:
@@ -305,10 +325,14 @@ def test_list_folders_with_data():
             assert "created_at" in folder, "Each folder should have created_at"
 
         # Check that our test folder exists
-        test_folder = next((f for f in data["data"] if f["id"] == created_folder_id), None)
+        test_folder = next(
+            (f for f in data["data"] if f["id"] == created_folder_id), None
+        )
         assert test_folder is not None, "Created test folder should be in the list"
 
-        print_result("List Folders (With Data)", True, f"Found {len(data['data'])} folder(s)")
+        print_result(
+            "List Folders (With Data)", True, f"Found {len(data['data'])} folder(s)"
+        )
         return True
 
     except AssertionError as e:
@@ -355,14 +379,18 @@ def test_get_folder_success():
         assert "created_at" in folder, "Should have created_at"
         assert "updated_at" in folder, "Should have updated_at"
 
-        print_result("Get Single Folder (Success)", True, f"Retrieved folder: {folder['name']}")
+        print_result(
+            "Get Single Folder (Success)", True, f"Retrieved folder: {folder['name']}"
+        )
         return True
 
     except AssertionError as e:
         print_result("Get Single Folder (Success)", False, str(e))
         return False
     except Exception as e:
-        print_result("Get Single Folder (Success)", False, f"Unexpected error: {str(e)}")
+        print_result(
+            "Get Single Folder (Success)", False, f"Unexpected error: {str(e)}"
+        )
         return False
 
 
@@ -387,7 +415,9 @@ def test_get_folder_not_found():
         assert response.status_code == 404, f"Expected 404, got {response.status_code}"
 
         data = response.json()
-        assert "detail" in data or "message" in data, "Error response should have detail/message"
+        assert "detail" in data or "message" in data, (
+            "Error response should have detail/message"
+        )
 
         print_result("Get Single Folder (Not Found)", True, "Correctly returned 404")
         return True
@@ -396,7 +426,9 @@ def test_get_folder_not_found():
         print_result("Get Single Folder (Not Found)", False, str(e))
         return False
     except Exception as e:
-        print_result("Get Single Folder (Not Found)", False, f"Unexpected error: {str(e)}")
+        print_result(
+            "Get Single Folder (Not Found)", False, f"Unexpected error: {str(e)}"
+        )
         return False
 
 
@@ -420,16 +452,22 @@ def test_get_folder_invalid_id():
         assert response.status_code == 400, f"Expected 400, got {response.status_code}"
 
         data = response.json()
-        assert "detail" in data or "message" in data, "Error response should have detail/message"
+        assert "detail" in data or "message" in data, (
+            "Error response should have detail/message"
+        )
 
-        print_result("Get Single Folder (Invalid ID)", True, "Correctly rejected invalid ID")
+        print_result(
+            "Get Single Folder (Invalid ID)", True, "Correctly rejected invalid ID"
+        )
         return True
 
     except AssertionError as e:
         print_result("Get Single Folder (Invalid ID)", False, str(e))
         return False
     except Exception as e:
-        print_result("Get Single Folder (Invalid ID)", False, f"Unexpected error: {str(e)}")
+        print_result(
+            "Get Single Folder (Invalid ID)", False, f"Unexpected error: {str(e)}"
+        )
         return False
 
 
@@ -450,7 +488,7 @@ def test_update_folder_success():
     payload = {
         "name": "TEST_Updated Vocabulary",
         "color": "#00FF00",
-        "description": "Updated description"
+        "description": "Updated description",
     }
 
     print(f"Request Body: {json.dumps(payload, indent=2)}")
@@ -471,7 +509,9 @@ def test_update_folder_success():
         assert folder["id"] == created_folder_id, "Folder ID should not change"
         assert folder["name"] == payload["name"], "Name should be updated"
         assert folder["color"] == payload["color"], "Color should be updated"
-        assert folder["description"] == payload["description"], "Description should be updated"
+        assert folder["description"] == payload["description"], (
+            "Description should be updated"
+        )
 
         # updated_at should be more recent than created_at
         assert "updated_at" in folder, "Should have updated_at"
@@ -499,9 +539,7 @@ def test_update_folder_not_found():
     url = f"{BASE_URL}/api/v1/folders/{fake_id}"
     print(f"PUT {url}")
 
-    payload = {
-        "name": "TEST_Should Not Exist"
-    }
+    payload = {"name": "TEST_Should Not Exist"}
 
     print(f"Request Body: {json.dumps(payload, indent=2)}")
 
@@ -514,7 +552,9 @@ def test_update_folder_not_found():
         assert response.status_code == 404, f"Expected 404, got {response.status_code}"
 
         data = response.json()
-        assert "detail" in data or "message" in data, "Error response should have detail/message"
+        assert "detail" in data or "message" in data, (
+            "Error response should have detail/message"
+        )
 
         print_result("Update Folder (Not Found)", True, "Correctly returned 404")
         return True
@@ -593,7 +633,9 @@ def test_delete_folder_not_found():
         assert response.status_code == 404, f"Expected 404, got {response.status_code}"
 
         data = response.json()
-        assert "detail" in data or "message" in data, "Error response should have detail/message"
+        assert "detail" in data or "message" in data, (
+            "Error response should have detail/message"
+        )
 
         print_result("Delete Folder (Not Found)", True, "Correctly returned 404")
         return True
@@ -612,9 +654,9 @@ def test_delete_folder_not_found():
 def print_test_summary(results):
     """Print summary of all tests."""
     print_separator()
-    print("\n" + "╔" + "="*78 + "╗")
-    print("║" + " "*28 + "TEST SUMMARY" + " "*38 + "║")
-    print("╚" + "="*78 + "╝")
+    print("\n" + "╔" + "=" * 78 + "╗")
+    print("║" + " " * 28 + "TEST SUMMARY" + " " * 38 + "║")
+    print("╚" + "=" * 78 + "╝")
 
     total = len(results)
     passed = sum(results.values())
@@ -638,9 +680,9 @@ def print_test_summary(results):
 # ==============================================================================
 def print_curl_examples():
     """Print CURL command examples for manual testing."""
-    print("\n" + "╔" + "="*78 + "╗")
-    print("║" + " "*26 + "CURL EXAMPLES" + " "*39 + "║")
-    print("╚" + "="*78 + "╝")
+    print("\n" + "╔" + "=" * 78 + "╗")
+    print("║" + " " * 26 + "CURL EXAMPLES" + " " * 39 + "║")
+    print("╚" + "=" * 78 + "╝")
 
     print("\n1. List All Folders:")
     print(f"   curl -X GET {BASE_URL}/api/v1/folders")
@@ -648,7 +690,9 @@ def print_curl_examples():
     print("\n2. Create Folder:")
     print(f"   curl -X POST {BASE_URL}/api/v1/folders \\")
     print('     -H "Content-Type: application/json" \\')
-    print('     -d \'{"name":"My Vocabulary","description":"My words","color":"#FF5733","icon":"📚"}\'')
+    print(
+        '     -d \'{"name":"My Vocabulary","description":"My words","color":"#FF5733","icon":"📚"}\''
+    )
 
     print("\n3. Get Single Folder:")
     print(f"   curl -X GET {BASE_URL}/api/v1/folders/{{folder_id}}")
@@ -675,10 +719,10 @@ def run_all_tests():
     global test_user_id
 
     print("\n")
-    print("╔" + "="*78 + "╗")
-    print("║" + " "*24 + "FOLDER CRUD ENDPOINT TESTS" + " "*28 + "║")
-    print("║" + " "*25 + "(Simplified - No Token)" + " "*28 + "║")
-    print("╚" + "="*78 + "╝")
+    print("╔" + "=" * 78 + "╗")
+    print("║" + " " * 24 + "FOLDER CRUD ENDPOINT TESTS" + " " * 28 + "║")
+    print("║" + " " * 25 + "(Simplified - No Token)" + " " * 28 + "║")
+    print("╚" + "=" * 78 + "╝")
 
     # Setup: Get test user ID
     print("\n🔧 Setup: Getting test user ID...")
@@ -734,5 +778,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\n✗ FATAL ERROR: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
