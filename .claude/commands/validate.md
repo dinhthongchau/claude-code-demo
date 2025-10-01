@@ -5,7 +5,7 @@ description: Deep validation of completed implementation
 
 # Implementation Validation
 
-Ultrathink and thoroughly validate the implementation we juok st completed
+Think hard and thoroughly validate the implementation we juok st completed
 
 ## Validation Criteria
 

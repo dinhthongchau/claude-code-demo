@@ -30,6 +30,13 @@
 - [x] Fix Windows console encoding issues in test file
 - [x] Test: Call endpoint and verify user data returned (4/4 tests passed)
 
+### Task 1.2.1: Create Project Documentation ✅
+**Documentation and guidance for development**
+
+- [x] Create root `CLAUDE.md` with monorepo overview and architecture
+- [x] Update `be_enzo_english_test/README.md` to reflect simplified scope
+- [x] Add custom Claude Code commands for project workflow
+
 ### Task 1.3: Implement User Folder Endpoints
 **Based on:** `be_enzo_english` existing folder
 

@@ -1,7 +1,6 @@
 # Enzo English Test Backend
 
 Simplified FastAPI backend for testing core Enzo English functionality:
-- Firebase Authentication
 - User Folder Management
 - Word List Management
 
