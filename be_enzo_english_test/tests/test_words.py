@@ -131,7 +131,7 @@ def cleanup_test_words():
                         # Endpoint doesn't exist yet, skip cleanup entirely
                         endpoint_exists = False
                         break
-                except:
+                except Exception:
                     # Skip if endpoint doesn't exist or times out
                     endpoint_exists = False
                     break
@@ -196,7 +196,7 @@ def test_setup_create_folder():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         folder = data["data"]
@@ -242,7 +242,7 @@ def test_list_words_empty():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
         assert isinstance(data["data"], list), "Data should be a list"
 
@@ -298,7 +298,7 @@ def test_create_word_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -648,7 +648,7 @@ def test_create_word_minimal():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -702,7 +702,7 @@ def test_create_word_empty_arrays():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -742,7 +742,7 @@ def test_list_words_with_data():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
         assert isinstance(data["data"], list), "Data should be a list"
         assert len(data["data"]) > 0, "Should have at least one word"
@@ -793,7 +793,7 @@ def test_list_words_pagination():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
         assert isinstance(data["data"], list), "Data should be a list"
         assert len(data["data"]) <= 2, "Should return at most 2 words"
@@ -901,7 +901,7 @@ def test_get_word_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -1022,7 +1022,7 @@ def test_update_word_partial():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -1071,7 +1071,7 @@ def test_update_word_arrays():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         word = data["data"]
@@ -1190,7 +1190,7 @@ def test_delete_word_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
 
         # Verify word is actually deleted
         get_url = f"{BASE_URL}/api/v1/words/{created_word_id}"
@@ -1329,7 +1329,7 @@ def run_all_tests():
     try:
         cleanup_test_words()
         cleanup_test_folders()
-    except:
+    except Exception:
         print("⚠ Cleanup skipped (endpoints may not exist yet)")
 
     results = {}

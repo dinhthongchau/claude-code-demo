@@ -99,7 +99,7 @@ def test_current_user():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         user_data = data["data"]

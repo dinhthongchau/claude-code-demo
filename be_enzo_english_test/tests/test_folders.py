@@ -114,7 +114,7 @@ def test_list_folders_empty():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
         assert isinstance(data["data"], list), "Data should be a list"
 
@@ -172,7 +172,7 @@ def test_create_folder_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         folder = data["data"]
@@ -312,7 +312,7 @@ def test_list_folders_with_data():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
         assert isinstance(data["data"], list), "Data should be a list"
         assert len(data["data"]) > 0, "Should have at least one folder"
@@ -366,7 +366,7 @@ def test_get_folder_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         folder = data["data"]
@@ -502,7 +502,7 @@ def test_update_folder_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
         assert "data" in data, "Response should contain data"
 
         folder = data["data"]
@@ -592,7 +592,7 @@ def test_delete_folder_success():
         assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
         data = response.json()
-        assert data["success"] == True, "Response should be successful"
+        assert data["success"], "Response should be successful"
 
         # Verify folder is actually deleted by trying to get it
         get_url = f"{BASE_URL}/api/v1/folders/{created_folder_id}"
