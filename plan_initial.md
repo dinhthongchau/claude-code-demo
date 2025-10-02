@@ -1408,7 +1408,6 @@ All new tasks must follow this TDD process:
 
 #### Phase A: Plan & Design (PLAN) 📋 **[COMPLETED]**
 - [x] **Update API endpoints in Flutter**:
-  - Change from `/users/{user_id}/folders/{folder_id}/words`
   - To `/users/{user_id}/folders/{folder_id}/wordlist`
 
 - [x] **New Flutter models needed**:
