@@ -72,7 +72,7 @@ class TestWordListsSystem:
         """Set up test data before each test."""
         # Ensure test words exist in global dictionary
         words_collection = db_client["words"]
-        
+
         test_words = [
             {
                 "word_id": "APPLE_001",
@@ -111,7 +111,7 @@ class TestWordListsSystem:
                 "updated_at": datetime.utcnow(),
             },
         ]
-        
+
         # Insert test words (ignore duplicates)
         for word in test_words:
             existing = await words_collection.find_one({"word_id": word["word_id"]})
@@ -135,18 +135,14 @@ class TestWordListsSystem:
         """Test creating a WordList with no words."""
         response = client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert data["message"] == "WordList created successfully"
-        
+
         wordlist = data["data"]
         assert wordlist["user_id"] == TEST_USER_ID
         assert wordlist["folder_id"] == TEST_FOLDER_ID
@@ -162,14 +158,14 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002"]
-            }
+                "words": ["APPLE_001", "BANANA_002"],
+            },
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 2
         assert "APPLE_001" in wordlist["words"]
@@ -180,23 +176,15 @@ class TestWordListsSystem:
         # Create first WordList
         client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
-        
+
         # Try to create duplicate
         response = client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
-        
+
         assert response.status_code == 409
         data = response.json()
         assert "already exists" in data["detail"]
@@ -208,10 +196,10 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["NONEXISTENT_WORD"]
-            }
+                "words": ["NONEXISTENT_WORD"],
+            },
         )
-        
+
         assert response.status_code == 404
         data = response.json()
         assert "not found in global dictionary" in data["detail"]
@@ -224,18 +212,18 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001"]
-            }
+                "words": ["APPLE_001"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Get WordList
         response = client.get(f"/api/v1/wordlists/{word_list_id}")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert wordlist["word_list_id"] == word_list_id
         assert wordlist["words"] == ["APPLE_001"]
@@ -243,7 +231,7 @@ class TestWordListsSystem:
     def test_get_wordlist_not_found(self, client):
         """Test getting non-existent WordList should fail."""
         response = client.get("/api/v1/wordlists/nonexistent_id")
-        
+
         assert response.status_code == 404
         data = response.json()
         assert "not found" in data["detail"]
@@ -256,21 +244,21 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002"]
-            }
+                "words": ["APPLE_001", "BANANA_002"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Get WordList with resolved words
         response = client.get(f"/api/v1/wordlists/{word_list_id}/words")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 2
-        
+
         # Check that words are resolved (not just IDs)
         for word in wordlist["words"]:
             assert "word_id" in word
@@ -284,26 +272,19 @@ class TestWordListsSystem:
         # Create WordList first
         create_response = client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Update WordList
         response = client.put(
-            f"/api/v1/wordlists/{word_list_id}",
-            json={
-                "folder_id": "new_folder_id_123"
-            }
+            f"/api/v1/wordlists/{word_list_id}", json={"folder_id": "new_folder_id_123"}
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert wordlist["folder_id"] == "new_folder_id_123"
 
@@ -315,19 +296,19 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001"]
-            }
+                "words": ["APPLE_001"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Delete WordList
         response = client.delete(f"/api/v1/wordlists/{word_list_id}")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert data["data"]["deleted"] is True
-        
+
         # Verify WordList is gone
         get_response = client.get(f"/api/v1/wordlists/{word_list_id}")
         assert get_response.status_code == 404
@@ -344,24 +325,22 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001"]
-            }
+                "words": ["APPLE_001"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Add more words
         response = client.post(
             f"/api/v1/wordlists/{word_list_id}/words",
-            json={
-                "word_ids": ["BANANA_002", "GRAPE_003"]
-            }
+            json={"word_ids": ["BANANA_002", "GRAPE_003"]},
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert "Added 2 words" in data["message"]
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 3
         assert "APPLE_001" in wordlist["words"]
@@ -376,24 +355,24 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002"]
-            }
+                "words": ["APPLE_001", "BANANA_002"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Try to add existing and new words
         response = client.post(
             f"/api/v1/wordlists/{word_list_id}/words",
             json={
                 "word_ids": ["APPLE_001", "GRAPE_003"]  # APPLE_001 is duplicate
-            }
+            },
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert "Added 1 words" in data["message"]
         assert "skipped 1 duplicates" in data["message"]
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 3  # Should have 3 total (not 4)
 
@@ -402,22 +381,16 @@ class TestWordListsSystem:
         # Create WordList first
         create_response = client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Try to add non-existent word
         response = client.post(
             f"/api/v1/wordlists/{word_list_id}/words",
-            json={
-                "word_ids": ["NONEXISTENT_WORD"]
-            }
+            json={"word_ids": ["NONEXISTENT_WORD"]},
         )
-        
+
         assert response.status_code == 404
         data = response.json()
         assert "not found in global dictionary" in data["detail"]
@@ -430,19 +403,19 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002", "GRAPE_003"]
-            }
+                "words": ["APPLE_001", "BANANA_002", "GRAPE_003"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Remove one word
         response = client.delete(f"/api/v1/wordlists/{word_list_id}/words/BANANA_002")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert "removed from WordList" in data["message"]
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 2
         assert "APPLE_001" in wordlist["words"]
@@ -457,18 +430,18 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001"]
-            }
+                "words": ["APPLE_001"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Try to remove word that's not in the list
         response = client.delete(f"/api/v1/wordlists/{word_list_id}/words/BANANA_002")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert "was not in WordList" in data["message"]
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 1  # Should remain unchanged
 
@@ -484,22 +457,24 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002"]
-            }
+                "words": ["APPLE_001", "BANANA_002"],
+            },
         )
-        
+
         # Get folder's WordList
-        response = client.get(f"/api/v1/users/{TEST_USER_ID}/folders/{TEST_FOLDER_ID}/wordlist")
-        
+        response = client.get(
+            f"/api/v1/users/{TEST_USER_ID}/folders/{TEST_FOLDER_ID}/wordlist"
+        )
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert wordlist["user_id"] == TEST_USER_ID
         assert wordlist["folder_id"] == TEST_FOLDER_ID
         assert len(wordlist["words"]) == 2
-        
+
         # Verify words are resolved
         for word in wordlist["words"]:
             assert "word_id" in word
@@ -509,13 +484,15 @@ class TestWordListsSystem:
     def test_get_folder_wordlist_empty(self, client):
         """Test getting WordList for folder with no WordList (should return empty)."""
         # Don't create WordList, just try to get it
-        response = client.get(f"/api/v1/users/{TEST_USER_ID}/folders/nonexistent_folder/wordlist")
-        
+        response = client.get(
+            f"/api/v1/users/{TEST_USER_ID}/folders/nonexistent_folder/wordlist"
+        )
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert "No WordList found" in data["message"]
-        
+
         wordlist = data["data"]
         assert wordlist["words"] == []
 
@@ -527,18 +504,18 @@ class TestWordListsSystem:
             json={
                 "user_id": TEST_USER_ID,
                 "folder_id": TEST_FOLDER_ID,
-                "words": ["APPLE_001", "BANANA_002", "GRAPE_003", "ORANGE_004"]
-            }
+                "words": ["APPLE_001", "BANANA_002", "GRAPE_003", "ORANGE_004"],
+            },
         )
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # Get stats
         response = client.get(f"/api/v1/wordlists/{word_list_id}/stats")
-        
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         stats = data["data"]
         assert stats["total_words"] == 4
         assert stats["words_with_images"] == 4  # All test words have images
@@ -554,45 +531,41 @@ class TestWordListsSystem:
         # 1. Create empty WordList
         create_response = client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
         assert create_response.status_code == 200
         word_list_id = create_response.json()["data"]["word_list_id"]
-        
+
         # 2. Add words to WordList
         add_response = client.post(
             f"/api/v1/wordlists/{word_list_id}/words",
-            json={
-                "word_ids": ["APPLE_001", "BANANA_002", "GRAPE_003"]
-            }
+            json={"word_ids": ["APPLE_001", "BANANA_002", "GRAPE_003"]},
         )
         assert add_response.status_code == 200
         assert len(add_response.json()["data"]["words"]) == 3
-        
+
         # 3. Get WordList with resolved words
         get_response = client.get(f"/api/v1/wordlists/{word_list_id}/words")
         assert get_response.status_code == 200
         wordlist = get_response.json()["data"]
         assert len(wordlist["words"]) == 3
-        
+
         # Verify words are fully resolved
         apple_word = next(w for w in wordlist["words"] if w["word_id"] == "APPLE_001")
         assert apple_word["word"] == "apple"
         assert apple_word["definition"] == "A round red fruit that grows on trees"
-        
+
         # 4. Remove one word
-        remove_response = client.delete(f"/api/v1/wordlists/{word_list_id}/words/BANANA_002")
+        remove_response = client.delete(
+            f"/api/v1/wordlists/{word_list_id}/words/BANANA_002"
+        )
         assert remove_response.status_code == 200
         assert len(remove_response.json()["data"]["words"]) == 2
-        
+
         # 5. Delete WordList
         delete_response = client.delete(f"/api/v1/wordlists/{word_list_id}")
         assert delete_response.status_code == 200
-        
+
         # 6. Verify deletion
         final_get_response = client.get(f"/api/v1/wordlists/{word_list_id}")
         assert final_get_response.status_code == 404
@@ -602,32 +575,30 @@ class TestWordListsSystem:
         # 1. Create WordList for folder (simulating folder creation)
         client.post(
             "/api/v1/wordlists",
-            json={
-                "user_id": TEST_USER_ID,
-                "folder_id": TEST_FOLDER_ID,
-                "words": []
-            }
+            json={"user_id": TEST_USER_ID, "folder_id": TEST_FOLDER_ID, "words": []},
         )
-        
+
         # 2. Add words to folder (simulating adding words via UI)
-        word_list_id = f"list_{TEST_USER_ID.replace('@', '_').replace('.', '_')}_{TEST_FOLDER_ID}"
+        word_list_id = (
+            f"list_{TEST_USER_ID.replace('@', '_').replace('.', '_')}_{TEST_FOLDER_ID}"
+        )
         client.post(
             f"/api/v1/wordlists/{word_list_id}/words",
-            json={
-                "word_ids": ["APPLE_001", "BANANA_002", "GRAPE_003", "ORANGE_004"]
-            }
+            json={"word_ids": ["APPLE_001", "BANANA_002", "GRAPE_003", "ORANGE_004"]},
         )
-        
+
         # 3. Flutter fetches words for display (main endpoint)
-        response = client.get(f"/api/v1/users/{TEST_USER_ID}/folders/{TEST_FOLDER_ID}/wordlist")
-        
+        response = client.get(
+            f"/api/v1/users/{TEST_USER_ID}/folders/{TEST_FOLDER_ID}/wordlist"
+        )
+
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        
+
         wordlist = data["data"]
         assert len(wordlist["words"]) == 4
-        
+
         # Verify all data needed for Flutter display is present
         for word in wordlist["words"]:
             assert word["word_id"] is not None
@@ -647,22 +618,19 @@ if __name__ == "__main__":
     """Run tests directly with pytest."""
     import subprocess
     import sys
-    
+
     print("🧪 Running WordLists System Tests...")
     print("=" * 60)
-    
+
     # Run pytest with verbose output
-    result = subprocess.run([
-        sys.executable, "-m", "pytest", 
-        __file__, 
-        "-v", 
-        "--tb=short",
-        "--color=yes"
-    ], capture_output=False)
-    
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", __file__, "-v", "--tb=short", "--color=yes"],
+        capture_output=False,
+    )
+
     if result.returncode == 0:
         print("\n✅ All tests passed!")
     else:
         print(f"\n❌ Tests failed with exit code: {result.returncode}")
-    
+
     sys.exit(result.returncode)

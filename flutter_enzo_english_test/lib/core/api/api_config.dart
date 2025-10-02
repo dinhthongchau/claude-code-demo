@@ -14,9 +14,13 @@ class ApiConfig {
   static const String authEndpoint = '/api/v1/auth/current-user';
   static const String foldersEndpoint = '/api/v1/folders';
 
-  /// User folder words endpoint (simplified structure)
+  /// User folder words endpoint (simplified structure) - DEPRECATED
   static String userFolderWordsEndpoint(String userId, String folderId) =>
       '/api/v1/users/$userId/folders/$folderId/words';
+
+  /// User folder WordList endpoint (NEW - WordLists system)
+  static String userFolderWordListEndpoint(String userId, String folderId) =>
+      '/api/v1/users/$userId/folders/$folderId/wordlist';
 
   static String wordEndpoint(String wordId) => '/api/v1/words/$wordId';
   static const String wordsEndpoint = '/api/v1/words';

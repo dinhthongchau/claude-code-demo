@@ -2,6 +2,7 @@ import 'package:flutter_enzo_english_test/core/api/api_config.dart';
 import 'package:flutter_enzo_english_test/core/errors/exceptions.dart';
 import 'package:flutter_enzo_english_test/core/network/dio_client.dart';
 import 'package:flutter_enzo_english_test/data/models/word_model.dart';
+import 'package:flutter_enzo_english_test/data/models/wordlist_model.dart';
 
 class WordRemoteSource {
   final DioClient dioClient;
@@ -19,8 +20,9 @@ class WordRemoteSource {
       if (limit != null) queryParameters['limit'] = limit;
       if (skip != null) queryParameters['skip'] = skip;
 
+      // Use new WordList endpoint instead of old words endpoint
       final response = await dioClient.get(
-        ApiConfig.userFolderWordsEndpoint(userId, folderId),
+        ApiConfig.userFolderWordListEndpoint(userId, folderId),
         queryParameters: queryParameters,
       );
 
@@ -32,15 +34,17 @@ class WordRemoteSource {
 
       if (responseData['success'] != true) {
         throw ServerException(
-          responseData['message'] ?? 'Failed to fetch words',
+          responseData['message'] ?? 'Failed to fetch WordList',
         );
       }
 
-      final data = responseData['data'] as List<dynamic>;
+      // The response now contains a WordList object with a words array
+      final wordListData = responseData['data'] as Map<String, dynamic>;
+      final wordListModel = WordListModel.fromJson(wordListData);
 
-      return data
-          .map((json) => WordModel.fromJson(json as Map<String, dynamic>))
-          .toList();
+      // Extract the words from the WordList and return as List<WordModel>
+      // This maintains compatibility with existing code that expects List<WordModel>
+      return wordListModel.words.cast<WordModel>();
     } catch (e) {
       rethrow;
     }
