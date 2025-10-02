@@ -1,7 +1,6 @@
 """Delete all folders except 'Test Folder' via API."""
 
 import requests
-import json
 import sys
 import io
 
@@ -70,7 +69,7 @@ def main():
     print(f"{'='*60}")
 
     if folder_to_keep:
-        print(f"\n📁 Remaining folder:")
+        print("\n📁 Remaining folder:")
         print(f"   Name: {folder_to_keep['name']}")
         print(f"   ID: {folder_to_keep['id']}")
         print(f"   Description: {folder_to_keep['description']}")

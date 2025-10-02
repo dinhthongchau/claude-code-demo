@@ -59,11 +59,11 @@ async def move_words():
             print(f"❌ Failed to add {word_id}")
 
     print("\n🎉 Success! Words moved to Test Folder")
-    print(f"\n📱 Now test in Flutter:")
-    print(f"   Folder: Test Folder")
+    print("\n📱 Now test in Flutter:")
+    print("   Folder: Test Folder")
     print(f"   Folder ID: {TEST_FOLDER_ID}")
     print(f"   User ID: {TEST_USER_ID}")
-    print(f"\n🔍 Test API endpoint:")
+    print("\n🔍 Test API endpoint:")
     print(
         f"   http://localhost:8829/api/v1/users/{TEST_USER_ID}/folders/{TEST_FOLDER_ID}/words"
     )

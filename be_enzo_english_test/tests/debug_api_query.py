@@ -4,7 +4,6 @@ import os
 import sys
 from pathlib import Path
 from motor.motor_asyncio import AsyncIOMotorClient
-from bson import ObjectId
 import asyncio
 
 # Add UTF-8 encoding for Windows
@@ -58,7 +57,7 @@ async def debug_query():
                 }
             )
         else:
-            print(f"    ❌ Not found")
+            print("    ❌ Not found")
 
     print(f"\nFinal result: {len(response_data)} words")
     for w in response_data:

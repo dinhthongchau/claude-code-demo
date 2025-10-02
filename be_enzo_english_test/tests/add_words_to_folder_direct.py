@@ -73,7 +73,7 @@ async def add_words_to_folder():
     client.close()
 
     print(f"\n🎉 Success! Added {success_count}/{len(WORD_IDS)} words to folder")
-    print(f"\n📱 Now open your Flutter app and you should see the words with images!")
+    print("\n📱 Now open your Flutter app and you should see the words with images!")
     print(f"   Folder ID: {FOLDER_ID}")
     print(f"   User ID: {TEST_USER_ID}")
 

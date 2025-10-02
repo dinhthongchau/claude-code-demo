@@ -104,7 +104,7 @@ def create_word_with_image(word_id, word, definition, example, image_color):
         print(f"   ❌ Failed to create word: {response.text}")
         return False
 
-    print(f"   ✅ Created word in global dictionary")
+    print("   ✅ Created word in global dictionary")
 
     # Step 2: Upload image
     img = create_test_image(color=image_color)
@@ -131,7 +131,7 @@ def add_word_to_folder(folder_id, word_id):
     )
 
     if response.status_code == 200:
-        print(f"   ✅ Added to folder")
+        print("   ✅ Added to folder")
         return True
     else:
         print(f"   ❌ Failed to add to folder: {response.text}")
@@ -202,10 +202,10 @@ def main():
     print(f"\n{'=' * 60}")
     print(f"🎉 Success! Created {success_count}/{len(sample_words)} words with images")
     print(f"{'=' * 60}")
-    print(f"\n📱 Now check your Flutter app!")
+    print("\n📱 Now check your Flutter app!")
     print(f"   Folder ID: {folder_id}")
     print(f"   User ID: {TEST_USER_ID}")
-    print(f"\n🔍 Test in browser:")
+    print("\n🔍 Test in browser:")
     print(f"   {BASE_URL}/api/v1/users/{TEST_USER_ID}/folders/{folder_id}/words")
 
 
