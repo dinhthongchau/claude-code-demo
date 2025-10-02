@@ -692,6 +692,13 @@ All new tasks must follow this TDD process:
 - [x] **Final test run**: Run all tests to ensure everything works
   - [x] Clear error messages
 
+#### Phase F: Testing Utilities ✅
+- [x] **Create sample word insertion scripts**:
+  - [x] Create `tests/add_sample_words.py` - Interactive script to add words to selected folder
+  - [x] Create `tests/add_sample_words_auto.py` - Automatic script to populate all folders with sample words
+  - [x] Both scripts include diverse vocabulary with definitions, examples, pronunciation
+  - [x] Auto script filters out TEST_ folders and cycles through different word sets
+
 - [x] **Performance considerations** (document for future):
   - [x] Note: Add database indexes in production
   - [x] Index on folder_id for fast word listing
@@ -728,7 +735,7 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase F: Documentation ✅
+#### Phase G: Documentation ✅
 - [x] **Update CLAUDE.md** (if needed):
   - [x] Add word endpoints to API section
   - [x] Update task 1.4 status to completed
