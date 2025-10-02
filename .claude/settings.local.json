@@ -5,7 +5,9 @@
       "Bash(timeout:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: move hardcoded URLs to environment variables\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(python tests:*)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "Bash(flutter create:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
