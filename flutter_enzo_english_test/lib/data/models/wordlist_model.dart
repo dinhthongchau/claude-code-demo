@@ -3,7 +3,7 @@ import 'package:flutter_enzo_english_test/domain/entity/word_entity.dart';
 import 'package:flutter_enzo_english_test/domain/entity/wordlist_entity.dart';
 
 /// WordList model for data layer
-/// 
+///
 /// Represents a collection of words associated with a user and folder.
 /// Maps between JSON API responses and domain entities.
 class WordListModel extends WordListEntity {
@@ -26,18 +26,20 @@ class WordListModel extends WordListEntity {
       if (wordData is String) {
         // If it's just a word ID, create a minimal WordModel
         // This shouldn't happen with the /wordlist endpoint, but handle it gracefully
-        words.add(WordModel(
-          id: '', // No MongoDB ID available
-          wordId: wordData,
-          word: '', // Will need to be resolved
-          definition: '',
-          example: null,
-          imageUrl: null,
-          folderId: '', // Required field
-          userId: '', // Required field
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ));
+        words.add(
+          WordModel(
+            id: '', // No MongoDB ID available
+            wordId: wordData,
+            word: '', // Will need to be resolved
+            definition: '',
+            example: null,
+            imageUrl: null,
+            folderId: '', // Required field
+            userId: '', // Required field
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
       } else if (wordData is Map<String, dynamic>) {
         // Full word object from resolved WordList
         words.add(WordModel.fromJson(wordData));

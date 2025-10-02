@@ -16,14 +16,14 @@ class WordModel extends WordEntity {
 
   factory WordModel.fromJson(Map<String, dynamic> json) {
     return WordModel(
-      id: json['id'] as String,
+      id: json['id'] as String? ?? '', // Handle missing id from WordList response
       wordId: json['word_id'] as String,
       word: json['word'] as String,
       definition: json['definition'] as String,
       example: json['example'] as String?,
       imageUrl: json['image_url'] as String?,
-      folderId: json['folder_id'] as String,
-      userId: json['user_id'] as String,
+      folderId: json['folder_id'] as String? ?? '', // Handle missing folder_id from WordList response
+      userId: json['user_id'] as String? ?? '', // Handle missing user_id from WordList response
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
