@@ -41,6 +41,7 @@ class ApiResponse(BaseModel, Generic[T]):
 
 class UserRole(str, Enum):
     """User role enumeration."""
+
     SUPER_ADMIN = "super-admin"
     ADMIN = "admin"
     USER = "user"
@@ -116,6 +117,7 @@ def get_db() -> AsyncIOMotorDatabase:
 
 class Collections:
     """MongoDB collection names."""
+
     USERS = "users"
     FOLDERS = "folders"
     WORDLISTS = "wordlists"
@@ -123,23 +125,33 @@ class Collections:
 
 def get_collection(collection_name: str):
     """Factory function to get a specific collection dependency."""
-    def _get_collection(db: AsyncIOMotorDatabase = Depends(get_db)) -> AsyncIOMotorCollection:
+
+    def _get_collection(
+        db: AsyncIOMotorDatabase = Depends(get_db),
+    ) -> AsyncIOMotorCollection:
         return db[collection_name]
+
     return _get_collection
 
 
 # Collection-specific dependency getters
-def get_users_collection(db: AsyncIOMotorDatabase = Depends(get_db)) -> AsyncIOMotorCollection:
+def get_users_collection(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> AsyncIOMotorCollection:
     """Get users collection."""
     return db[Collections.USERS]
 
 
-def get_folders_collection(db: AsyncIOMotorDatabase = Depends(get_db)) -> AsyncIOMotorCollection:
+def get_folders_collection(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> AsyncIOMotorCollection:
     """Get folders collection."""
     return db[Collections.FOLDERS]
 
 
-def get_wordlists_collection(db: AsyncIOMotorDatabase = Depends(get_db)) -> AsyncIOMotorCollection:
+def get_wordlists_collection(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> AsyncIOMotorCollection:
     """Get wordlists collection."""
     return db[Collections.WORDLISTS]
 
@@ -156,7 +168,9 @@ class FirebaseAuth:
             try:
                 firebase_project_id = os.getenv("FIREBASE_PROJECT_ID")
                 if not firebase_project_id:
-                    raise ValueError("FIREBASE_PROJECT_ID not set in environment variables")
+                    raise ValueError(
+                        "FIREBASE_PROJECT_ID not set in environment variables"
+                    )
 
                 # Try to load service account from assets directory
                 cred_path = basedir / "assets" / "firebase-adminsdk.json"
