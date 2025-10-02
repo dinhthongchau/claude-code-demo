@@ -1294,4 +1294,305 @@ All new tasks must follow this TDD process:
 
 ---
 
-### Task 3: 
+## Task 3: Implement WordLists System (TDD) 🚧 **[IN PROGRESS]**
+
+**Objective:** Restructure the word management system to use WordLists that contain arrays of word IDs, enabling better organization and performance.
+
+**Current System Issues:**
+- Words are directly assigned to folders via `user_folder_words` collection
+- No grouping mechanism for related words
+- Difficult to manage word collections efficiently
+- No support for word list metadata (creation date, etc.)
+
+**New WordLists System:**
+- **Words Collection**: Global dictionary of all words (unchanged)
+- **WordLists Collection**: Contains arrays of word IDs with metadata
+- **Folders**: Reference WordLists instead of individual words
+- **Flutter**: Fetches WordList → resolves word IDs → displays words
+
+### Task 3.1: Design WordLists Schema & Models ⏳ **[PENDING]**
+
+#### WordList Schema Design:
+```json
+{
+  "word_list_id": "list_hygdUu05vYdzKXJ3bWxUj04cIet1_hygdUu05vYdzKXJ3bWxUj04cIet1_folder001",
+  "user_id": "hygdUu05vYdzKXJ3bWxUj04cIet1", 
+  "folder_id": "hygdUu05vYdzKXJ3bWxUj04cIet1_folder001",
+  "words": ["APPLE_001", "BANANA_002", "GRAPE_003", "ORANGE_004"],
+  "created_at": "2025-08-21T01:48:27.065+00:00",
+  "updated_at": "2025-08-22T07:42:06.833+00:00"
+}
+```
+
+#### Backend Models (Pydantic):
+- [ ] **CreateWordListRequest**: Create new WordList
+- [ ] **UpdateWordListRequest**: Update WordList (add/remove words)
+- [ ] **WordListResponse**: WordList data response
+- [ ] **AddWordsToListRequest**: Add multiple words to list
+- [ ] **RemoveWordsFromListRequest**: Remove words from list
+- [ ] **WordListWithWordsResponse**: WordList + resolved word details
+
+#### Database Collections:
+- [ ] **words**: Global dictionary (existing, unchanged)
+- [ ] **wordlists**: New collection for WordLists
+- [ ] **user_folder_words**: DEPRECATED (will be removed)
+- [ ] **folders**: Updated to reference wordlists instead of individual words
+
+### Task 3.2: Implement Backend WordLists System (TDD) ⏳ **[PENDING]**
+
+#### Phase A: Plan & Design (PLAN) 📋
+- [ ] **Design API endpoints**:
+  - `POST /api/v1/wordlists` - Create WordList
+  - `GET /api/v1/wordlists/{wordlist_id}` - Get WordList
+  - `PUT /api/v1/wordlists/{wordlist_id}` - Update WordList
+  - `DELETE /api/v1/wordlists/{wordlist_id}` - Delete WordList
+  - `POST /api/v1/wordlists/{wordlist_id}/words` - Add words to list
+  - `DELETE /api/v1/wordlists/{wordlist_id}/words/{word_id}` - Remove word from list
+  - `GET /api/v1/users/{user_id}/folders/{folder_id}/wordlist` - Get folder's WordList with resolved words
+
+- [ ] **Update folder endpoints**:
+  - `POST /api/v1/folders` - Create folder with WordList
+  - `GET /api/v1/folders/{folder_id}/words` - Get words via WordList (replaces old endpoint)
+
+- [ ] **Migration strategy**:
+  - Script to migrate existing `user_folder_words` to `wordlists`
+  - Preserve existing word assignments
+  - Generate WordList IDs in new format
+
+#### Phase B: Write Tests (RED) 🔴
+- [ ] **Create test file**: `tests/test_wordlists.py`
+- [ ] **WordList CRUD tests**:
+  - [ ] Create WordList with empty words array
+  - [ ] Get WordList by ID
+  - [ ] Update WordList metadata
+  - [ ] Delete WordList
+  - [ ] Add words to WordList
+  - [ ] Remove words from WordList
+  - [ ] Get WordList with resolved word details
+  - [ ] Error handling (invalid IDs, non-existent words)
+
+- [ ] **Integration tests**:
+  - [ ] Create folder → creates WordList
+  - [ ] Add words to folder → updates WordList
+  - [ ] Delete folder → deletes WordList
+  - [ ] Get folder words → resolves via WordList
+
+- [ ] **Migration tests**:
+  - [ ] Test migration script with sample data
+  - [ ] Verify data integrity after migration
+
+- [ ] **Run tests**: `pytest tests/test_wordlists.py` → Tests FAIL ✅ (Expected)
+- [ ] **Commit failing tests**: `git commit -m "test: add WordLists system tests (TDD RED phase)"`
+
+#### Phase C: Implement Backend (GREEN) 🟢
+- [ ] **Create WordList models** (`models/wordlist.py`):
+  - [ ] Pydantic models for requests/responses
+  - [ ] Validation rules for word_list_id format
+  - [ ] Helper functions for ID generation
+
+- [ ] **Create WordList router** (`routers/wordlists_router.py`):
+  - [ ] CRUD endpoints for WordLists
+  - [ ] Word addition/removal endpoints
+  - [ ] Integration with words collection
+  - [ ] Error handling and validation
+
+- [ ] **Update dependencies** (`dependencies.py`):
+  - [ ] Add `get_wordlists_collection` function
+  - [ ] Update collection constants
+
+- [ ] **Update folders router** (`routers/folders_router.py`):
+  - [ ] Create WordList when folder is created
+  - [ ] Update folder-words endpoint to use WordLists
+  - [ ] Maintain backward compatibility during transition
+
+- [ ] **Create migration script** (`scripts/migrate_to_wordlists.py`):
+  - [ ] Read existing `user_folder_words` data
+  - [ ] Group by user_id + folder_id
+  - [ ] Create WordLists with word arrays
+  - [ ] Verify migration success
+
+- [ ] **Update main.py**:
+  - [ ] Include WordLists router
+  - [ ] Add migration endpoint (optional)
+
+- [ ] **Run tests**: `pytest tests/test_wordlists.py` → Tests PASS ✅
+- [ ] **Commit implementation**: `git commit -m "feat: implement WordLists system backend"`
+
+#### Phase D: Migration & Cleanup (REFACTOR) 🔄
+- [ ] **Run migration script**:
+  - [ ] Backup existing data
+  - [ ] Execute migration
+  - [ ] Verify data integrity
+  - [ ] Test API endpoints with migrated data
+
+- [ ] **Deprecate old endpoints**:
+  - [ ] Mark old user_folder_words endpoints as deprecated
+  - [ ] Add deprecation warnings
+  - [ ] Update API documentation
+
+- [ ] **Code cleanup**:
+  - [ ] Remove unused imports
+  - [ ] Run linting: `ruff check --fix .`
+  - [ ] Format code: `black .`
+  - [ ] Update type hints
+
+- [ ] **Run all tests**: `pytest` → All tests PASS ✅
+- [ ] **Commit refactoring**: `git commit -m "refactor: migrate to WordLists and cleanup deprecated code"`
+
+### Task 3.3: Update Flutter App for WordLists (TDD) ⏳ **[PENDING]**
+
+#### Phase A: Plan & Design (PLAN) 📋
+- [ ] **Update API endpoints in Flutter**:
+  - Change from `/users/{user_id}/folders/{folder_id}/words`
+  - To `/users/{user_id}/folders/{folder_id}/wordlist`
+
+- [ ] **New Flutter models needed**:
+  - `WordListModel` - represents WordList data
+  - `WordListWithWordsModel` - WordList + resolved words
+  - Update existing models if needed
+
+- [ ] **Repository layer changes**:
+  - Update `WordRemoteSource` to use new endpoint
+  - Handle WordList response format
+  - Maintain existing `getWordsByFolder` interface
+
+#### Phase B: Write Tests (RED) 🔴
+- [ ] **Update test fixtures** (`test/helpers/test_fixtures.dart`):
+  - [ ] Add `tWordListModel` fixture
+  - [ ] Add `tWordListWithWordsModel` fixture
+  - [ ] Update API response format in tests
+
+- [ ] **Update model tests**:
+  - [ ] Test WordList JSON serialization
+  - [ ] Test WordListWithWords JSON serialization
+  - [ ] Test backward compatibility
+
+- [ ] **Update repository tests**:
+  - [ ] Update mock API responses to WordList format
+  - [ ] Test word resolution from WordList
+  - [ ] Test error handling
+
+- [ ] **Update BLoC tests**:
+  - [ ] Verify BLoC still works with new data flow
+  - [ ] Test loading states
+  - [ ] Test error states
+
+- [ ] **Run tests**: `flutter test` → Tests FAIL ✅ (Expected)
+- [ ] **Commit failing tests**: `git commit -m "test: update Flutter tests for WordLists (TDD RED phase)"`
+
+#### Phase C: Implement Flutter Changes (GREEN) 🟢
+- [ ] **Create WordList models**:
+  - [ ] `lib/data/models/wordlist_model.dart`
+  - [ ] JSON serialization methods
+  - [ ] Entity conversion methods
+
+- [ ] **Update API configuration**:
+  - [ ] Update endpoint in `api_config.dart`
+  - [ ] Handle new response format
+
+- [ ] **Update data layer**:
+  - [ ] Update `WordRemoteSource` to call new endpoint
+  - [ ] Parse WordList response
+  - [ ] Extract words array from WordList
+
+- [ ] **Update repository layer**:
+  - [ ] Implement WordList data handling
+  - [ ] Maintain existing interface for BLoC layer
+  - [ ] Add error handling for new format
+
+- [ ] **Test with backend**:
+  - [ ] Verify API integration works
+  - [ ] Test word display in Flutter
+  - [ ] Test error scenarios
+
+- [ ] **Run tests**: `flutter test` → Tests PASS ✅
+- [ ] **Commit implementation**: `git commit -m "feat: implement WordLists support in Flutter"`
+
+#### Phase D: Manual Testing & Polish (REFACTOR) 🔄
+- [ ] **End-to-end testing**:
+  - [ ] Create words in backend
+  - [ ] Add words to WordList
+  - [ ] Verify display in Flutter
+  - [ ] Test image loading
+  - [ ] Test empty states
+
+- [ ] **Performance testing**:
+  - [ ] Test with large WordLists (100+ words)
+  - [ ] Verify loading performance
+  - [ ] Test memory usage
+
+- [ ] **UI/UX improvements**:
+  - [ ] Add loading indicators for WordList resolution
+  - [ ] Improve error messages
+  - [ ] Add pull-to-refresh functionality
+
+- [ ] **Code cleanup**:
+  - [ ] Remove deprecated code
+  - [ ] Format with `dart format`
+  - [ ] Run `dart analyze`
+  - [ ] Update documentation
+
+- [ ] **Run all tests**: `flutter test` → All tests PASS ✅
+- [ ] **Commit polish**: `git commit -m "polish: improve WordLists UI and performance"`
+
+### Task 3.4: Migration & Deployment ⏳ **[PENDING]**
+
+#### Data Migration
+- [ ] **Backup current data**:
+  - [ ] Export existing `user_folder_words` collection
+  - [ ] Export existing `words` collection
+  - [ ] Create restore script if needed
+
+- [ ] **Execute migration**:
+  - [ ] Run migration script on production data
+  - [ ] Verify WordLists created correctly
+  - [ ] Test API endpoints with real data
+  - [ ] Verify Flutter app works with migrated data
+
+#### Testing & Validation
+- [ ] **Integration testing**:
+  - [ ] Test complete flow: create word → add to WordList → display in Flutter
+  - [ ] Test with multiple users and folders
+  - [ ] Test edge cases (empty WordLists, missing words)
+
+- [ ] **Performance validation**:
+  - [ ] Measure API response times
+  - [ ] Test with realistic data volumes
+  - [ ] Monitor memory usage
+
+#### Documentation & Cleanup
+- [ ] **Update API documentation**:
+  - [ ] Document new WordList endpoints
+  - [ ] Mark deprecated endpoints
+  - [ ] Update example requests/responses
+
+- [ ] **Update README files**:
+  - [ ] Document WordList system architecture
+  - [ ] Update setup instructions
+  - [ ] Add migration guide
+
+- [ ] **Clean up deprecated code**:
+  - [ ] Remove old `user_folder_words_router.py` (after migration)
+  - [ ] Remove deprecated endpoints
+  - [ ] Update database indexes
+
+### Benefits of WordLists System:
+
+#### Performance Benefits:
+- ✅ **Reduced API calls**: One call to get WordList + words vs multiple calls
+- ✅ **Better caching**: WordLists can be cached effectively
+- ✅ **Efficient queries**: Single query to get all words in a folder
+
+#### Organizational Benefits:
+- ✅ **Logical grouping**: Words are grouped in meaningful collections
+- ✅ **Metadata tracking**: Creation/update timestamps for word collections
+- ✅ **Flexible structure**: Easy to add WordList-level features later
+
+#### Development Benefits:
+- ✅ **Cleaner architecture**: Clear separation between words and word collections
+- ✅ **Better testing**: Easier to test word collection logic
+- ✅ **Future-proof**: Foundation for advanced features (sharing, templates, etc.)
+
+---
+
+### Task 4: 
