@@ -12,6 +12,7 @@ from routers.folders_router import router as folders_router
 from routers.words_router import router as words_router
 from routers.simplified_words_router import router as simplified_words_router
 from routers.user_folder_words_router import router as user_folder_words_router
+from routers.wordlists_router import router as wordlists_router
 import uvicorn
 
 # Fix Windows console encoding for emoji support
@@ -42,7 +43,8 @@ app = FastAPI(
     * User Folder Management
     * Word List Management
     * Simplified Word Dictionary (Global)
-    * User Folder Word Assignments
+    * WordLists Management (Collections of Words)
+    * User Folder Word Assignments (DEPRECATED)
     * Image Upload/Serving
 
     ## Authentication
@@ -74,7 +76,8 @@ app.include_router(auth_router)
 app.include_router(folders_router)  # Folder CRUD operations
 app.include_router(words_router)  # Word CRUD operations
 app.include_router(simplified_words_router)  # Simplified word dictionary management
-app.include_router(user_folder_words_router)  # User folder word assignments
+app.include_router(user_folder_words_router)  # User folder word assignments (DEPRECATED)
+app.include_router(wordlists_router)  # WordLists management (NEW)
 
 
 @app.on_event("startup")
