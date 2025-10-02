@@ -1158,68 +1158,120 @@ All new tasks must follow this TDD process:
 
 ---
 
-#### Phase A: Analysis & Plan
+#### Phase A: Analysis & Plan ✅
 - [x] **Current Implementation Analysis**:
   - [x] **Current WordEntity**: Has complex structure with `examples[]`, `imageUrls[]`, `partOfSpeech`, `pronunciation`, `notes`
   - [x] **Current WordCard**: Displays all fields including multiple examples, part of speech, pronunciation, notes
   - [x] **Current API**: Uses `/api/v1/folders/{folder_id}/words` endpoint
   - [x] **Current Flow**: FoldersScreen → tap folder → WordsScreen → displays WordCard list
 
-- [ ] **Plan Simplified Updates**:
-  - [ ] **Update WordEntity**: Add simplified constructor/factory for new backend structure
-  - [ ] **Update WordModel**: Handle new JSON structure with single `example`, `image_url` fields
-  - [ ] **Update WordCard**: Simplified display showing only `word`, `definition`, `example`, `image_url`
-  - [ ] **Update API endpoint**: Change to new `/api/v1/users/{user_id}/folders/{folder_id}/words`
-  - [ ] **No Context7 needed**: Use existing Flutter architecture (Clean Architecture + BLoC)
+- [x] **Plan Simplified Updates** (TDD Approach):
+  - [x] **Backend API changes**:
+    - Old: `GET /api/v1/folders/{folder_id}/words`
+    - New: `GET /api/v1/users/{user_id}/folders/{folder_id}/words`
+  - [x] **JSON Response changes**:
+    - Add `word_id` field (business identifier)
+    - Change `examples[]` → `example` (single string)
+    - Change `image_urls[]` → `image_url` (single string)
+    - Remove `part_of_speech`, `pronunciation`, `notes`
+  - [x] **Files to modify**:
+    1. `test/helpers/test_fixtures.dart` - Update test data
+    2. `test/data/models/word_model_test.dart` - Update JSON tests
+    3. `test/presentation/widgets/word_card_test.dart` - Update display tests
+    4. `lib/domain/entity/word_entity.dart` - Simplify structure
+    5. `lib/data/models/word_model.dart` - Update JSON parsing
+    6. `lib/presentation/widgets/word_card.dart` - Simplify display
+    7. `lib/core/api/api_config.dart` - Add new endpoint
+    8. `lib/data/source/remote/word_remote_source.dart` - Call new endpoint
+  - [x] **TDD workflow**: Update tests first → Run (fail) → Implement → Run (pass)
 
-#### Phase B: Update Data Layer
+#### Phase B: Write Tests First (RED) 🔴 ✅
+- [x] **Update test fixtures** (`test/helpers/test_fixtures.dart`):
+  - [x] Add `wordId` field to test data
+  - [x] Change `examples[]` → `example` (single string)
+  - [x] Change `imageUrls[]` → `imageUrl` (single string)
+  - [x] Remove `partOfSpeech`, `pronunciation`, `notes`
+  - [x] Update `tWordJson1` to match new backend format
+
+- [x] **Update WordModel tests** (`test/data/models/word_model_test.dart`):
+  - [x] Update test expectations for new structure
+  - [x] Test `word_id` field parsing
+  - [x] Test single `example` vs array
+  - [x] Test single `image_url` vs array
+  - [x] Verify missing optional fields default correctly
+
+- [x] **Update WordCard widget tests** (`test/presentation/widgets/word_card_test.dart`):
+  - [x] Remove tests for `partOfSpeech`, `pronunciation`, `notes`
+  - [x] Update tests for single example display
+  - [x] Add test for image display when `imageUrl` provided
+  - [x] Add test for placeholder when `imageUrl` is null
+  - [x] Remove "limit examples to first 3" test
+
+- [x] **Run tests**: Execute `flutter test` → Tests FAIL ✅ (Expected in RED phase)
+- [x] **Commit failing tests**: `git commit -m "test: update tests for simplified word structure (TDD RED phase)"`
+
+#### Phase C: Implement Changes (GREEN) 🟢
 - [ ] **Update WordEntity** (`lib/domain/entity/word_entity.dart`):
-  - [ ] Add `word_id` field (business identifier)
-  - [ ] Change `examples` List<String> → `example` String?
-  - [ ] Change `imageUrls` List<String> → `imageUrl` String?
-  - [ ] Remove `partOfSpeech`, `pronunciation`, `notes` (or make optional)
-  - [ ] Keep existing constructor for backward compatibility
+  - [ ] Add `wordId` field
+  - [ ] Change `examples` → `example` (String?)
+  - [ ] Change `imageUrls` → `imageUrl` (String?)
+  - [ ] Remove `partOfSpeech`, `pronunciation`, `notes`
 
 - [ ] **Update WordModel** (`lib/data/models/word_model.dart`):
-  - [ ] Update `fromJson` to handle new backend response format
-  - [ ] Map `image_url` → `imageUrl`, `example` → `example`
-  - [ ] Handle both old and new JSON formats for smooth transition
+  - [ ] Update `fromJson` for new backend format
+  - [ ] Map `word_id` → `wordId`
+  - [ ] Map `example` → `example`
+  - [ ] Map `image_url` → `imageUrl`
+  - [ ] Update `toJson` method
+  - [ ] Update `toEntity` method
 
-- [ ] **Update API endpoint** (`lib/core/api/api_config.dart`):
-  - [ ] Change endpoint from `/api/v1/folders/{folder_id}/words` 
-  - [ ] To `/api/v1/users/{user_id}/folders/{folder_id}/words`
-  - [ ] Add user_id parameter to API calls
-
-#### Phase C: Update Presentation Layer
 - [ ] **Update WordCard** (`lib/presentation/widgets/word_card.dart`):
-  - [ ] Simplify layout to show only: word title, definition, single example, single image
-  - [ ] Remove: part of speech badge, pronunciation, notes section, multiple examples
-  - [ ] Add image display if `imageUrl` is provided
-  - [ ] Keep clean, minimal design focused on essential information
-
-- [ ] **Update WordsBloc** (if needed):
-  - [ ] Update API calls to include user_id parameter
-  - [ ] Handle new response format from backend
-
-#### Phase D: Image Display Integration
-- [ ] **Add image display to WordCard**:
-  - [ ] Show image from backend URL: `{BASE_URL}/api/v1/words/{word_id}/image`
+  - [ ] Remove part of speech badge display
+  - [ ] Remove pronunciation display
+  - [ ] Remove notes section
+  - [ ] Update example display for single string
+  - [ ] Add image display from `imageUrl`
   - [ ] Add placeholder for missing images
-  - [ ] Handle image loading states and errors
-  - [ ] Optimize image display (caching, sizing)
-  - [ ] Images served from `image_users/` folder via FastAPI static files
 
-#### Phase E: Testing & Verification
-- [ ] **Update existing tests**:
-  - [ ] Update WordModel tests for new JSON structure
-  - [ ] Update WordCard tests for simplified display
-  - [ ] Update integration tests for new API endpoints
+- [ ] **Update API config** (`lib/core/api/api_config.dart`):
+  - [ ] Add new endpoint: `userFolderWordsEndpoint(userId, folderId)`
+  - [ ] Keep old endpoint for backward compatibility (temporary)
 
-- [ ] **Manual testing**:
-  - [ ] Test folder → word list flow
-  - [ ] Verify simplified word display
+- [ ] **Update WordRemoteSource** (`lib/data/source/remote/word_remote_source.dart`):
+  - [ ] Add `userId` parameter to `getWordsByFolder`
+  - [ ] Call new endpoint with user_id
+  - [ ] Update method signature
+
+- [ ] **Run tests**: Execute `flutter test` → should PASS (GREEN) ✅
+- [ ] **Commit implementation**: `git commit -m "feat: implement simplified word structure for Flutter app"`
+
+#### Phase D: Refactor & Polish (REFACTOR) 🔄
+- [ ] **Code cleanup**:
+  - [ ] Remove unused imports
+  - [ ] Format with `dart format .`
+  - [ ] Run `dart analyze` to check warnings
+  - [ ] Fix any linting issues
+
+- [ ] **Add image caching** (optional for now):
+  - [ ] Consider adding `cached_network_image` package
+  - [ ] Document image caching strategy
+
+- [ ] **Run tests again**: Ensure all tests still pass ✅
+- [ ] **Commit refactoring**: `git commit -m "refactor: clean up simplified word implementation"`
+
+#### Phase E: Manual Testing & Verification
+- [ ] **Test with real backend**:
+  - [ ] Ensure backend server is running (port 8829)
+  - [ ] Create test words with images in backend
+  - [ ] Test folder → word list flow in app
+  - [ ] Verify simplified display looks good
   - [ ] Test image loading from backend
-  - [ ] Test empty states and error handling
+  - [ ] Test empty states (no words, no images)
+  - [ ] Test error handling
+
+- [ ] **Document any issues found**:
+  - [ ] Note any UI/UX improvements needed
+  - [ ] Document any edge cases discovered
 
 ---
 
