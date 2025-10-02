@@ -7,18 +7,13 @@ import '../../helpers/test_fixtures.dart';
 void main() {
   group('FolderCard', () {
     testWidgets('should display folder name and description', (tester) async {
-      // arrange
-      var tapped = false;
-
       // act
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: FolderCard(
               folder: tFolderEntity1,
-              onTap: () {
-                tapped = true;
-              },
+              onTap: () {},
             ),
           ),
         ),

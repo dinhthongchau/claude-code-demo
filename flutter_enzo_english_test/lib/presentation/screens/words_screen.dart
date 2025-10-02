@@ -108,7 +108,11 @@ class _WordsView extends StatelessWidget {
           ),
           TextButton.icon(
             onPressed: () {
-              context.read<WordsBloc>().add(RefreshWordsEvent(folderId));
+              // TODO: Get user ID from auth state
+              const userId = 'dinhthongchau@gmail.com';
+              context.read<WordsBloc>().add(
+                RefreshWordsEvent(userId: userId, folderId: folderId),
+              );
             },
             icon: const Icon(Icons.refresh),
             label: const Text('Refresh'),
