@@ -4,6 +4,8 @@ import logging
 from dotenv import load_dotenv
 import pathlib
 import os
+import sys
+import io
 from dependencies import get_db, FirebaseAuth
 from routers.auth_router import router as auth_router
 from routers.folders_router import router as folders_router
@@ -11,6 +13,11 @@ from routers.words_router import router as words_router
 from routers.simplified_words_router import router as simplified_words_router
 from routers.user_folder_words_router import router as user_folder_words_router
 import uvicorn
+
+# Fix Windows console encoding for emoji support
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
 # Load environment variables
 basedir = pathlib.Path(__file__).parent
