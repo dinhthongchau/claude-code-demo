@@ -7,13 +7,11 @@ import '../../helpers/test_fixtures.dart';
 void main() {
   final tWordModel = WordModel(
     id: '1',
+    wordId: 'apple_001',
     word: 'apple',
     definition: 'A round fruit',
-    examples: const ['I ate an apple', 'Apple pie'],
-    imageUrls: const ['https://example.com/apple.jpg'],
-    partOfSpeech: 'noun',
-    pronunciation: '/ˈæp.əl/',
-    notes: 'Common fruit',
+    example: 'I ate an apple',
+    imageUrl: 'image_users/apple_001.jpg',
     folderId: '1',
     userId: 'test@example.com',
     createdAt: DateTime(2024, 1, 1),
@@ -39,6 +37,7 @@ void main() {
         // arrange
         final json = {
           'id': '1',
+          'word_id': 'test_001',
           'word': 'test',
           'definition': 'A test word',
           'folder_id': '1',
@@ -51,21 +50,19 @@ void main() {
         final result = WordModel.fromJson(json);
 
         // assert
-        expect(result.examples, []);
-        expect(result.imageUrls, []);
-        expect(result.partOfSpeech, null);
-        expect(result.pronunciation, null);
-        expect(result.notes, null);
+        expect(result.example, null);
+        expect(result.imageUrl, null);
       });
 
-      test('should handle null arrays as empty lists', () {
+      test('should handle null optional fields', () {
         // arrange
         final json = {
           'id': '1',
+          'word_id': 'test_002',
           'word': 'test',
           'definition': 'A test word',
-          'examples': null,
-          'image_urls': null,
+          'example': null,
+          'image_url': null,
           'folder_id': '1',
           'user_id': 'test@example.com',
           'created_at': '2024-01-01T00:00:00.000',
@@ -76,8 +73,8 @@ void main() {
         final result = WordModel.fromJson(json);
 
         // assert
-        expect(result.examples, []);
-        expect(result.imageUrls, []);
+        expect(result.example, null);
+        expect(result.imageUrl, null);
       });
     });
 
@@ -99,13 +96,11 @@ void main() {
         // assert
         expect(result, isA<WordEntity>());
         expect(result.id, tWordModel.id);
+        expect(result.wordId, tWordModel.wordId);
         expect(result.word, tWordModel.word);
         expect(result.definition, tWordModel.definition);
-        expect(result.examples, tWordModel.examples);
-        expect(result.imageUrls, tWordModel.imageUrls);
-        expect(result.partOfSpeech, tWordModel.partOfSpeech);
-        expect(result.pronunciation, tWordModel.pronunciation);
-        expect(result.notes, tWordModel.notes);
+        expect(result.example, tWordModel.example);
+        expect(result.imageUrl, tWordModel.imageUrl);
         expect(result.folderId, tWordModel.folderId);
         expect(result.userId, tWordModel.userId);
         expect(result.createdAt, tWordModel.createdAt);

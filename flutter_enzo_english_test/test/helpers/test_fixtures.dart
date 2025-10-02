@@ -28,16 +28,14 @@ final tFolderEntity2 = FolderEntity(
 
 final List<FolderEntity> tFolderList = [tFolderEntity1, tFolderEntity2];
 
-// Words
+// Words (Simplified structure for AI bubble feature)
 final tWordEntity1 = WordEntity(
   id: '1',
+  wordId: 'apple_001',
   word: 'apple',
   definition: 'A round fruit',
-  examples: ['I ate an apple', 'Apple pie'],
-  imageUrls: ['https://example.com/apple.jpg'],
-  partOfSpeech: 'noun',
-  pronunciation: '/ˈæp.əl/',
-  notes: 'Common fruit',
+  example: 'I ate an apple',
+  imageUrl: 'image_users/apple_001.jpg',
   folderId: '1',
   userId: 'test@example.com',
   createdAt: DateTime(2024, 1, 1),
@@ -46,13 +44,11 @@ final tWordEntity1 = WordEntity(
 
 final tWordEntity2 = WordEntity(
   id: '2',
+  wordId: 'book_002',
   word: 'book',
   definition: 'A written or printed work',
-  examples: ['Read a book', 'Book club'],
-  imageUrls: [],
-  partOfSpeech: 'noun',
-  pronunciation: '/bʊk/',
-  notes: null,
+  example: 'Read a book',
+  imageUrl: null,
   folderId: '1',
   userId: 'test@example.com',
   createdAt: DateTime(2024, 1, 2),
@@ -75,13 +71,11 @@ final Map<String, dynamic> tFolderJson1 = {
 
 final Map<String, dynamic> tWordJson1 = {
   'id': '1',
+  'word_id': 'apple_001',
   'word': 'apple',
   'definition': 'A round fruit',
-  'examples': ['I ate an apple', 'Apple pie'],
-  'image_urls': ['https://example.com/apple.jpg'],
-  'part_of_speech': 'noun',
-  'pronunciation': '/ˈæp.əl/',
-  'notes': 'Common fruit',
+  'example': 'I ate an apple',
+  'image_url': 'image_users/apple_001.jpg',
   'folder_id': '1',
   'user_id': 'test@example.com',
   'created_at': '2024-01-01T00:00:00.000',
