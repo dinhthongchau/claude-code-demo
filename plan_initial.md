@@ -748,23 +748,51 @@ All new tasks must follow this TDD process:
 
 ## Phase 2: Flutter Mobile Repository Setup (Basic Features Only)
 
-### Task 2.1: Create New Flutter Project
-**Based on:** `flutter_enzo_english` existing folder
+### Task 2.1: Create Flutter Mobile App - Folders List with Word Count ✅
+**Goal:** Display folders with total count and word count per folder
 
-- [ ] Clone/copy `flutter_enzo_test` or similar name from existing project
-- [ ] Set up basic project structure following clean architecture
-- [ ] Update `pubspec.yaml` with dependencies:
-  - [ ] `dio` - HTTP client
-  - [ ] `flutter_bloc` - State management
-  - [ ] `get_it` - Dependency injection
-  - [ ] `go_router` - Navigation
-  - [ ] `equatable` - Value equality
-  - [ ] `firebase_core` - Firebase initialization
-  - [ ] `firebase_auth` - Firebase authentication
-  - [ ] `dartz` - Functional programming (Either type)
-  - [ ] `shared_preferences` - Local storage
-- [ ] Run `flutter pub get`
-- [ ] Test: Run `flutter run` and verify default app launches
+#### Setup and Structure ✅
+- [x] Create new Flutter project `flutter_enzo_english_test`
+- [x] Update `pubspec.yaml` with dependencies:
+  - [x] `http: ^1.2.0` - HTTP client
+  - [x] `flutter_dotenv: ^5.1.0` - Environment variables
+- [x] Configure `.env` file with `BASE_URL`
+- [x] Run `flutter pub get`
+
+#### Data Layer ✅
+- [x] Create `lib/data/models/api_response.dart` - Generic API response wrapper
+- [x] Create `lib/data/models/folder_model.dart` - Folder model with fromJson/toJson
+- [x] Create `lib/data/models/word_model.dart` - Word model with fromJson/toJson
+- [x] Create `lib/data/api_client.dart` with methods:
+  - [x] `fetchFolders()` - GET `/api/v1/folders`
+  - [x] `fetchWordCount(folderId)` - GET `/api/v1/folders/{folder_id}/words` and return data.length
+
+#### Presentation Layer ✅
+- [x] Create `lib/presentation/widgets/folder_card.dart`:
+  - [x] Display folder icon, name, description
+  - [x] Fetch and display word count using StatefulWidget
+  - [x] Show loading indicator while fetching word count
+  - [x] Parse and apply folder color
+- [x] Create `lib/presentation/folders_screen.dart`:
+  - [x] AppBar showing "My Folders (X folders)"
+  - [x] FutureBuilder to load folders
+  - [x] ListView with FolderCard widgets
+  - [x] Pull-to-refresh functionality
+  - [x] Loading, error, and empty states
+
+#### Main App ✅
+- [x] Update `lib/main.dart`:
+  - [x] Initialize dotenv
+  - [x] Set FoldersScreen as home
+  - [x] Configure Material theme
+
+#### Features ✅
+- [x] Total folder count displayed in AppBar
+- [x] Word count displayed for each folder
+- [x] Color-coded folder cards
+- [x] Icon support (emoji)
+- [x] Error handling with retry button
+- [x] Pull-to-refresh support
 
 ### Task 2.2: Setup Firebase Authentication
 **Based on:** `flutter_enzo_english` existing folder
