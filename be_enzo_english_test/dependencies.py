@@ -20,7 +20,7 @@ from motor.motor_asyncio import (
     AsyncIOMotorCollection,
     AsyncIOMotorDatabase,
 )
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # Generic type for ApiResponse data
@@ -36,7 +36,7 @@ class ApiResponse(BaseModel, Generic[T]):
     code: Optional[str] = None
     error_code: Optional[int] = None
     error_message: Optional[str] = None
-    timestamp: datetime
+    timestamp: datetime = Field(default_factory=datetime.now)
 
 
 class UserRole(str, Enum):
