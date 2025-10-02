@@ -21,13 +21,11 @@ class WordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: Get user ID from auth state instead of hardcoding
     const userId = 'dinhthongchau@gmail.com';
-    
+
     return BlocProvider(
-      create: (context) => getIt<WordsBloc>()
-        ..add(LoadWordsByFolderEvent(
-          userId: userId,
-          folderId: folderId,
-        )),
+      create: (context) =>
+          getIt<WordsBloc>()
+            ..add(LoadWordsByFolderEvent(userId: userId, folderId: folderId)),
       child: _WordsView(folder: folder, folderId: folderId),
     );
   }
@@ -68,10 +66,9 @@ class _WordsView extends StatelessWidget {
               onRefresh: () async {
                 // TODO: Get user ID from auth state
                 const userId = 'dinhthongchau@gmail.com';
-                context.read<WordsBloc>().add(RefreshWordsEvent(
-                  userId: userId,
-                  folderId: folderId,
-                ));
+                context.read<WordsBloc>().add(
+                  RefreshWordsEvent(userId: userId, folderId: folderId),
+                );
                 await Future.delayed(const Duration(milliseconds: 500));
               },
               child: ListView.builder(

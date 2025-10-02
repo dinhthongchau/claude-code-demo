@@ -34,9 +34,9 @@ class WordCard extends StatelessWidget {
                   child: Text(
                     word.word,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
                 // Image thumbnail
@@ -94,9 +94,9 @@ class WordCard extends StatelessWidget {
               Text(
                 'Example:',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[700],
+                ),
               ),
               const SizedBox(height: 4),
               Padding(
@@ -105,17 +105,14 @@ class WordCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 8,
                   children: [
-                    Text(
-                      '•',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    Text('•', style: Theme.of(context).textTheme.bodySmall),
                     Expanded(
                       child: Text(
                         word.example!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[700],
-                            ),
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey[700],
+                        ),
                       ),
                     ),
                   ],

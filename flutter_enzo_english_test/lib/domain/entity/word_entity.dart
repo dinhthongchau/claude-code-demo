@@ -29,15 +29,15 @@ class WordEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        wordId,
-        word,
-        definition,
-        example,
-        imageUrl,
-        folderId,
-        userId,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    wordId,
+    word,
+    definition,
+    example,
+    imageUrl,
+    folderId,
+    userId,
+    createdAt,
+    updatedAt,
+  ];
 }

@@ -1210,40 +1210,59 @@ All new tasks must follow this TDD process:
 - [x] **Run tests**: Execute `flutter test` → Tests FAIL ✅ (Expected in RED phase)
 - [x] **Commit failing tests**: `git commit -m "test: update tests for simplified word structure (TDD RED phase)"`
 
-#### Phase C: Implement Changes (GREEN) 🟢
-- [ ] **Update WordEntity** (`lib/domain/entity/word_entity.dart`):
-  - [ ] Add `wordId` field
-  - [ ] Change `examples` → `example` (String?)
-  - [ ] Change `imageUrls` → `imageUrl` (String?)
-  - [ ] Remove `partOfSpeech`, `pronunciation`, `notes`
+#### Phase C: Implement Changes (GREEN) 🟢 **[COMPLETED]**
+- [x] **Update WordEntity** (`lib/domain/entity/word_entity.dart`):
+  - [x] Add `wordId` field
+  - [x] Change `examples` → `example` (String?)
+  - [x] Change `imageUrls` → `imageUrl` (String?)
+  - [x] Remove `partOfSpeech`, `pronunciation`, `notes`
 
-- [ ] **Update WordModel** (`lib/data/models/word_model.dart`):
-  - [ ] Update `fromJson` for new backend format
-  - [ ] Map `word_id` → `wordId`
-  - [ ] Map `example` → `example`
-  - [ ] Map `image_url` → `imageUrl`
-  - [ ] Update `toJson` method
-  - [ ] Update `toEntity` method
+- [x] **Update WordModel** (`lib/data/models/word_model.dart`):
+  - [x] Update `fromJson` for new backend format
+  - [x] Map `word_id` → `wordId`
+  - [x] Map `example` → `example`
+  - [x] Map `image_url` → `imageUrl`
+  - [x] Update `toJson` method
+  - [x] Update `toEntity` method
 
-- [ ] **Update WordCard** (`lib/presentation/widgets/word_card.dart`):
-  - [ ] Remove part of speech badge display
-  - [ ] Remove pronunciation display
-  - [ ] Remove notes section
-  - [ ] Update example display for single string
-  - [ ] Add image display from `imageUrl`
-  - [ ] Add placeholder for missing images
+- [x] **Update WordCard** (`lib/presentation/widgets/word_card.dart`):
+  - [x] Remove part of speech badge display
+  - [x] Remove pronunciation display
+  - [x] Remove notes section
+  - [x] Update example display for single string
+  - [x] Add image display from `imageUrl`
+  - [x] Add placeholder for missing images
+  - [x] Initialize dotenv in widget tests
 
-- [ ] **Update API config** (`lib/core/api/api_config.dart`):
-  - [ ] Add new endpoint: `userFolderWordsEndpoint(userId, folderId)`
-  - [ ] Keep old endpoint for backward compatibility (temporary)
+- [x] **Update API config** (`lib/core/api/api_config.dart`):
+  - [x] Add new endpoint: `userFolderWordsEndpoint(userId, folderId)`
+  - [x] Remove old endpoint (breaking change - replaced)
 
-- [ ] **Update WordRemoteSource** (`lib/data/source/remote/word_remote_source.dart`):
-  - [ ] Add `userId` parameter to `getWordsByFolder`
-  - [ ] Call new endpoint with user_id
-  - [ ] Update method signature
+- [x] **Update WordRemoteSource** (`lib/data/source/remote/word_remote_source.dart`):
+  - [x] Add `userId` parameter to `getWordsByFolder`
+  - [x] Call new endpoint with user_id
+  - [x] Update method signature
 
-- [ ] **Run tests**: Execute `flutter test` → should PASS (GREEN) ✅
-- [ ] **Commit implementation**: `git commit -m "feat: implement simplified word structure for Flutter app"`
+- [x] **Update Repository Layer**:
+  - [x] Add `userId` parameter to `WordRepository` interface
+  - [x] Update `WordRepositoryImpl` implementation
+
+- [x] **Update Use Case Layer**:
+  - [x] Add `userId` parameter to `GetWordsByFolderUseCase`
+
+- [x] **Update Presentation Layer**:
+  - [x] Add `userId` to `LoadWordsByFolderEvent` and `RefreshWordsEvent`
+  - [x] Update `WordsBloc` to pass `userId` to use case
+  - [x] Update `WordsScreen` to provide `userId` when dispatching events
+
+- [x] **Update All Tests**:
+  - [x] Update `word_repository_impl_test.dart` with userId parameter
+  - [x] Update `get_words_by_folder_use_case_test.dart` with userId parameter
+  - [x] Update `words_bloc_test.dart` with userId parameter
+  - [x] Initialize dotenv in `word_card_test.dart`
+
+- [x] **Run tests**: Execute `flutter test` → **54 tests PASSED** (GREEN) ✅
+- [x] **Commit implementation**: `git commit -m "feat: implement simplified word structure for Flutter app"` ✅
 
 #### Phase D: Refactor & Polish (REFACTOR) 🔄
 - [ ] **Code cleanup**:

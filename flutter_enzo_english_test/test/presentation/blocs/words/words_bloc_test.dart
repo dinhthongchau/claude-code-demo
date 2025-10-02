@@ -48,10 +48,9 @@ void main() {
         ).thenAnswer((_) async => Right(tWordList));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const LoadWordsByFolderEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [isA<WordsLoading>(), WordsSuccess(words: tWordList)],
       verify: (_) {
         verify(
@@ -78,10 +77,9 @@ void main() {
         ).thenAnswer((_) async => const Left(ServerFailure('Server error')));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const LoadWordsByFolderEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [
         isA<WordsLoading>(),
         const WordsError(words: [], errorMessage: 'Server error'),
@@ -113,10 +111,9 @@ void main() {
         );
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const LoadWordsByFolderEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [
         isA<WordsLoading>(),
         const WordsError(words: [], errorMessage: 'No internet connection'),
@@ -147,10 +144,9 @@ void main() {
         return bloc;
       },
       seed: () => WordsSuccess(words: tWordList),
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const LoadWordsByFolderEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [
         WordsLoading.fromState(state: WordsSuccess(words: tWordList)),
         WordsSuccess(words: tWordList),
@@ -170,10 +166,9 @@ void main() {
         ).thenAnswer((_) async => const Right([]));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const LoadWordsByFolderEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [isA<WordsLoading>(), const WordsSuccess(words: [])],
     );
   });
@@ -192,10 +187,9 @@ void main() {
         ).thenAnswer((_) async => Right(tWordList));
         return bloc;
       },
-      act: (bloc) => bloc.add(const RefreshWordsEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const RefreshWordsEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [WordsSuccess(words: tWordList)],
       verify: (_) {
         verify(
@@ -222,10 +216,9 @@ void main() {
         ).thenAnswer((_) async => const Left(ServerFailure('Server error')));
         return bloc;
       },
-      act: (bloc) => bloc.add(const RefreshWordsEvent(
-        userId: tUserId,
-        folderId: tFolderId,
-      )),
+      act: (bloc) => bloc.add(
+        const RefreshWordsEvent(userId: tUserId, folderId: tFolderId),
+      ),
       expect: () => [const WordsError(words: [], errorMessage: 'Server error')],
       verify: (_) {
         verify(

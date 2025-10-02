@@ -9,9 +9,11 @@ import '../../helpers/test_fixtures.dart';
 void main() {
   setUpAll(() async {
     // Initialize dotenv with a test value
-    dotenv.testLoad(fileInput: '''
+    dotenv.testLoad(
+      fileInput: '''
 BASE_URL=http://localhost:8829
-''');
+''',
+    );
   });
 
   group('WordCard', () {
