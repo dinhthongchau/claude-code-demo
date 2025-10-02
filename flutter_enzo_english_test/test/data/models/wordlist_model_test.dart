@@ -8,7 +8,7 @@ void main() {
     test('should be a subclass of WordListEntity', () {
       // arrange
       final wordListModel = WordListModel.fromJson(tWordListJson1);
-      
+
       // assert
       expect(wordListModel, isA<WordListEntity>());
     });

@@ -6,8 +6,7 @@ WordLists enable better organization and performance compared to individual word
 """
 
 from datetime import datetime
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from motor.motor_asyncio import AsyncIOMotorCollection
 from bson.errors import InvalidId
 
@@ -16,13 +15,11 @@ from dependencies import (
     get_words_collection,
     get_folders_collection,
     ApiResponse,
-    HARDCODED_EMAIL,
 )
 from models.wordlist import (
     CreateWordListRequest,
     UpdateWordListRequest,
     AddWordsToListRequest,
-    RemoveWordsFromListRequest,
     WordListResponse,
     WordListWithWordsResponse,
     WordListStatsResponse,
