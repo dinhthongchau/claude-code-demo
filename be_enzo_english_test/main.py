@@ -8,6 +8,8 @@ from dependencies import get_db, FirebaseAuth
 from routers.auth_router import router as auth_router
 from routers.folders_router import router as folders_router
 from routers.words_router import router as words_router
+from routers.simplified_words_router import router as simplified_words_router
+from routers.user_folder_words_router import router as user_folder_words_router
 import uvicorn
 
 # Load environment variables
@@ -32,6 +34,9 @@ app = FastAPI(
     * Firebase Authentication
     * User Folder Management
     * Word List Management
+    * Simplified Word Dictionary (Global)
+    * User Folder Word Assignments
+    * Image Upload/Serving
 
     ## Authentication
     All endpoints require Firebase authentication except for health check.
@@ -61,6 +66,8 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 app.include_router(auth_router)
 app.include_router(folders_router)  # Folder CRUD operations
 app.include_router(words_router)  # Word CRUD operations
+app.include_router(simplified_words_router)  # Simplified word dictionary management
+app.include_router(user_folder_words_router)  # User folder word assignments
 
 
 @app.on_event("startup")
@@ -85,6 +92,7 @@ async def shutdown_event() -> None:
     """Clean up database connection on shutdown."""
     try:
         from dependencies import DatabaseConnection
+
         await DatabaseConnection().close()
         logger.info("Database connection closed")
     except Exception as e:
@@ -97,7 +105,7 @@ async def root():
     return {
         "message": "Enzo English Test API",
         "version": "1.0.0-test",
-        "docs": "/docs"
+        "docs": "/docs",
     }
 
 
@@ -107,18 +115,12 @@ async def health_check():
     try:
         db = get_db()
         await db.command("ping")
-        return {
-            "status": "healthy",
-            "database": "connected",
-            "firebase": "initialized"
-        }
+        return {"status": "healthy", "database": "connected", "firebase": "initialized"}
     except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
+        return {"status": "unhealthy", "error": str(e)}
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host=os.getenv("HOST"), port=int(os.getenv("PORT")), reload=True)
-
+    uvicorn.run(
+        "main:app", host=os.getenv("HOST"), port=int(os.getenv("PORT")), reload=True
+    )

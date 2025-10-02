@@ -156,6 +156,20 @@ def get_wordlists_collection(
     return db[Collections.WORDLISTS]
 
 
+def get_words_collection(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> AsyncIOMotorCollection:
+    """Get words collection (global word dictionary)."""
+    return db["words"]
+
+
+def get_user_folder_words_collection(
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> AsyncIOMotorCollection:
+    """Get user_folder_words collection for user folder word assignments."""
+    return db["user_folder_words"]
+
+
 class FirebaseAuth:
     """Firebase authentication manager."""
 

@@ -6,7 +6,6 @@ Usage:
 """
 
 import requests
-import json
 import sys
 import io
 import os
