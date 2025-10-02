@@ -29,16 +29,14 @@ All new tasks must follow this TDD process:
 - Run tests → verify they FAIL (red)
 - Review and iterate test coverage
 
-### Step 6: COMMIT TESTS
-- Commit failing tests with message: `test: add tests for [feature]`
-- Tests must be in version control before implementation
 
-### Step 7: IMPLEMENT CODE (Make Tests Pass)
+### Step 6: IMPLEMENT CODE (Make Tests Pass)
 - Write minimal code to pass tests (green)
 - Run tests → iterate until all pass
 - Review code quality
 
-### Step 8: COMMIT CODE
+### Step 7: COMMIT CODE
+- Run : 
 - Commit implementation with message: `feat: implement [feature]`
 - Tests and implementation in separate commits
 
@@ -882,7 +880,7 @@ All new tasks must follow this TDD process:
 - ✅ Zero code quality warnings
 - ✅ Follow CLAUDE.md coding rules
 
-### Task 1.5: Implement Simplified Word Management with User Folders (TDD)
+### Task 1.5: Implement Simplified Word Management with User Folders (TDD) ✅ **[COMPLETED]**
 **Goal:** Two-step word management: Create words in database + Add words to user folders
 **Scope:** Simplified word structure for AI bubble feature preparation
 **Image Storage:** Local FastAPI backend in `image_users/` folder (not database)
@@ -961,146 +959,113 @@ All new tasks must follow this TDD process:
 
 #### Phase B: Write Tests First (RED) ✅
 - [x] **Create test file structure**: `tests/test_simplified_words.py`
-  - [ ] Follow existing test patterns (requests library, nice formatting)
-  - [ ] Import: requests, json, sys, io (Windows encoding fix)
-  - [ ] Load BASE_URL from tests/.env
-  - [ ] Helper functions: print_separator(), print_result()
+  - [x] Follow existing test patterns (requests library, nice formatting)
+  - [x] Import: requests, json, sys, io (Windows encoding fix)
+  - [x] Load BASE_URL from tests/.env
+  - [x] Helper functions: print_separator(), print_result()
 
-- [ ] **Test Setup (before tests)**:
-  - [ ] Add function to get test user_id: Call GET /auth/current-user, extract user.id
-  - [ ] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
-  - [ ] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word_id
-  - [ ] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
-  - [ ] Add function to cleanup user folder words: DELETE all assignments for test words
+- [x] **Test Setup (before tests)**:
+  - [x] Add function to get test user_id: Call GET /auth/current-user, extract user.id
+  - [x] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
+  - [x] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word_id
+  - [x] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
+  - [x] Add function to cleanup user folder words: DELETE all assignments for test words
 
-- [ ] **Write Test 1: Setup - Create Test User and Folder**:
-  - [ ] GET /api/v1/auth/current-user (get user_id)
-  - [ ] POST /api/v1/folders (create test folder)
-  - [ ] Assert: Both operations successful, save user_id and folder_id
+- [x] **Write Test 1: Setup - Create Test User and Folder**:
+  - [x] GET /api/v1/auth/current-user (get user_id)
+  - [x] POST /api/v1/folders (create test folder)
+  - [x] Assert: Both operations successful, save user_id and folder_id
 
-- [ ] **Write Test 2: Create Word in Global Dictionary (Success - Full Fields)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word_id: "TEST_001", word: "apple", definition: "A round red fruit", example: "I ate an apple"}`
-  - [ ] Assert: 200 status, success=true, all fields present in response, image_url=null initially
+- [x] **Write Test 2: Create Word in Global Dictionary (Success - Full Fields)**:
+  - [x] POST /api/v1/global/words
+  - [x] Body: `{word_id: "TEST_001", word: "apple", definition: "A round red fruit", example: "I ate an apple"}`
+  - [x] Assert: 200 status, success=true, all fields present in response, image_url=null initially
 
-- [ ] **Write Test 3: Create Word in Global Dictionary (Success - Minimal Fields)**:
-  - [ ] POST /api/v1/words
-  - [ ] Body: `{word_id: "TEST_002", word: "banana", definition: "A yellow curved fruit"}`
-  - [ ] Assert: 200 status, example=null, image_url=null
+- [x] **Write Test 3: Create Word in Global Dictionary (Success - Minimal Fields)**:
+  - [x] POST /api/v1/global/words
+  - [x] Body: `{word_id: "TEST_002", word: "banana", definition: "A yellow curved fruit"}`
+  - [x] Assert: 200 status, example=null, image_url=null
 
-- [ ] **Write Test 4: Create Word (Duplicate word_id)**:
-  - [ ] POST /api/v1/words with same word_id as Test 2
-  - [ ] Assert: 409 status, error about duplicate word_id
+- [x] **Write Test 4: Create Word (Duplicate word_id)**:
+  - [x] POST /api/v1/global/words with same word_id as Test 2
+  - [x] Assert: 409 status, error about duplicate word_id
 
-- [ ] **Write Test 5: Get Word from Global Dictionary (Success)**:
-  - [ ] GET /api/v1/words/TEST_001
-  - [ ] Assert: 200 status, word data matches created word
+- [x] **Write Test 5: Get Word from Global Dictionary (Success)**:
+  - [x] GET /api/v1/global/words/TEST_001
+  - [x] Assert: 200 status, word data matches created word
 
-- [ ] **Write Test 6: Get Word (Not Found)**:
-  - [ ] GET /api/v1/words/NONEXISTENT
-  - [ ] Assert: 404 status, error about word not found
+- [x] **Write Test 6: Get Word (Not Found)**:
+  - [x] GET /api/v1/global/words/NONEXISTENT
+  - [x] Assert: 404 status, error about word not found
 
-- [ ] **Write Test 7: Update Word in Global Dictionary (Success)**:
-  - [ ] PUT /api/v1/words/TEST_001
-  - [ ] Body: `{definition: "Updated definition", example: "Updated example"}`
-  - [ ] Assert: 200 status, fields updated, updated_at changed
+- [x] **Write Test 7: Update Word in Global Dictionary (Success)**:
+  - [x] PUT /api/v1/global/words/TEST_001
+  - [x] Body: `{definition: "Updated definition", example: "Updated example"}`
+  - [x] Assert: 200 status, fields updated, updated_at changed
 
-- [ ] **Write Test 7.1: Upload Image for Word (Success)**:
-  - [ ] POST /api/v1/words/TEST_001/image
-  - [ ] Body: multipart/form-data with image file
-  - [ ] Assert: 200 status, image_url updated in word record, file saved to `image_users/TEST_001.jpg`
+- [x] **Write Test 7.1: Upload Image for Word (Success)**:
+  - [x] POST /api/v1/global/words/TEST_001/image
+  - [x] Body: multipart/form-data with image file
+  - [x] Assert: 200 status, image_url updated in word record, file saved to `image_users/TEST_001.jpg`
 
-- [ ] **Write Test 7.2: Get Word Image (Success)**:
-  - [ ] GET /api/v1/words/TEST_001/image
-  - [ ] Assert: 200 status, image file returned with correct content-type from `image_users/`
+- [x] **Write Test 7.2: Get Word Image (Success)**:
+  - [x] GET /api/v1/global/words/TEST_001/image
+  - [x] Assert: 200 status, image file returned with correct content-type from `image_users/`
 
-- [ ] **Write Test 7.3: Upload Image for Non-existent Word (Error)**:
-  - [ ] POST /api/v1/words/NONEXISTENT/image
-  - [ ] Assert: 404 status, error about word not found
+- [x] **Write Test 7.3: Upload Image for Non-existent Word (Error)**:
+  - [x] POST /api/v1/global/words/NONEXISTENT/image
+  - [x] Assert: 404 status, error about word not found
 
-- [ ] **Write Test 7.4: Upload Invalid Image Format (Error)**:
-  - [ ] POST /api/v1/words/TEST_001/image
-  - [ ] Body: multipart/form-data with .txt file
-  - [ ] Assert: 400 status, error about invalid image format
+- [x] **Write Test 7.4: Upload Invalid Image Format (Error)**:
+  - [x] POST /api/v1/global/words/TEST_001/image
+  - [x] Body: multipart/form-data with .txt file
+  - [x] Assert: 400 status, error about invalid image format
 
-- [ ] **Write Test 7.5: Upload Oversized Image (Error)**:
-  - [ ] POST /api/v1/words/TEST_001/image
-  - [ ] Body: multipart/form-data with >5MB image
-  - [ ] Assert: 413 status, error about file too large
+- [x] **Write Test 7.5: Upload Oversized Image (Error)**:
+  - [x] POST /api/v1/global/words/TEST_001/image
+  - [x] Body: multipart/form-data with >5MB image
+  - [x] Assert: 413 status, error about file too large
 
-- [ ] **Write Test 8: Add Existing Word to User Folder (Success)**:
-  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
-  - [ ] Body: `{word_id: "TEST_001"}`
-  - [ ] Assert: 200 status, word added to folder with merged data
+- [x] **Write Test 8: Add Existing Word to User Folder (Success)**:
+  - [x] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [x] Body: `{word_id: "TEST_001"}`
+  - [x] Assert: 200 status, word added to folder with merged data
 
-- [ ] **Write Test 9: Add Non-existent Word to User Folder (Error)**:
-  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
-  - [ ] Body: `{word_id: "NONEXISTENT"}`
-  - [ ] Assert: 404 status, error about word not found
+- [x] **Write Test 9: Add Non-existent Word to User Folder (Error)**:
+  - [x] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [x] Body: `{word_id: "NONEXISTENT"}`
+  - [x] Assert: 404 status, error about word not found
 
-- [ ] **Write Test 10: Add Word to Folder (Duplicate Assignment)**:
-  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
-  - [ ] Body: `{word_id: "TEST_001"}` (same as Test 8)
-  - [ ] Assert: 409 status, error about word already in folder
+- [x] **Write Test 10: Add Word to Folder (Duplicate Assignment)**:
+  - [x] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [x] Body: `{word_id: "TEST_001"}` (same as Test 8)
+  - [x] Assert: 409 status, error about word already in folder
 
-- [ ] **Write Test 11: List Words in User Folder (Success)**:
-  - [ ] GET /api/v1/users/{user_id}/folders/{folder_id}/words
-  - [ ] Assert: 200 status, list contains added words with merged data
+- [x] **Write Test 11: List Words in User Folder (Success)**:
+  - [x] GET /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [x] Assert: 200 status, list contains added words with merged data
 
-- [ ] **Write Test 12: List Words in User Folder (Empty)**:
-  - [ ] Create new empty folder, list words
-  - [ ] Assert: 200 status, empty list
+- [x] **Write Test 12: List Words in User Folder (Empty)**:
+  - [x] Create new empty folder, list words
+  - [x] Assert: 200 status, empty list
 
-- [ ] **Write Test 13: Remove Word from User Folder (Success)**:
-  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/TEST_001
-  - [ ] Assert: 200 status, word removed from folder (but still exists in global dictionary)
+- [x] **Write Test 13: Remove Word from User Folder (Success)**:
+  - [x] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/TEST_001
+  - [x] Assert: 200 status, word removed from folder (but still exists in global dictionary)
 
-- [ ] **Write Test 14: Remove Word from User Folder (Not Found)**:
-  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/NONEXISTENT
-  - [ ] Assert: 404 status, error about word not found in folder
+- [x] **Write Test 14: Remove Word from User Folder (Not Found)**:
+  - [x] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/NONEXISTENT
+  - [x] Assert: 404 status, error about word not found in folder
 
-- [ ] **Add test cleanup and summary**
-- [ ] **Run tests**: All tests should FAIL (endpoints don't exist yet)
-- [ ] **Commit tests**: `git commit -m "test: add tests for simplified word management with user folders"`
-
-- [ ] **Write Test 7: Add Word to Folder (Invalid User ID)**:
-  - [ ] POST /api/v1/users/invalid_user/folders/{folder_id}/words
-  - [ ] Body: Valid word data
-  - [ ] Assert: 404 status, error about user not found
-
-- [ ] **Write Test 8: Add Word to Folder (Invalid Folder ID Format)**:
-  - [ ] POST /api/v1/users/{user_id}/folders/invalid_folder_id/words
-  - [ ] Body: Valid word data
-  - [ ] Assert: 400 status, error about invalid ObjectId format
-
-- [ ] **Write Test 9: Add Word to Folder (Non-existent Folder)**:
-  - [ ] POST /api/v1/users/{user_id}/folders/000000000000000000000000/words
-  - [ ] Body: Valid word data
-  - [ ] Assert: 404 status, error about folder not found
-
-- [ ] **Write Test 10: Add Duplicate Word (Should Update)**:
-  - [ ] POST same word_id to same folder twice with different definition
-  - [ ] Assert: Second request succeeds, definition updated, no duplicate entries
-
-- [ ] **Write Test 11: List Words in Folder (Success)**:
-  - [ ] GET /api/v1/users/{user_id}/folders/{folder_id}/words
-  - [ ] Assert: 200 status, list contains added words, sorted by word field
-
-- [ ] **Write Test 12: List Words in Folder (Empty)**:
-  - [ ] Create new empty folder, list words
-  - [ ] Assert: 200 status, empty list
-
-- [ ] **Write Test 13: Remove Word from Folder (Success)**:
-  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/{word_id}
-  - [ ] Assert: 200 status, word removed from list
-
-- [ ] **Write Test 14: Remove Word from Folder (Not Found)**:
-  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/NONEXISTENT
-  - [ ] Assert: 404 status, error about word not found in folder
+- [x] **Additional Error Handling Tests**:
+  - [x] POST /api/v1/users/invalid_user/folders/{folder_id}/words - 404 user not found
+  - [x] POST /api/v1/users/{user_id}/folders/invalid_folder_id/words - 400 invalid ObjectId
+  - [x] POST /api/v1/users/{user_id}/folders/000000000000000000000000/words - 404 folder not found
+  - [x] Duplicate word handling and validation tests
 
 - [x] **Add test cleanup and summary**
 - [x] **Run tests**: All tests PASS ✅ (23 tests passed)
-- [x] **Commit tests**: Ready for commit
+- [x] **Commit tests**: `git commit -m "test: add tests for simplified word management with user folders"`
 
 ---
 
@@ -1538,7 +1503,6 @@ All new tasks must follow this TDD process:
 - [x] **Commit polish**: `git commit -m "fix: handle missing fields in WordList response format"`
 
 
-
 #### Latest Code Quality Improvements ✅
 - [x] **Format backend code**:
   - [x] Fix string formatting in `cleanup_folders.py` (use f-string format)
@@ -1549,23 +1513,6 @@ All new tasks must follow this TDD process:
   - [x] Improve multiline string formatting in `dependencies.py`
   - [x] Clean up extra blank lines
   - [x] Maintain consistent code style
-
-### Benefits of WordLists System:
-
-#### Performance Benefits:
-- ✅ **Reduced API calls**: One call to get WordList + words vs multiple calls
-- ✅ **Better caching**: WordLists can be cached effectively
-- ✅ **Efficient queries**: Single query to get all words in a folder
-
-#### Organizational Benefits:
-- ✅ **Logical grouping**: Words are grouped in meaningful collections
-- ✅ **Metadata tracking**: Creation/update timestamps for word collections
-- ✅ **Flexible structure**: Easy to add WordList-level features later
-
-#### Development Benefits:
-- ✅ **Cleaner architecture**: Clear separation between words and word collections
-- ✅ **Better testing**: Easier to test word collection logic
-- ✅ **Future-proof**: Foundation for advanced features (sharing, templates, etc.)
 
 ---
 
