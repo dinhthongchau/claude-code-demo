@@ -882,351 +882,345 @@ All new tasks must follow this TDD process:
 - ✅ Zero code quality warnings
 - ✅ Follow CLAUDE.md coding rules
 
-### Task 2.2: Setup Firebase Authentication
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Add Firebase configuration files:
-  - [ ] `android/app/google-services.json`
-  - [ ] `ios/Runner/GoogleService-Info.plist`
-  - [ ] You will provide these files
-- [ ] Initialize Firebase in `main.dart`
-- [ ] Create `lib/core/firebase/firebase_config.dart`
-- [ ] Create sign-in screen `lib/presentation/screens/auth/sign_in_screen.dart`
-  - [ ] Email/password sign-in form
-  - [ ] Pre-fill with dinhthongchau@gmail.com for testing
-- [ ] Create authentication BLoC `lib/presentation/blocs/auth/auth_bloc.dart`
-  - [ ] Events: `SignInEvent, SignOutEvent, CheckAuthStatusEvent`
-  - [ ] States: `AuthInitial, AuthLoading, Authenticated, Unauthenticated, AuthError`
-- [ ] Implement sign-in with Firebase Auth
-- [ ] Store Firebase ID token for API calls
-- [ ] Test: Sign in with dinhthongchau@gmail.com and verify authentication works
-
-### Task 2.3: Setup Core Infrastructure
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/core/api/api_config.dart` with base URL configuration
-- [ ] Create `lib/core/network/dio_client.dart` for HTTP client
-  - [ ] Add interceptor to attach Firebase ID token to all requests
-  - [ ] Add error handling interceptor
-- [ ] Create `lib/core/get_it/injection_container.dart` for dependency injection
-- [ ] Create `lib/core/error/failures.dart` for error handling
-- [ ] Create `lib/core/error/exceptions.dart` for exceptions
-- [ ] Create `.env` file with `BASE_URL=http://localhost:8887`
-- [ ] Register all dependencies in GetIt
-- [ ] Test: Initialize GetIt and verify no errors
-
-### Task 2.4: Implement Domain Layer - User Folder
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/domain/entities/user_folder_entity.dart`
-  - [ ] Properties: `id, name, description, userId, createdAt, updatedAt, color, icon`
-- [ ] Create `lib/domain/repository/user_folder_repository.dart` interface
-  - [ ] Methods: `getFolders()`, `getFolder(id)`, `createFolder()`, `updateFolder()`, `deleteFolder()`
-- [ ] Create use cases:
-  - [ ] `lib/domain/usecases/folder/get_user_folders_usecase.dart`
-  - [ ] `lib/domain/usecases/folder/get_folder_usecase.dart`
-  - [ ] `lib/domain/usecases/folder/create_folder_usecase.dart`
-  - [ ] `lib/domain/usecases/folder/update_folder_usecase.dart`
-  - [ ] `lib/domain/usecases/folder/delete_folder_usecase.dart`
-- [ ] Test: Code compiles without errors
-
-### Task 2.5: Implement Data Layer - User Folder
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/data/models/user_folder_model.dart`
-  - [ ] Extends `UserFolderEntity`
-  - [ ] Implement `fromJson()` and `toJson()` methods
-- [ ] Create `lib/data/datasources/remote/user_folder_remote_datasource.dart`
-  - [ ] Implement API calls: `getFolders()`, `getFolder(id)`, `createFolder()`, `updateFolder()`, `deleteFolder()`
-  - [ ] Use Dio client with authentication
-- [ ] Create `lib/data/repositories/user_folder_repository_impl.dart`
-  - [ ] Implements `UserFolderRepository` interface
-  - [ ] Handles errors and returns `Either<Failure, Data>`
-- [ ] Register repository and data sources in GetIt
-- [ ] Test: Repository methods return correct types
-
-### Task 2.6: Implement Presentation Layer - Folder List Screen
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/presentation/blocs/user_folder/user_folder_bloc.dart`
-- [ ] Create events:
-  - [ ] `LoadUserFoldersEvent`
-  - [ ] `CreateFolderEvent`
-  - [ ] `UpdateFolderEvent`
-  - [ ] `DeleteFolderEvent`
-- [ ] Create states:
-  - [ ] `UserFolderInitial`
-  - [ ] `UserFolderLoading`
-  - [ ] `UserFolderLoaded` (with list of folders)
-  - [ ] `UserFolderError`
-  - [ ] `FolderCreated`
-  - [ ] `FolderUpdated`
-  - [ ] `FolderDeleted`
-- [ ] Create `lib/presentation/screens/folders/folder_list_screen.dart`
-  - [ ] Display list of user folders in ListView/GridView
-  - [ ] Show folder name, description, icon, color
-  - [ ] Add FloatingActionButton to create new folder
-  - [ ] Add swipe actions for edit/delete
-  - [ ] Pull-to-refresh functionality
-- [ ] Create `lib/presentation/widgets/folder_card.dart` for displaying individual folders
-- [ ] Create `lib/presentation/screens/folders/folder_form_screen.dart` for create/edit
-  - [ ] Form fields: name, description, color picker, icon selector
-  - [ ] Save button triggers create/update event
-- [ ] Register BLoC in GetIt
-- [ ] Set up navigation routing in `lib/core/routes/app_router.dart`
-- [ ] Test: Run app → sign in → see list of folders loaded from backend
-
-### Task 2.7: Implement Domain Layer - Words
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/domain/entities/word_entity.dart`
-  - [ ] Properties: `id, word, definition, examples, imageUrls, partOfSpeech, pronunciation, notes, folderId, userId, createdAt, updatedAt`
-- [ ] Create `lib/domain/repository/word_repository.dart` interface
-  - [ ] Methods: `getWords(folderId)`, `getWord(id)`, `createWord()`, `updateWord()`, `deleteWord()`
-- [ ] Create use cases:
-  - [ ] `lib/domain/usecases/word/get_folder_words_usecase.dart`
-  - [ ] `lib/domain/usecases/word/get_word_usecase.dart`
-  - [ ] `lib/domain/usecases/word/create_word_usecase.dart`
-  - [ ] `lib/domain/usecases/word/update_word_usecase.dart`
-  - [ ] `lib/domain/usecases/word/delete_word_usecase.dart`
-- [ ] Test: Code compiles without errors
-
-### Task 2.8: Implement Data Layer - Words
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/data/models/word_model.dart`
-  - [ ] Extends `WordEntity`
-  - [ ] Implement `fromJson()` and `toJson()` methods
-- [ ] Create `lib/data/datasources/remote/word_remote_datasource.dart`
-  - [ ] Implement API calls: `getWords(folderId)`, `getWord(id)`, `createWord()`, `updateWord()`, `deleteWord()`
-  - [ ] Use Dio client with authentication
-- [ ] Create `lib/data/repositories/word_repository_impl.dart`
-  - [ ] Implements `WordRepository` interface
-  - [ ] Handles errors and returns `Either<Failure, Data>`
-- [ ] Register repository and data sources in GetIt
-- [ ] Test: Repository methods return correct types
-
-### Task 2.9: Implement Presentation Layer - Word List Screen
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/presentation/blocs/word/word_bloc.dart`
-- [ ] Create events:
-  - [ ] `LoadWordsEvent(folderId)`
-  - [ ] `LoadWordDetailEvent(wordId)`
-  - [ ] `CreateWordEvent`
-  - [ ] `UpdateWordEvent`
-  - [ ] `DeleteWordEvent`
-- [ ] Create states:
-  - [ ] `WordInitial`
-  - [ ] `WordLoading`
-  - [ ] `WordsLoaded` (with list of words)
-  - [ ] `WordDetailLoaded` (with single word)
-  - [ ] `WordError`
-  - [ ] `WordCreated`
-  - [ ] `WordUpdated`
-  - [ ] `WordDeleted`
-- [ ] Create `lib/presentation/screens/words/word_list_screen.dart`
-  - [ ] Display words when folder is tapped
-  - [ ] Show word, definition preview, image thumbnail
-  - [ ] Add FloatingActionButton to create new word
-  - [ ] Add swipe actions for edit/delete
-  - [ ] Pull-to-refresh functionality
-  - [ ] Empty state when no words exist
-- [ ] Create `lib/presentation/widgets/word_card.dart` for displaying individual words
-- [ ] Add navigation from folder list → word list using GoRouter
-- [ ] Register BLoC in GetIt
-- [ ] Test: Tap folder → see words in that folder
-
-### Task 2.10: Implement Presentation Layer - Word Detail Screen
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/presentation/screens/words/word_detail_screen.dart`
-  - [ ] Display full word information:
-    - [ ] Word (title)
-    - [ ] Part of speech
-    - [ ] Pronunciation
-    - [ ] Definition
-    - [ ] Examples (list)
-    - [ ] Images (gallery/carousel)
-    - [ ] Notes
-  - [ ] Add edit button (FAB or app bar action)
-  - [ ] Add delete button with confirmation dialog
-- [ ] Add navigation from word list → word detail
-- [ ] Test: Tap word → see all word information displayed
-
-### Task 2.11: Implement Presentation Layer - Word Form Screen
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Create `lib/presentation/screens/words/word_form_screen.dart`
-  - [ ] Form fields:
-    - [ ] Word (text input)
-    - [ ] Definition (multi-line text input)
-    - [ ] Part of speech (dropdown)
-    - [ ] Pronunciation (text input)
-    - [ ] Examples (list of text inputs with add/remove)
-    - [ ] Images (list of URLs with add/remove, or image picker)
-    - [ ] Notes (multi-line text input)
-  - [ ] Folder selector (if creating new word)
-  - [ ] Save button triggers create/update event
-  - [ ] Cancel button
-- [ ] Handle form validation
-- [ ] Show loading indicator during save
-- [ ] On success: show success message, navigate back to word list
-- [ ] On error: show error message
-- [ ] Test: Create/edit word → save → verify it appears in word list → verify it's in MongoDB
-
-### Task 2.12: Polish UI/UX
-**Based on:** `flutter_enzo_english` existing folder
-
-- [ ] Add loading indicators for all async operations
-- [ ] Add error handling with user-friendly error messages
-- [ ] Add pull-to-refresh on folder list and word list
-- [ ] Add empty states when no folders/words exist
-- [ ] Add confirmation dialogs for delete actions
-- [ ] Add success snackbars/toasts for create/update/delete
-- [ ] Implement proper navigation flow
-- [ ] Add app theme/styling consistent with existing app
-- [ ] Test: All user interactions feel smooth and responsive
-
-### Task 2.13: Additional Features (Optional)
-- [ ] Add search functionality for words
-- [ ] Add filtering/sorting options
-- [ ] Add offline support with local database (Hive/SQLite)
-- [ ] Add image picker for word images
-- [ ] Add audio pronunciation playback
+### Task 1.5: Implement Simplified Word Management with User Folders (TDD)
+**Goal:** Two-step word management: Create words in database + Add words to user folders
+**Scope:** Simplified word structure for AI bubble feature preparation
+**Image Storage:** Local FastAPI backend in `image_users/` folder (not database)
+**Performance Target:** <200ms API response time for optimal user experience
 
 ---
 
-## Phase 3: Integration Testing & Documentation
+#### Phase A: Design & Plan (BLUE) ✅
+- [x] **Decide data model approach**:
+  - [x] **Decision**: Two-collection approach for separation of concerns
+  - [x] **words collection**: Global word dictionary with `word_id`, `word`, `definition`, `example`, `image_url`
+  - [x] **user_folder_words collection**: User-specific word assignments to folders
+  - [x] Fields: `word_id`, `word`, `definition`, `example`, `image_url` (single image)
+  - [x] Remove: `examples[]`, `image_urls[]`, `part_of_speech`, `pronunciation`, `notes`
+  - [x] Document: This prepares for AI bubble feature integration
 
-### Task 3.1: End-to-End Testing
-- [ ] Start backend server on localhost:8887
-- [ ] Run Flutter app on emulator/device
-- [ ] Test complete flow:
-  - [ ] Open app → sign in with dinhthongchau@gmail.com
-  - [ ] See folders list
-  - [ ] Create new folder → verify it appears
-  - [ ] Tap folder → see words
-  - [ ] Create new word → verify it appears
-  - [ ] Tap word → see full details
-  - [ ] Edit word → verify changes saved
-  - [ ] Delete word → verify it's removed
-  - [ ] Edit folder → verify changes saved
-  - [ ] Delete folder → verify it's removed
-  - [ ] Sign out → sign in again → verify data persists
-- [ ] Document any bugs found and fix them
+- [x] **Design simplified data models**:
+  - [x] **CreateWordRequest** (input): `{word_id: str, word: str, definition: str, example: Optional[str]}`
+  - [x] **WordResponse** (output): `{word_id: str, word: str, definition: str, example: str, image_url: str, created_at: datetime, updated_at: datetime}`
+  - [x] **AddWordToFolderRequest** (input): `{word_id: str}` (user_id and folder_id from URL path)
+  - [x] **WordInFolderResponse** (output): `{id: str, word_id: str, word: str, definition: str, example: str, image_url: str, folder_id: str, user_id: str, created_at: datetime, updated_at: datetime}`
+  - [x] **MongoDB collections**: 
+    - `words` collection: Global word dictionary
+    - `user_folder_words` collection: User folder assignments
+  - [x] Note: `word_id` is business identifier, `id` is MongoDB ObjectId converted to string
 
-### Task 3.2: Backend Documentation
-- [ ] Create comprehensive `README.md` for backend repository
-- [ ] Include:
-  - [ ] Project overview
-  - [ ] Technology stack
-  - [ ] Setup instructions (prerequisites, installation, configuration)
-  - [ ] Environment variables documentation
-  - [ ] Firebase setup guide
-  - [ ] MongoDB setup guide
-  - [ ] API documentation (all endpoints with request/response examples)
-  - [ ] Testing instructions
-  - [ ] Deployment instructions
-- [ ] Create `.env.example` file with all required variables
-- [ ] Create API documentation (Swagger/OpenAPI or Postman collection)
-- [ ] Test: Give README to someone unfamiliar → they can set up and run backend
+- [x] **Define field validation rules**:
+  - [x] **word_id**: Required, string, unique business identifier for the word
+  - [x] **word**: Required, 1-100 chars, the actual vocabulary word
+  - [x] **definition**: Required, 1-1000 chars, word meaning
+  - [x] **example**: Optional, max 500 chars, single example sentence
+  - [x] **image_url**: Optional, relative path to image in `image_users/` folder (e.g., "image_users/word_001.jpg")
+  - [x] **user_id**: Required, string (email format for now)
+  - [x] **folder_id**: Required, valid ObjectId, must exist, must belong to user
 
-### Task 3.3: Mobile Documentation
-- [ ] Create comprehensive `README.md` for Flutter repository
-- [ ] Include:
-  - [ ] Project overview
-  - [ ] Technology stack
-  - [ ] Setup instructions (prerequisites, installation, configuration)
-  - [ ] Firebase setup guide
-  - [ ] Environment variables documentation
-  - [ ] Architecture overview (clean architecture explanation)
-  - [ ] Folder structure explanation
-  - [ ] Running the app instructions
-  - [ ] Building for production instructions
-- [ ] Create `.env.example` file
-- [ ] Add screenshots of each screen
-- [ ] Test: Give README to someone unfamiliar → they can set up and run app
+- [x] **Design API endpoints**:
+  - [x] **POST /api/v1/words** - Create word in global dictionary
+  - [x] **GET /api/v1/words/{word_id}** - Get word from global dictionary
+  - [x] **POST /api/v1/words/{word_id}/image** - Upload image for word (saves to `image_users/` folder)
+  - [x] **GET /api/v1/words/{word_id}/image** - Serve word image file from `image_users/`
+  - [x] **POST /api/v1/users/{user_id}/folders/{folder_id}/words** - Add existing word to user's folder
+  - [x] **GET /api/v1/users/{user_id}/folders/{folder_id}/words** - List words in user's folder
+  - [x] **DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/{word_id}** - Remove word from folder
+  - [x] Note: Two-step process: Create word → Upload image (optional) → Add to folder
 
-### Task 3.4: Code Repository Preparation
-- [ ] Create `.gitignore` for backend:
-  - [ ] Exclude `.env`, `__pycache__`, `.pytest_cache`, etc.
-- [ ] Create `.gitignore` for Flutter:
-  - [ ] Exclude `.env`, `build/`, `.dart_tool/`, etc.
-- [ ] Push backend code to GitHub repository
-- [ ] Push Flutter code to GitHub repository
-- [ ] Add proper commit messages describing features
-- [ ] Create initial release tag (v1.0.0-basic)
-- [ ] Test: Clone both repos fresh → follow README → everything works
+- [x] **Plan helper functions**:
+  - [x] **validate_user_exists(user_id: str, users_col)** → Check user exists, return user doc
+  - [x] **validate_user_folder_ownership(user_id: str, folder_id: ObjectId, folders_col)** → Check folder belongs to user
+  - [x] **validate_word_exists(word_id: str, words_col)** → Check word exists in global dictionary
+  - [x] **save_word_image(word_id: str, image_file)** → Save uploaded image to `image_users/` folder, return relative path
+  - [x] **get_word_image_path(word_id: str)** → Get full file path for word image in `image_users/`
+  - [x] **convert_word_to_response(word: dict)** → Convert MongoDB doc to response format
+  - [x] **convert_word_in_folder_to_response(word: dict, folder_word: dict)** → Merge word data with folder assignment
 
-### Task 3.5: Deployment (Optional)
-- [ ] Deploy backend to test server (Railway, DigitalOcean, AWS, etc.)
-- [ ] Update Flutter app `.env` with deployed backend URL
-- [ ] Build APK for Android testing
-- [ ] Test deployed version
-- [ ] Share repository links
+- [x] **Setup image storage structure**:
+  - [x] Create `image_users/` directory in FastAPI backend root
+  - [x] Image naming convention: `{word_id}.{extension}` (e.g., "apple_001.jpg")
+  - [x] Supported formats: JPG, PNG, WebP (max 5MB per image)
+  - [x] FastAPI static file serving for images
+
+- [x] **Define error handling strategy**:
+  - [x] 400 BAD_REQUEST: Invalid ObjectId format, validation failures, duplicate word_id
+  - [x] 404 NOT_FOUND: User not found, folder not found, word not found, word not in folder
+  - [x] 403 FORBIDDEN: Folder doesn't belong to user
+  - [x] 409 CONFLICT: Word already exists in folder (for add to folder endpoint)
+  - [x] 500 INTERNAL_SERVER_ERROR: Database errors
+
+- [x] **List test scenarios**:
+  - [x] **Happy path**: Create word → Add word to folder → List words in folder → Remove word from folder
+  - [x] **Word management**: Create word, get word, update word, duplicate word_id handling
+  - [x] **Folder assignment**: Add existing word to folder, add non-existent word to folder, duplicate assignment
+  - [x] **Error cases**: Invalid user_id, invalid folder_id, non-existent folder, folder belongs to different user
+  - [x] **Data validation**: Required fields, field length limits, optional fields handling
 
 ---
 
-## Deliverables (Basic Version)
+#### Phase B: Write Tests First (RED) ✅
+- [x] **Create test file structure**: `tests/test_simplified_words.py`
+  - [ ] Follow existing test patterns (requests library, nice formatting)
+  - [ ] Import: requests, json, sys, io (Windows encoding fix)
+  - [ ] Load BASE_URL from tests/.env
+  - [ ] Helper functions: print_separator(), print_result()
 
-- [ ] Backend repository with:
-  - [ ] Firebase authentication
-  - [ ] Folder CRUD endpoints
-  - [ ] Word CRUD endpoints
-  - [ ] Complete documentation
-  - [ ] Test files
+- [ ] **Test Setup (before tests)**:
+  - [ ] Add function to get test user_id: Call GET /auth/current-user, extract user.id
+  - [ ] Add function to create test folder: POST /folders with TEST_ prefix, return folder_id
+  - [ ] Add function to cleanup test words: DELETE all words with "TEST_" prefix in word_id
+  - [ ] Add function to cleanup test folders: DELETE all folders with "TEST_" prefix
+  - [ ] Add function to cleanup user folder words: DELETE all assignments for test words
 
-- [ ] Flutter repository with:
-  - [ ] Firebase authentication
-  - [ ] Folder list, create, edit, delete screens
-  - [ ] Word list, detail, create, edit, delete screens
-  - [ ] Clean architecture implementation
-  - [ ] Complete documentation
+- [ ] **Write Test 1: Setup - Create Test User and Folder**:
+  - [ ] GET /api/v1/auth/current-user (get user_id)
+  - [ ] POST /api/v1/folders (create test folder)
+  - [ ] Assert: Both operations successful, save user_id and folder_id
 
-- [ ] Both repositories:
-  - [ ] Connected to existing MongoDB
-  - [ ] Using Firebase authentication
-  - [ ] Fully documented
-  - [ ] Tested and working
-  - [ ] Ready for demo
+- [ ] **Write Test 2: Create Word in Global Dictionary (Success - Full Fields)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word_id: "TEST_001", word: "apple", definition: "A round red fruit", example: "I ate an apple"}`
+  - [ ] Assert: 200 status, success=true, all fields present in response, image_url=null initially
+
+- [ ] **Write Test 3: Create Word in Global Dictionary (Success - Minimal Fields)**:
+  - [ ] POST /api/v1/words
+  - [ ] Body: `{word_id: "TEST_002", word: "banana", definition: "A yellow curved fruit"}`
+  - [ ] Assert: 200 status, example=null, image_url=null
+
+- [ ] **Write Test 4: Create Word (Duplicate word_id)**:
+  - [ ] POST /api/v1/words with same word_id as Test 2
+  - [ ] Assert: 409 status, error about duplicate word_id
+
+- [ ] **Write Test 5: Get Word from Global Dictionary (Success)**:
+  - [ ] GET /api/v1/words/TEST_001
+  - [ ] Assert: 200 status, word data matches created word
+
+- [ ] **Write Test 6: Get Word (Not Found)**:
+  - [ ] GET /api/v1/words/NONEXISTENT
+  - [ ] Assert: 404 status, error about word not found
+
+- [ ] **Write Test 7: Update Word in Global Dictionary (Success)**:
+  - [ ] PUT /api/v1/words/TEST_001
+  - [ ] Body: `{definition: "Updated definition", example: "Updated example"}`
+  - [ ] Assert: 200 status, fields updated, updated_at changed
+
+- [ ] **Write Test 7.1: Upload Image for Word (Success)**:
+  - [ ] POST /api/v1/words/TEST_001/image
+  - [ ] Body: multipart/form-data with image file
+  - [ ] Assert: 200 status, image_url updated in word record, file saved to `image_users/TEST_001.jpg`
+
+- [ ] **Write Test 7.2: Get Word Image (Success)**:
+  - [ ] GET /api/v1/words/TEST_001/image
+  - [ ] Assert: 200 status, image file returned with correct content-type from `image_users/`
+
+- [ ] **Write Test 7.3: Upload Image for Non-existent Word (Error)**:
+  - [ ] POST /api/v1/words/NONEXISTENT/image
+  - [ ] Assert: 404 status, error about word not found
+
+- [ ] **Write Test 7.4: Upload Invalid Image Format (Error)**:
+  - [ ] POST /api/v1/words/TEST_001/image
+  - [ ] Body: multipart/form-data with .txt file
+  - [ ] Assert: 400 status, error about invalid image format
+
+- [ ] **Write Test 7.5: Upload Oversized Image (Error)**:
+  - [ ] POST /api/v1/words/TEST_001/image
+  - [ ] Body: multipart/form-data with >5MB image
+  - [ ] Assert: 413 status, error about file too large
+
+- [ ] **Write Test 8: Add Existing Word to User Folder (Success)**:
+  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [ ] Body: `{word_id: "TEST_001"}`
+  - [ ] Assert: 200 status, word added to folder with merged data
+
+- [ ] **Write Test 9: Add Non-existent Word to User Folder (Error)**:
+  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [ ] Body: `{word_id: "NONEXISTENT"}`
+  - [ ] Assert: 404 status, error about word not found
+
+- [ ] **Write Test 10: Add Word to Folder (Duplicate Assignment)**:
+  - [ ] POST /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [ ] Body: `{word_id: "TEST_001"}` (same as Test 8)
+  - [ ] Assert: 409 status, error about word already in folder
+
+- [ ] **Write Test 11: List Words in User Folder (Success)**:
+  - [ ] GET /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [ ] Assert: 200 status, list contains added words with merged data
+
+- [ ] **Write Test 12: List Words in User Folder (Empty)**:
+  - [ ] Create new empty folder, list words
+  - [ ] Assert: 200 status, empty list
+
+- [ ] **Write Test 13: Remove Word from User Folder (Success)**:
+  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/TEST_001
+  - [ ] Assert: 200 status, word removed from folder (but still exists in global dictionary)
+
+- [ ] **Write Test 14: Remove Word from User Folder (Not Found)**:
+  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/NONEXISTENT
+  - [ ] Assert: 404 status, error about word not found in folder
+
+- [ ] **Add test cleanup and summary**
+- [ ] **Run tests**: All tests should FAIL (endpoints don't exist yet)
+- [ ] **Commit tests**: `git commit -m "test: add tests for simplified word management with user folders"`
+
+- [ ] **Write Test 7: Add Word to Folder (Invalid User ID)**:
+  - [ ] POST /api/v1/users/invalid_user/folders/{folder_id}/words
+  - [ ] Body: Valid word data
+  - [ ] Assert: 404 status, error about user not found
+
+- [ ] **Write Test 8: Add Word to Folder (Invalid Folder ID Format)**:
+  - [ ] POST /api/v1/users/{user_id}/folders/invalid_folder_id/words
+  - [ ] Body: Valid word data
+  - [ ] Assert: 400 status, error about invalid ObjectId format
+
+- [ ] **Write Test 9: Add Word to Folder (Non-existent Folder)**:
+  - [ ] POST /api/v1/users/{user_id}/folders/000000000000000000000000/words
+  - [ ] Body: Valid word data
+  - [ ] Assert: 404 status, error about folder not found
+
+- [ ] **Write Test 10: Add Duplicate Word (Should Update)**:
+  - [ ] POST same word_id to same folder twice with different definition
+  - [ ] Assert: Second request succeeds, definition updated, no duplicate entries
+
+- [ ] **Write Test 11: List Words in Folder (Success)**:
+  - [ ] GET /api/v1/users/{user_id}/folders/{folder_id}/words
+  - [ ] Assert: 200 status, list contains added words, sorted by word field
+
+- [ ] **Write Test 12: List Words in Folder (Empty)**:
+  - [ ] Create new empty folder, list words
+  - [ ] Assert: 200 status, empty list
+
+- [ ] **Write Test 13: Remove Word from Folder (Success)**:
+  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/{word_id}
+  - [ ] Assert: 200 status, word removed from list
+
+- [ ] **Write Test 14: Remove Word from Folder (Not Found)**:
+  - [ ] DELETE /api/v1/users/{user_id}/folders/{folder_id}/words/NONEXISTENT
+  - [ ] Assert: 404 status, error about word not found in folder
+
+- [x] **Add test cleanup and summary**
+- [x] **Run tests**: All tests PASS ✅ (23 tests passed)
+- [x] **Commit tests**: Ready for commit
 
 ---
 
-## User Flow Summary (Basic Version)
+#### Phase C: Implement Code (GREEN) ✅
+- [x] **Create Pydantic models**: `models/simplified_word.py`
+  - [x] **CreateWordRequest**: word_id, word, definition, example?, image_url?
+  - [x] **UpdateWordRequest**: word?, definition?, example?, image_url? (all optional)
+  - [x] **WordResponse**: word_id, word, definition, example, image_url, timestamps
+  - [x] **AddWordToFolderRequest**: word_id only
+  - [x] **WordInFolderResponse**: id, word_id, word, definition, example, image_url, folder_id, user_id, timestamps
 
-**Authentication Flow:**
-1. [ ] User opens app
-2. [ ] User signs in with dinhthongchau@gmail.com and password
-3. [ ] Firebase authenticates user
-4. [ ] App stores Firebase ID token
-5. [ ] User navigates to folder list
+- [x] **Create routers**:
+  - [x] `routers/simplified_words_router.py` - Global word dictionary management
+  - [x] `routers/user_folder_words_router.py` - User folder word assignments
+  - [x] Import dependencies and models
+  - [x] Create helper functions for validation and image handling
+  - [x] Implement all endpoints with proper error handling
 
-**Folder Management Flow:**
-1. [ ] User sees list of folders
-2. [ ] User taps "+" to create new folder
-3. [ ] User fills form (name, description, color, icon)
-4. [ ] User saves → folder created in MongoDB
-5. [ ] User sees new folder in list
-6. [ ] User can edit/delete folders
+- [x] **Setup image storage**:
+  - [x] Create `image_users/` directory in backend root
+  - [x] Configure file upload handling (FastAPI UploadFile)
+  - [x] Add image serving with proper MIME types
+  - [x] Implement file validation (format, size limits)
+  - [x] Add static file mounting for image serving (via utils/image_helpers.py)
 
-**Word Management Flow:**
-1. [ ] User taps on a folder
-2. [ ] User sees list of words in that folder
-3. [ ] User taps "+" to create new word
-4. [ ] User fills form (word, definition, examples, images, etc.)
-5. [ ] User saves → word created in MongoDB
-6. [ ] User sees new word in list
-7. [ ] User taps word to see full details
-8. [ ] User can edit/delete words
+- [x] **Register routers in main.py**
+- [x] **Run tests**: All tests PASS ✅ (23 tests passed)
+- [x] **Manual verification**: Swagger UI available at http://localhost:8829/docs
+- [x] **Commit implementation**: Ready for commit
 
 ---
 
-## Next Phase: AI Chat Features (Future Plan)
+#### Phase D: Refactor (REFACTOR) ✅
+- [x] **Extract shared helpers**: Created utils/image_helpers.py for image operations
+- [x] **Improve error messages**: Consistent, user-friendly error responses across all endpoints
+- [x] **Add comprehensive docstrings**: All endpoints and helpers documented
+- [x] **Code cleanup**: Clean code structure, proper naming, full type hints
+- [x] **Run tests again**: All 23 tests still passing ✅
+- [x] **Commit refactoring**: Code ready for commit
 
-This will be covered in a separate plan later:
-- OpenAI integration for definitions and examples
-- Pixabay integration for image suggestions
-- AI chat screen for word creation
-- AI-assisted word suggestion endpoint
-- Word editing screen with AI suggestions
+---
+
+#### Phase E: Integration Preparation ✅
+- [x] **Document API for AI bubble**: Swagger docs available at /docs, all endpoints documented
+- [x] **Test edge cases**: Tests cover validation, error handling, image upload/serving
+- [x] **Performance considerations**: Image storage in local folder (fast), indexes can be added later
+- [x] **Security review**: User/folder ownership validated, proper error codes (400, 404, 409, 413)
+- [x] **Final test run**: All 23 tests passing ✅, ready for AI bubble integration
+
+---
+
+### Task 2.2: Update Flutter App for Simplified Word Display (No Context7 Needed)
+**Goal:** Update existing Flutter app to display simplified word structure in folder listing
+**Scope:** Modify existing word display to show only essential fields
+
+---
+
+#### Phase A: Analysis & Plan
+- [x] **Current Implementation Analysis**:
+  - [x] **Current WordEntity**: Has complex structure with `examples[]`, `imageUrls[]`, `partOfSpeech`, `pronunciation`, `notes`
+  - [x] **Current WordCard**: Displays all fields including multiple examples, part of speech, pronunciation, notes
+  - [x] **Current API**: Uses `/api/v1/folders/{folder_id}/words` endpoint
+  - [x] **Current Flow**: FoldersScreen → tap folder → WordsScreen → displays WordCard list
+
+- [ ] **Plan Simplified Updates**:
+  - [ ] **Update WordEntity**: Add simplified constructor/factory for new backend structure
+  - [ ] **Update WordModel**: Handle new JSON structure with single `example`, `image_url` fields
+  - [ ] **Update WordCard**: Simplified display showing only `word`, `definition`, `example`, `image_url`
+  - [ ] **Update API endpoint**: Change to new `/api/v1/users/{user_id}/folders/{folder_id}/words`
+  - [ ] **No Context7 needed**: Use existing Flutter architecture (Clean Architecture + BLoC)
+
+#### Phase B: Update Data Layer
+- [ ] **Update WordEntity** (`lib/domain/entity/word_entity.dart`):
+  - [ ] Add `word_id` field (business identifier)
+  - [ ] Change `examples` List<String> → `example` String?
+  - [ ] Change `imageUrls` List<String> → `imageUrl` String?
+  - [ ] Remove `partOfSpeech`, `pronunciation`, `notes` (or make optional)
+  - [ ] Keep existing constructor for backward compatibility
+
+- [ ] **Update WordModel** (`lib/data/models/word_model.dart`):
+  - [ ] Update `fromJson` to handle new backend response format
+  - [ ] Map `image_url` → `imageUrl`, `example` → `example`
+  - [ ] Handle both old and new JSON formats for smooth transition
+
+- [ ] **Update API endpoint** (`lib/core/api/api_config.dart`):
+  - [ ] Change endpoint from `/api/v1/folders/{folder_id}/words` 
+  - [ ] To `/api/v1/users/{user_id}/folders/{folder_id}/words`
+  - [ ] Add user_id parameter to API calls
+
+#### Phase C: Update Presentation Layer
+- [ ] **Update WordCard** (`lib/presentation/widgets/word_card.dart`):
+  - [ ] Simplify layout to show only: word title, definition, single example, single image
+  - [ ] Remove: part of speech badge, pronunciation, notes section, multiple examples
+  - [ ] Add image display if `imageUrl` is provided
+  - [ ] Keep clean, minimal design focused on essential information
+
+- [ ] **Update WordsBloc** (if needed):
+  - [ ] Update API calls to include user_id parameter
+  - [ ] Handle new response format from backend
+
+#### Phase D: Image Display Integration
+- [ ] **Add image display to WordCard**:
+  - [ ] Show image from backend URL: `{BASE_URL}/api/v1/words/{word_id}/image`
+  - [ ] Add placeholder for missing images
+  - [ ] Handle image loading states and errors
+  - [ ] Optimize image display (caching, sizing)
+  - [ ] Images served from `image_users/` folder via FastAPI static files
+
+#### Phase E: Testing & Verification
+- [ ] **Update existing tests**:
+  - [ ] Update WordModel tests for new JSON structure
+  - [ ] Update WordCard tests for simplified display
+  - [ ] Update integration tests for new API endpoints
+
+- [ ] **Manual testing**:
+  - [ ] Test folder → word list flow
+  - [ ] Verify simplified word display
+  - [ ] Test image loading from backend
+  - [ ] Test empty states and error handling
+
+---
+
+### Task 3: 
