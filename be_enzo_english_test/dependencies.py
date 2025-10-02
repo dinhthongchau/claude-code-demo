@@ -172,11 +172,6 @@ def get_user_folder_words_collection(
     return db["user_folder_words"]
 
 
-def get_wordlists_collection(
-    db: AsyncIOMotorDatabase = Depends(get_db),
-) -> AsyncIOMotorCollection:
-    """Get wordlists collection for WordList management."""
-    return db[Collections.WORDLISTS]
 
 
 class FirebaseAuth:

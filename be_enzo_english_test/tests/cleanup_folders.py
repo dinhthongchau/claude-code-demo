@@ -69,15 +69,15 @@ async def cleanup_folders():
         )
 
         # Delete folder
-        folder_result = await folders_collection.delete_one({"_id": folder["_id"]})
+        await folders_collection.delete_one({"_id": folder["_id"]})
         print(f"  - Deleted folder '{folder['name']}'")
 
     print(f"\n{'='*60}")
-    print(f"✅ Cleanup complete!")
+    print("✅ Cleanup complete!")
     print(f"{'='*60}")
 
     if folder_to_keep:
-        print(f"\n📁 Remaining folder:")
+        print("\n📁 Remaining folder:")
         print(f"   Name: {folder_to_keep['name']}")
         print(f"   ID: {str(folder_to_keep['_id'])}")
         print(f"   Description: {folder_to_keep.get('description', 'N/A')}")
@@ -88,7 +88,7 @@ async def cleanup_folders():
         )
         print(f"   Words: {word_count}")
     else:
-        print(f"\n⚠️  Warning: 'Test Folder' was not found!")
+        print("\n⚠️  Warning: 'Test Folder' was not found!")
 
     client.close()
 
