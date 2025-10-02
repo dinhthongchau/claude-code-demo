@@ -9,6 +9,7 @@ class WordRemoteSource {
   WordRemoteSource(this.dioClient);
 
   Future<List<WordModel>> getWordsByFolder({
+    required String userId,
     required String folderId,
     int? limit,
     int? skip,
@@ -19,7 +20,7 @@ class WordRemoteSource {
       if (skip != null) queryParameters['skip'] = skip;
 
       final response = await dioClient.get(
-        ApiConfig.folderWordsEndpoint(folderId),
+        ApiConfig.userFolderWordsEndpoint(userId, folderId),
         queryParameters: queryParameters,
       );
 

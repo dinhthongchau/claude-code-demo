@@ -8,19 +8,27 @@ sealed class WordsEvent extends Equatable {
 }
 
 class LoadWordsByFolderEvent extends WordsEvent {
+  final String userId;
   final String folderId;
 
-  const LoadWordsByFolderEvent(this.folderId);
+  const LoadWordsByFolderEvent({
+    required this.userId,
+    required this.folderId,
+  });
 
   @override
-  List<Object?> get props => [folderId];
+  List<Object?> get props => [userId, folderId];
 }
 
 class RefreshWordsEvent extends WordsEvent {
+  final String userId;
   final String folderId;
 
-  const RefreshWordsEvent(this.folderId);
+  const RefreshWordsEvent({
+    required this.userId,
+    required this.folderId,
+  });
 
   @override
-  List<Object?> get props => [folderId];
+  List<Object?> get props => [userId, folderId];
 }

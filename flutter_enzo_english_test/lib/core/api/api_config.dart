@@ -13,8 +13,11 @@ class ApiConfig {
   /// API endpoints
   static const String authEndpoint = '/api/v1/auth/current-user';
   static const String foldersEndpoint = '/api/v1/folders';
-  static String folderWordsEndpoint(String folderId) =>
-      '/api/v1/folders/$folderId/words';
+  
+  /// User folder words endpoint (simplified structure)
+  static String userFolderWordsEndpoint(String userId, String folderId) =>
+      '/api/v1/users/$userId/folders/$folderId/words';
+  
   static String wordEndpoint(String wordId) => '/api/v1/words/$wordId';
   static const String wordsEndpoint = '/api/v1/words';
 

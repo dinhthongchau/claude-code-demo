@@ -12,12 +12,14 @@ class WordRepositoryImpl implements WordRepository {
 
   @override
   Future<Either<Failure, List<WordEntity>>> getWordsByFolder({
+    required String userId,
     required String folderId,
     int? limit,
     int? skip,
   }) async {
     try {
       final words = await remoteSource.getWordsByFolder(
+        userId: userId,
         folderId: folderId,
         limit: limit,
         skip: skip,

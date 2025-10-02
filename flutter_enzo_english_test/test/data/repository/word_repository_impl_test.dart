@@ -20,18 +20,17 @@ void main() {
     repository = WordRepositoryImpl(mockRemoteSource);
   });
 
+  const tUserId = 'test@example.com';
   const tFolderId = '1';
 
   final tWordModelList = [
     WordModel(
       id: tWordEntity1.id,
+      wordId: tWordEntity1.wordId,
       word: tWordEntity1.word,
       definition: tWordEntity1.definition,
-      examples: tWordEntity1.examples,
-      imageUrls: tWordEntity1.imageUrls,
-      partOfSpeech: tWordEntity1.partOfSpeech,
-      pronunciation: tWordEntity1.pronunciation,
-      notes: tWordEntity1.notes,
+      example: tWordEntity1.example,
+      imageUrl: tWordEntity1.imageUrl,
       folderId: tWordEntity1.folderId,
       userId: tWordEntity1.userId,
       createdAt: tWordEntity1.createdAt,
@@ -39,13 +38,11 @@ void main() {
     ),
     WordModel(
       id: tWordEntity2.id,
+      wordId: tWordEntity2.wordId,
       word: tWordEntity2.word,
       definition: tWordEntity2.definition,
-      examples: tWordEntity2.examples,
-      imageUrls: tWordEntity2.imageUrls,
-      partOfSpeech: tWordEntity2.partOfSpeech,
-      pronunciation: tWordEntity2.pronunciation,
-      notes: tWordEntity2.notes,
+      example: tWordEntity2.example,
+      imageUrl: tWordEntity2.imageUrl,
       folderId: tWordEntity2.folderId,
       userId: tWordEntity2.userId,
       createdAt: tWordEntity2.createdAt,
@@ -58,6 +55,7 @@ void main() {
       // arrange
       when(
         () => mockRemoteSource.getWordsByFolder(
+          userId: any(named: 'userId'),
           folderId: any(named: 'folderId'),
           limit: any(named: 'limit'),
           skip: any(named: 'skip'),
@@ -66,6 +64,7 @@ void main() {
 
       // act
       final result = await repository.getWordsByFolder(
+        userId: tUserId,
         folderId: tFolderId,
         limit: 100,
         skip: 0,
@@ -80,6 +79,7 @@ void main() {
       });
       verify(
         () => mockRemoteSource.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
@@ -94,6 +94,7 @@ void main() {
         // arrange
         when(
           () => mockRemoteSource.getWordsByFolder(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -102,6 +103,7 @@ void main() {
 
         // act
         final result = await repository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
@@ -115,6 +117,7 @@ void main() {
         }, (_) => fail('Expected Left but got Right'));
         verify(
           () => mockRemoteSource.getWordsByFolder(
+            userId: tUserId,
             folderId: tFolderId,
             limit: 100,
             skip: 0,
@@ -130,6 +133,7 @@ void main() {
         // arrange
         when(
           () => mockRemoteSource.getWordsByFolder(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -138,6 +142,7 @@ void main() {
 
         // act
         final result = await repository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
@@ -151,6 +156,7 @@ void main() {
         }, (_) => fail('Expected Left but got Right'));
         verify(
           () => mockRemoteSource.getWordsByFolder(
+            userId: tUserId,
             folderId: tFolderId,
             limit: 100,
             skip: 0,
@@ -166,6 +172,7 @@ void main() {
         // arrange
         when(
           () => mockRemoteSource.getWordsByFolder(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -174,6 +181,7 @@ void main() {
 
         // act
         final result = await repository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
@@ -187,6 +195,7 @@ void main() {
         }, (_) => fail('Expected Left but got Right'));
         verify(
           () => mockRemoteSource.getWordsByFolder(
+            userId: tUserId,
             folderId: tFolderId,
             limit: 100,
             skip: 0,
@@ -200,6 +209,7 @@ void main() {
       // arrange
       when(
         () => mockRemoteSource.getWordsByFolder(
+          userId: any(named: 'userId'),
           folderId: any(named: 'folderId'),
           limit: any(named: 'limit'),
           skip: any(named: 'skip'),
@@ -208,6 +218,7 @@ void main() {
 
       // act
       final result = await repository.getWordsByFolder(
+        userId: tUserId,
         folderId: tFolderId,
         limit: 100,
         skip: 0,
@@ -221,6 +232,7 @@ void main() {
       );
       verify(
         () => mockRemoteSource.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,

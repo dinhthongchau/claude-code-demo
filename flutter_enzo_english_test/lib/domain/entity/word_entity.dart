@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
+/// Simplified word entity for AI bubble feature preparation
+/// Uses single example and image instead of arrays
 class WordEntity extends Equatable {
   final String id;
+  final String wordId;
   final String word;
   final String definition;
-  final List<String> examples;
-  final List<String> imageUrls;
-  final String? partOfSpeech;
-  final String? pronunciation;
-  final String? notes;
+  final String? example;
+  final String? imageUrl;
   final String folderId;
   final String userId;
   final DateTime createdAt;
@@ -16,13 +16,11 @@ class WordEntity extends Equatable {
 
   const WordEntity({
     required this.id,
+    required this.wordId,
     required this.word,
     required this.definition,
-    required this.examples,
-    required this.imageUrls,
-    this.partOfSpeech,
-    this.pronunciation,
-    this.notes,
+    this.example,
+    this.imageUrl,
     required this.folderId,
     required this.userId,
     required this.createdAt,
@@ -31,17 +29,15 @@ class WordEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id,
-    word,
-    definition,
-    examples,
-    imageUrls,
-    partOfSpeech,
-    pronunciation,
-    notes,
-    folderId,
-    userId,
-    createdAt,
-    updatedAt,
-  ];
+        id,
+        wordId,
+        word,
+        definition,
+        example,
+        imageUrl,
+        folderId,
+        userId,
+        createdAt,
+        updatedAt,
+      ];
 }

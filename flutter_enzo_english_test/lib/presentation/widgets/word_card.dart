@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_enzo_english_test/core/api/api_config.dart';
 import 'package:flutter_enzo_english_test/domain/entity/word_entity.dart';
 
+/// Simplified word card for displaying essential word information
+/// Shows: word title, definition, single example, and optional image
 class WordCard extends StatelessWidget {
   final WordEntity word;
 
@@ -24,46 +27,60 @@ class WordCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 8,
           children: [
-            // Word title with pronunciation
+            // Word title
             Row(
               children: [
                 Expanded(
                   child: Text(
                     word.word,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
                 ),
-                if (word.partOfSpeech != null)
+                // Image thumbnail
+                if (word.imageUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      '${ApiConfig.getBaseUrl()}/api/v1/global/words/${word.wordId}/image',
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: Colors.grey[400],
+                            size: 30,
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                else
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(4),
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      word.partOfSpeech!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey[400],
+                      size: 30,
                     ),
                   ),
               ],
             ),
-            // Pronunciation
-            if (word.pronunciation != null)
-              Text(
-                word.pronunciation!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
             // Divider
             const Divider(),
             // Definition
@@ -71,66 +88,34 @@ class WordCard extends StatelessWidget {
               word.definition,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            // Examples
-            if (word.examples.isNotEmpty) ...[
+            // Example
+            if (word.example != null && word.example!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'Examples:',
+                'Example:',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
               ),
               const SizedBox(height: 4),
-              ...word.examples
-                  .take(3)
-                  .map(
-                    (example) => Padding(
-                      padding: const EdgeInsets.only(left: 8, top: 2),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 8,
-                        children: [
-                          Text(
-                            '•',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          Expanded(
-                            child: Text(
-                              example,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey[700],
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-            ],
-            // Notes
-            if (word.notes != null && word.notes!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.amber[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.amber[200]!, width: 1),
-                ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 8,
                   children: [
-                    Icon(Icons.note, size: 16, color: Colors.amber[700]),
+                    Text(
+                      '•',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                     Expanded(
                       child: Text(
-                        word.notes!,
+                        word.example!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[800],
-                        ),
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey[700],
+                            ),
                       ),
                     ),
                   ],

@@ -27,6 +27,7 @@ void main() {
     bloc.close();
   });
 
+  const tUserId = 'test@example.com';
   const tFolderId = '1';
 
   test('initial state should be WordsInitial with empty list', () {
@@ -39,6 +40,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -46,11 +48,15 @@ void main() {
         ).thenAnswer((_) async => Right(tWordList));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(tFolderId)),
+      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [isA<WordsLoading>(), WordsSuccess(words: tWordList)],
       verify: (_) {
         verify(
           () => mockGetWordsByFolderUseCase(
+            userId: tUserId,
             folderId: tFolderId,
             limit: AppConstants.defaultPageLimit,
             skip: AppConstants.defaultPageSkip,
@@ -64,6 +70,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -71,7 +78,10 @@ void main() {
         ).thenAnswer((_) async => const Left(ServerFailure('Server error')));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(tFolderId)),
+      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [
         isA<WordsLoading>(),
         const WordsError(words: [], errorMessage: 'Server error'),
@@ -79,6 +89,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetWordsByFolderUseCase(
+            userId: tUserId,
             folderId: tFolderId,
             limit: AppConstants.defaultPageLimit,
             skip: AppConstants.defaultPageSkip,
@@ -92,6 +103,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -101,7 +113,10 @@ void main() {
         );
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(tFolderId)),
+      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [
         isA<WordsLoading>(),
         const WordsError(words: [], errorMessage: 'No internet connection'),
@@ -109,6 +124,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockGetWordsByFolderUseCase(
+            userId: tUserId,
             folderId: tFolderId,
             limit: AppConstants.defaultPageLimit,
             skip: AppConstants.defaultPageSkip,
@@ -122,6 +138,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -130,7 +147,10 @@ void main() {
         return bloc;
       },
       seed: () => WordsSuccess(words: tWordList),
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(tFolderId)),
+      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [
         WordsLoading.fromState(state: WordsSuccess(words: tWordList)),
         WordsSuccess(words: tWordList),
@@ -142,6 +162,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -149,7 +170,10 @@ void main() {
         ).thenAnswer((_) async => const Right([]));
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(tFolderId)),
+      act: (bloc) => bloc.add(const LoadWordsByFolderEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [isA<WordsLoading>(), const WordsSuccess(words: [])],
     );
   });
@@ -160,6 +184,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -167,11 +192,15 @@ void main() {
         ).thenAnswer((_) async => Right(tWordList));
         return bloc;
       },
-      act: (bloc) => bloc.add(const RefreshWordsEvent(tFolderId)),
+      act: (bloc) => bloc.add(const RefreshWordsEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [WordsSuccess(words: tWordList)],
       verify: (_) {
         verify(
           () => mockGetWordsByFolderUseCase(
+            userId: tUserId,
             folderId: tFolderId,
             limit: AppConstants.defaultPageLimit,
             skip: AppConstants.defaultPageSkip,
@@ -185,6 +214,7 @@ void main() {
       build: () {
         when(
           () => mockGetWordsByFolderUseCase(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -192,11 +222,15 @@ void main() {
         ).thenAnswer((_) async => const Left(ServerFailure('Server error')));
         return bloc;
       },
-      act: (bloc) => bloc.add(const RefreshWordsEvent(tFolderId)),
+      act: (bloc) => bloc.add(const RefreshWordsEvent(
+        userId: tUserId,
+        folderId: tFolderId,
+      )),
       expect: () => [const WordsError(words: [], errorMessage: 'Server error')],
       verify: (_) {
         verify(
           () => mockGetWordsByFolderUseCase(
+            userId: tUserId,
             folderId: tFolderId,
             limit: AppConstants.defaultPageLimit,
             skip: AppConstants.defaultPageSkip,

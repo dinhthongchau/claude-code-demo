@@ -22,6 +22,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
     try {
       final result = await getWordsByFolderUseCase(
+        userId: event.userId,
         folderId: event.folderId,
         limit: AppConstants.defaultPageLimit,
         skip: AppConstants.defaultPageSkip,
@@ -55,6 +56,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
     // Don't show loading state for refresh (pull-to-refresh handles it)
     try {
       final result = await getWordsByFolderUseCase(
+        userId: event.userId,
         folderId: event.folderId,
         limit: AppConstants.defaultPageLimit,
         skip: AppConstants.defaultPageSkip,

@@ -3,13 +3,11 @@ import 'package:flutter_enzo_english_test/domain/entity/word_entity.dart';
 class WordModel extends WordEntity {
   const WordModel({
     required super.id,
+    required super.wordId,
     required super.word,
     required super.definition,
-    required super.examples,
-    required super.imageUrls,
-    super.partOfSpeech,
-    super.pronunciation,
-    super.notes,
+    super.example,
+    super.imageUrl,
     required super.folderId,
     required super.userId,
     required super.createdAt,
@@ -19,21 +17,11 @@ class WordModel extends WordEntity {
   factory WordModel.fromJson(Map<String, dynamic> json) {
     return WordModel(
       id: json['id'] as String,
+      wordId: json['word_id'] as String,
       word: json['word'] as String,
       definition: json['definition'] as String,
-      examples:
-          (json['examples'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      imageUrls:
-          (json['image_urls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      partOfSpeech: json['part_of_speech'] as String?,
-      pronunciation: json['pronunciation'] as String?,
-      notes: json['notes'] as String?,
+      example: json['example'] as String?,
+      imageUrl: json['image_url'] as String?,
       folderId: json['folder_id'] as String,
       userId: json['user_id'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -44,13 +32,11 @@ class WordModel extends WordEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'word_id': wordId,
       'word': word,
       'definition': definition,
-      'examples': examples,
-      'image_urls': imageUrls,
-      'part_of_speech': partOfSpeech,
-      'pronunciation': pronunciation,
-      'notes': notes,
+      'example': example,
+      'image_url': imageUrl,
       'folder_id': folderId,
       'user_id': userId,
       'created_at': createdAt.toIso8601String(),
@@ -61,13 +47,11 @@ class WordModel extends WordEntity {
   WordEntity toEntity() {
     return WordEntity(
       id: id,
+      wordId: wordId,
       word: word,
       definition: definition,
-      examples: examples,
-      imageUrls: imageUrls,
-      partOfSpeech: partOfSpeech,
-      pronunciation: pronunciation,
-      notes: notes,
+      example: example,
+      imageUrl: imageUrl,
       folderId: folderId,
       userId: userId,
       createdAt: createdAt,

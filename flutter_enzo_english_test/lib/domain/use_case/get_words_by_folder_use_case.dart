@@ -9,11 +9,13 @@ class GetWordsByFolderUseCase {
   GetWordsByFolderUseCase(this.repository);
 
   Future<Either<Failure, List<WordEntity>>> call({
+    required String userId,
     required String folderId,
     int? limit,
     int? skip,
   }) async {
     return await repository.getWordsByFolder(
+      userId: userId,
       folderId: folderId,
       limit: limit,
       skip: skip,

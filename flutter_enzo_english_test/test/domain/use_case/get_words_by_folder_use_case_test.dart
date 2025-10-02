@@ -18,6 +18,7 @@ void main() {
     useCase = GetWordsByFolderUseCase(mockRepository);
   });
 
+  const tUserId = 'test@example.com';
   const tFolderId = '1';
 
   group('GetWordsByFolderUseCase', () {
@@ -27,6 +28,7 @@ void main() {
         // arrange
         when(
           () => mockRepository.getWordsByFolder(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -34,12 +36,18 @@ void main() {
         ).thenAnswer((_) async => Right(tWordList));
 
         // act
-        final result = await useCase(folderId: tFolderId, limit: 100, skip: 0);
+        final result = await useCase(
+          userId: tUserId,
+          folderId: tFolderId,
+          limit: 100,
+          skip: 0,
+        );
 
         // assert
         expect(result, Right(tWordList));
         verify(
           () => mockRepository.getWordsByFolder(
+            userId: tUserId,
             folderId: tFolderId,
             limit: 100,
             skip: 0,
@@ -54,6 +62,7 @@ void main() {
       const tFailure = ServerFailure('Server error');
       when(
         () => mockRepository.getWordsByFolder(
+          userId: any(named: 'userId'),
           folderId: any(named: 'folderId'),
           limit: any(named: 'limit'),
           skip: any(named: 'skip'),
@@ -61,12 +70,18 @@ void main() {
       ).thenAnswer((_) async => const Left(tFailure));
 
       // act
-      final result = await useCase(folderId: tFolderId, limit: 100, skip: 0);
+      final result = await useCase(
+        userId: tUserId,
+        folderId: tFolderId,
+        limit: 100,
+        skip: 0,
+      );
 
       // assert
       expect(result, const Left(tFailure));
       verify(
         () => mockRepository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
@@ -82,6 +97,7 @@ void main() {
         const tFailure = NetworkFailure('No internet connection');
         when(
           () => mockRepository.getWordsByFolder(
+            userId: any(named: 'userId'),
             folderId: any(named: 'folderId'),
             limit: any(named: 'limit'),
             skip: any(named: 'skip'),
@@ -89,12 +105,18 @@ void main() {
         ).thenAnswer((_) async => const Left(tFailure));
 
         // act
-        final result = await useCase(folderId: tFolderId, limit: 100, skip: 0);
+        final result = await useCase(
+          userId: tUserId,
+          folderId: tFolderId,
+          limit: 100,
+          skip: 0,
+        );
 
         // assert
         expect(result, const Left(tFailure));
         verify(
           () => mockRepository.getWordsByFolder(
+            userId: tUserId,
             folderId: tFolderId,
             limit: 100,
             skip: 0,
@@ -108,6 +130,7 @@ void main() {
       // arrange
       when(
         () => mockRepository.getWordsByFolder(
+          userId: any(named: 'userId'),
           folderId: any(named: 'folderId'),
           limit: any(named: 'limit'),
           skip: any(named: 'skip'),
@@ -115,12 +138,13 @@ void main() {
       ).thenAnswer((_) async => Right(tWordList));
 
       // act
-      final result = await useCase(folderId: tFolderId);
+      final result = await useCase(userId: tUserId, folderId: tFolderId);
 
       // assert
       expect(result, Right(tWordList));
       verify(
         () => mockRepository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: null,
           skip: null,
@@ -133,6 +157,7 @@ void main() {
       // arrange
       when(
         () => mockRepository.getWordsByFolder(
+          userId: any(named: 'userId'),
           folderId: any(named: 'folderId'),
           limit: any(named: 'limit'),
           skip: any(named: 'skip'),
@@ -140,7 +165,12 @@ void main() {
       ).thenAnswer((_) async => const Right([]));
 
       // act
-      final result = await useCase(folderId: tFolderId, limit: 100, skip: 0);
+      final result = await useCase(
+        userId: tUserId,
+        folderId: tFolderId,
+        limit: 100,
+        skip: 0,
+      );
 
       // assert
       expect(result, isA<Right>());
@@ -150,6 +180,7 @@ void main() {
       );
       verify(
         () => mockRepository.getWordsByFolder(
+          userId: tUserId,
           folderId: tFolderId,
           limit: 100,
           skip: 0,
