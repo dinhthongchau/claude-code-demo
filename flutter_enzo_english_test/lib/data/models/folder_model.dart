@@ -1,34 +1,27 @@
-class Folder {
-  final String id;
-  final String name;
-  final String? description;
-  final String userId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String? color;
-  final String? icon;
+import 'package:flutter_enzo_english_test/domain/entity/folder_entity.dart';
 
-  Folder({
-    required this.id,
-    required this.name,
-    this.description,
-    required this.userId,
-    required this.createdAt,
-    required this.updatedAt,
-    this.color,
-    this.icon,
+class FolderModel extends FolderEntity {
+  const FolderModel({
+    required super.id,
+    required super.name,
+    required super.description,
+    required super.userId,
+    required super.createdAt,
+    required super.updatedAt,
+    required super.color,
+    required super.icon,
   });
 
-  factory Folder.fromJson(Map<String, dynamic> json) {
-    return Folder(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      userId: json['user_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      color: json['color'],
-      icon: json['icon'],
+  factory FolderModel.fromJson(Map<String, dynamic> json) {
+    return FolderModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String? ?? '',
+      userId: json['user_id'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      color: json['color'] as String? ?? '#2196F3',
+      icon: json['icon'] as String? ?? '📁',
     );
   }
 
@@ -43,5 +36,18 @@ class Folder {
       'color': color,
       'icon': icon,
     };
+  }
+
+  FolderEntity toEntity() {
+    return FolderEntity(
+      id: id,
+      name: name,
+      description: description,
+      userId: userId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      color: color,
+      icon: icon,
+    );
   }
 }

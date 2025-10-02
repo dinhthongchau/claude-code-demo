@@ -1,46 +1,43 @@
-class Word {
-  final String id;
-  final String word;
-  final String definition;
-  final List<String> examples;
-  final List<String> imageUrls;
-  final String? partOfSpeech;
-  final String? pronunciation;
-  final String? notes;
-  final String folderId;
-  final String userId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+import 'package:flutter_enzo_english_test/domain/entity/word_entity.dart';
 
-  Word({
-    required this.id,
-    required this.word,
-    required this.definition,
-    required this.examples,
-    required this.imageUrls,
-    this.partOfSpeech,
-    this.pronunciation,
-    this.notes,
-    required this.folderId,
-    required this.userId,
-    required this.createdAt,
-    required this.updatedAt,
+class WordModel extends WordEntity {
+  const WordModel({
+    required super.id,
+    required super.word,
+    required super.definition,
+    required super.examples,
+    required super.imageUrls,
+    super.partOfSpeech,
+    super.pronunciation,
+    super.notes,
+    required super.folderId,
+    required super.userId,
+    required super.createdAt,
+    required super.updatedAt,
   });
 
-  factory Word.fromJson(Map<String, dynamic> json) {
-    return Word(
-      id: json['id'],
-      word: json['word'],
-      definition: json['definition'],
-      examples: List<String>.from(json['examples'] ?? []),
-      imageUrls: List<String>.from(json['image_urls'] ?? []),
-      partOfSpeech: json['part_of_speech'],
-      pronunciation: json['pronunciation'],
-      notes: json['notes'],
-      folderId: json['folder_id'],
-      userId: json['user_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+  factory WordModel.fromJson(Map<String, dynamic> json) {
+    return WordModel(
+      id: json['id'] as String,
+      word: json['word'] as String,
+      definition: json['definition'] as String,
+      examples:
+          (json['examples'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      imageUrls:
+          (json['image_urls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      partOfSpeech: json['part_of_speech'] as String?,
+      pronunciation: json['pronunciation'] as String?,
+      notes: json['notes'] as String?,
+      folderId: json['folder_id'] as String,
+      userId: json['user_id'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
@@ -59,5 +56,22 @@ class Word {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
+  }
+
+  WordEntity toEntity() {
+    return WordEntity(
+      id: id,
+      word: word,
+      definition: definition,
+      examples: examples,
+      imageUrls: imageUrls,
+      partOfSpeech: partOfSpeech,
+      pronunciation: pronunciation,
+      notes: notes,
+      folderId: folderId,
+      userId: userId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
   }
 }

@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'presentation/folders_screen.dart';
+import 'package:flutter_enzo_english_test/core/get_it/injection_container.dart';
+import 'package:flutter_enzo_english_test/core/theme/app_theme.dart';
+import 'package:flutter_enzo_english_test/presentation/routes.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load(fileName: '.env');
+
+  // Setup dependency injection
+  await setupDependencies();
+
   runApp(const MyApp());
 }
 
@@ -12,14 +21,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Enzo English Test',
+    return MaterialApp.router(
+      title: 'eVibe English Test',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home: const FoldersScreen(),
     );
   }
 }

@@ -1,5 +1,5 @@
 Follow these step:
-- Run .claude/commands/check.md
+- Run .claude/commands/check-code.md
 - Update the @plan.md file with the latest uncommited changes, makeing sure each individual sub-task has its own checkbox. Example :
 ```
 - [x] Create abc

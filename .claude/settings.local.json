@@ -6,7 +6,10 @@
       "Bash(python tests:*)",
       "Bash(ruff check:*)",
       "Bash(flutter create:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(dir)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,3 +1,4 @@
+---
 allowed-tools: all
 description: Verify code quality and fix all issues
 ---
