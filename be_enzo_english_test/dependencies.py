@@ -122,7 +122,9 @@ class Collections:
     FOLDERS = "folders"
     WORDLISTS = "wordlists"
     WORDS = "words"
-    USER_FOLDER_WORDS = "user_folder_words"  # DEPRECATED - will be removed after migration
+    USER_FOLDER_WORDS = (
+        "user_folder_words"  # DEPRECATED - will be removed after migration
+    )
 
 
 def get_collection(collection_name: str):
@@ -170,8 +172,6 @@ def get_user_folder_words_collection(
 ) -> AsyncIOMotorCollection:
     """Get user_folder_words collection for user folder word assignments."""
     return db["user_folder_words"]
-
-
 
 
 class FirebaseAuth:

@@ -53,9 +53,9 @@ async def cleanup_folders():
             folders_to_delete.append(folder)
             print(f"🗑️  Will delete: {folder_name} (ID: {folder_id})")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Deleting {len(folders_to_delete)} folders...")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     for folder in folders_to_delete:
         folder_id = str(folder["_id"])
@@ -72,9 +72,9 @@ async def cleanup_folders():
         await folders_collection.delete_one({"_id": folder["_id"]})
         print(f"  - Deleted folder '{folder['name']}'")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("✅ Cleanup complete!")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     if folder_to_keep:
         print("\n📁 Remaining folder:")
@@ -95,4 +95,3 @@ async def cleanup_folders():
 
 if __name__ == "__main__":
     asyncio.run(cleanup_folders())
-
