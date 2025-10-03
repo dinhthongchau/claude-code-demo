@@ -175,7 +175,7 @@ python tests/test_words.py
 ```
 
 **Backend Test Results:**
-![Backend Test Results]
+
 https://github.com/dinhthongchau/claude-code-demo/blob/main/backend_test_results.md
 *All 16 backend API tests passed, covering authentication, folder CRUD operations, and comprehensive error handling.*
 
@@ -188,7 +188,7 @@ flutter test
 ```
 
 **Frontend Test Results:**
-![Frontend Test Results](frontend_test_results.png)
+
 https://github.com/dinhthongchau/claude-code-demo/blob/main/frontend_test_results.md
 *All 71 Flutter tests passed, covering data models, repositories, use cases, BLoC state management, and UI widgets.*
 
@@ -257,19 +257,6 @@ This project demonstrates:
 - **Responsive UI**: Material Design with custom theming
 - **Testing**: Comprehensive unit and widget tests
 
-## 📚 Learning Resources
-
-### For Backend Development
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Pydantic Models](https://pydantic-docs.helpmanual.io/)
-- [MongoDB with Motor](https://motor.readthedocs.io/)
-- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup)
-
-### For Frontend Development
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [BLoC Pattern Guide](https://bloclibrary.dev/)
-- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Dependency Injection in Flutter](https://pub.dev/packages/get_it)
 
 ## 🤝 Contributing
 
