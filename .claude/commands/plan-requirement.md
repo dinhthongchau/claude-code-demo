@@ -1,1 +1,1 @@
-Think hard about how to implement all the requirments described in $ARGUMENT . Make a plan with Test Driven Development with all the proposed tasks and subtasks with check able . It will be flow from backend to frontend 
+Think hard about how to i@mplement all the requirments described in $ARGUMENT . Make a plan with Test Driven Development with all the proposed tasks and subtasks with check able . It will be flow from backend to frontend 
