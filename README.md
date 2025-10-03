@@ -175,8 +175,8 @@ python tests/test_words.py
 ```
 
 **Backend Test Results:**
-![Backend Test Results](backend_test_results.png)
-
+![Backend Test Results]
+https://github.com/dinhthongchau/claude-code-demo/blob/main/backend_test_results.md
 *All 16 backend API tests passed, covering authentication, folder CRUD operations, and comprehensive error handling.*
 
 ### Frontend Tests
@@ -189,7 +189,7 @@ flutter test
 
 **Frontend Test Results:**
 ![Frontend Test Results](frontend_test_results.png)
-
+https://github.com/dinhthongchau/claude-code-demo/blob/main/frontend_test_results.md
 *All 71 Flutter tests passed, covering data models, repositories, use cases, BLoC state management, and UI widgets.*
 
 ## 📊 Test Coverage
